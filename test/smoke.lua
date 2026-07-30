@@ -329,6 +329,15 @@ check("nothing readable depends on bold or italic", function()
   end
 end)
 
+check("lualine theme follows the active background", function()
+  reload()
+  require("cendre").setup({ background = "soft" })
+  require("cendre").load()
+  package.loaded["lualine.themes.cendre"] = nil
+  local theme = require("lualine.themes.cendre")
+  assert(theme.normal.c.bg == require("cendre.palette").grounds.soft.bg1,
+    "lualine still on the wrong ground")
+end)
 
 print(("-"):rep(52))
 if #failures > 0 then
