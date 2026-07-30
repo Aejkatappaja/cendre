@@ -396,6 +396,33 @@ check("the committed extras match a fresh render of the palette", function()
   assert(n > 0, "no extras were rendered at all")
 end)
 
+check("the help file exists and defines a tag per section", function()
+  local doc = io.open("doc/cendre.txt", "r")
+  assert(doc, "doc/cendre.txt is missing, so :help cendre fails")
+  local body = doc:read("*a")
+  doc:close()
+
+  local seen = {}
+  for tag in body:gmatch("%*([%w%.%-_():]+)%*") do
+    assert(not seen[tag], "duplicate help tag " .. tag)
+    seen[tag] = true
+  end
+
+  -- every documented option and command has to be reachable by :help
+  for _, tag in ipairs({
+    "cendre-contents", "cendre-installation", "cendre-configuration",
+    "cendre-commands", "cendre-depths", "cendre-palette", "cendre-roles",
+    "cendre-extras", "cendre.setup()", ":CendreBackground",
+  }) do
+    assert(seen[tag], "no help tag for " .. tag)
+  end
+
+  -- and every cross-reference inside the file has to land on one of them
+  for ref in body:gmatch("|(cendre[%w%.%-_():]*)|") do
+    assert(seen[ref], "help references |" .. ref .. "| but nothing defines it")
+  end
+end)
+
 check("lualine theme follows the active background", function()
   reload()
   require("cendre").setup({ background = "soft" })
