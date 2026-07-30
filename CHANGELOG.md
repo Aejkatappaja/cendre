@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/Aejkatappaja/cendre/compare/v1.0.0...v1.1.0) (2026-07-30)
+
+
+### Features
+
+* **site:** serve the page from cendretheme.com ([0400c8e](https://github.com/Aejkatappaja/cendre/commit/0400c8ef621c20826ae8b4dcf528ce049f13e8f5))
+
+
+### Bug Fixes
+
+* **transparent:** let plugin windows inherit the float surface ([deb1730](https://github.com/Aejkatappaja/cendre/commit/deb17305fb28f5da7a25a62c6b2286f0bbd65a2d))
+
 ## 1.0.0 (2026-07-30)
 
 
