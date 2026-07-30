@@ -396,6 +396,91 @@ check("the committed extras match a fresh render of the palette", function()
   assert(n > 0, "no extras were rendered at all")
 end)
 
+check("the landing page carries the same palette as the module", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local html = page:read("*a")
+  page:close()
+
+  -- The page keeps its own copy of the palette, in the stylesheet and again in
+  -- its data tables, because it has to render without Lua. Nothing structural
+  -- stops those from drifting from the module, so it is asserted here instead.
+  local palette = require("cendre.palette")
+  local checked = 0
+  local function must(hex, what)
+    checked = checked + 1
+    assert(html:lower():find(hex:lower(), 1, true),
+      ("%s is %s in the palette but absent from docs/index.html"):format(what, hex))
+  end
+
+  for name, hex in pairs(palette.ink) do must(hex, "ink." .. name) end
+  for name, hex in pairs(palette.pigments) do must(hex, name) end
+  for name, hex in pairs(palette.semantic) do must(hex, name) end
+  for _, bg in ipairs(palette.backgrounds) do
+    for name, hex in pairs(palette.grounds[bg]) do must(hex, bg .. "." .. name) end
+    for name, hex in pairs(palette.tints[bg]) do must(hex, bg .. ".tint." .. name) end
+  end
+  -- the three terminal-only slots are in both places too, so they are asserted
+  -- rather than assumed to have been kept in step
+  for _, hex in ipairs({ "#9480ba", "#a692cd", "#8bcfff" }) do
+    must(hex, "terminal-only slot")
+  end
+  assert(checked >= 40, "only " .. checked .. " values cross-checked")
+end)
+
+check("every path the landing page tells a reader to copy exists", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local html = page:read("*a")
+  page:close()
+
+  -- The install commands are written into the page by hand, and they are not all
+  -- one shape: cp, cp -r, source, open, an [include] line. So every extras/ path
+  -- the page mentions is checked, whatever leads up to it. A reader who runs the
+  -- command would find a stale path out; this finds it out first.
+  local seen = {}
+  for path in html:gmatch("(extras/[%w%-%./]+)") do
+    path = path:gsub("%.$", "")
+    if not seen[path] then
+      seen[path] = true
+      assert(vim.uv.fs_stat(path), "docs/index.html names " .. path .. ", which does not exist")
+    end
+  end
+  local n = 0
+  for _ in pairs(seen) do n = n + 1 end
+  assert(n >= 20, "only " .. n .. " extras paths found on the page, expected one per surface")
+end)
+
+check("every section of the landing page is a unique deep link", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local html = page:read("*a")
+  page:close()
+
+  -- Duplicates are worth failing over rather than leaving to a reader to spot:
+  -- the page's scripts reach for their render targets by id, so a second element
+  -- answering to one of those names is silently written over.
+  local seen = {}
+  for id in html:gmatch('%sid="([^"]+)"') do
+    assert(not seen[id], "duplicate id " .. id .. " in docs/index.html")
+    seen[id] = true
+  end
+
+  -- Anything announced elsewhere has to keep landing somewhere. These are the
+  -- anchors the README and the help file hand out.
+  for _, id in ipairs({
+    "depths", "in-the-editor", "specimen", "derivation", "pigments",
+    "geometry", "rules", "install", "surfaces", "get",
+  }) do
+    assert(seen[id], "docs/index.html has no #" .. id .. " to link to")
+
+    -- and each one is reachable from its own heading, so a section added later
+    -- cannot quietly be the one without a permalink
+    local anchor = ('<a class="permalink" href="#%s"'):format(id)
+    assert(html:find(anchor, 1, true), "no permalink on the heading for #" .. id)
+  end
+end)
+
 check("the help file exists and defines a tag per section", function()
   local doc = io.open("doc/cendre.txt", "r")
   assert(doc, "doc/cendre.txt is missing, so :help cendre fails")
