@@ -329,6 +329,73 @@ check("nothing readable depends on bold or italic", function()
   end
 end)
 
+check("every surface ships at all three depths", function()
+  reload()
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+  local surfaces = {}
+  for path in pairs(files) do
+    local dir = path:match("^extras/([^/]+)/")
+    if dir then surfaces[dir] = (surfaces[dir] or 0) + 1 end
+  end
+  local n = 0
+  for dir, count in pairs(surfaces) do
+    n = n + 1
+    assert(count % 3 == 0,
+      string.format("%s has %d files, not a multiple of three depths", dir, count))
+  end
+  assert(n >= 24, n .. " surfaces under extras/, expected at least 24")
+end)
+
+check("no two depths of one surface share a theme name", function()
+  reload()
+  local palette = require("cendre.palette")
+  local seen = {}
+  for _, bg in ipairs(palette.backgrounds) do
+    local name = palette.name(bg)
+    assert(not seen[name], "two depths resolve to the name " .. name)
+    seen[name] = bg
+  end
+  -- and the name has to appear in the files that store one rather than deriving
+  -- it from their filename, or installing two depths collides on one entry
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+  for _, bg in ipairs(palette.backgrounds) do
+    local name = palette.name(bg)
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    for _, target in ipairs({
+      "extras/zed/cendre%s.json",
+      "extras/wezterm/cendre%s.toml",
+      "extras/bat/cendre%s.tmTheme",
+      "extras/hunk/cendre%s.toml",
+      "extras/vim/cendre%s.vim",
+      "extras/obsidian/cendre%s/manifest.json",
+      "extras/firefox/cendre%s/manifest.json",
+    }) do
+      local path = target:format(suffix)
+      local body = files[path]
+      assert(body, "missing " .. path)
+      assert(body:find(name, 1, true), path .. " does not carry the name " .. name)
+    end
+  end
+end)
+
+check("the committed extras match a fresh render of the palette", function()
+  reload()
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+  local n = 0
+  for path, want in pairs(files) do
+    local fd = io.open(path, "r")
+    assert(fd, path .. " is missing, run scripts/extras.lua")
+    local got = fd:read("*a")
+    fd:close()
+    assert(got == want, path .. " is stale, run scripts/extras.lua")
+    n = n + 1
+  end
+  assert(n > 0, "no extras were rendered at all")
+end)
+
 check("lualine theme follows the active background", function()
   reload()
   require("cendre").setup({ background = "soft" })
