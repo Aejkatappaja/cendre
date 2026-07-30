@@ -80,7 +80,7 @@ lualine picks it up with `options.theme = "cendre"`, or leave `"auto"`.
 | option            | default    | effect                                                   |
 | ----------------- | ---------- | -------------------------------------------------------- |
 | `background`      | `"hard"`   | ground depth: `hard`, `medium` or `soft`                  |
-| `transparent`     | `false`    | strips the background off Normal, floats, statusline      |
+| `transparent`     | `false`    | strips Normal, floats and the statusline; plugin windows follow |
 | `italic`          | `false`    | italics across the theme                                  |
 | `italic_comments` | `true`     | keeps comments italic even when `italic = false`           |
 | `on_colors`       | noop       | `function(colors)` mutates the palette before highlights  |
@@ -88,6 +88,12 @@ lualine picks it up with `options.theme = "cendre"`, or leave `"auto"`.
 
 The background is painted by default. The ash bed is a colour the theme derived,
 so it may as well be on screen.
+
+With `transparent = true`, plugin windows go through too, without being listed one
+by one: which-key, the Snacks picker, Noice and fzf-lua link their windows to
+`NormalFloat`, so stripping that strips all of them, including plugins released
+after this README. The completion menu is the exception and stays painted, since a
+transparent popup over code is not readable.
 
 ```lua
 require("cendre").setup({
