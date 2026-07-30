@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 200" width="880" height="200"
+  role="img" aria-label="cendre">
+  <rect width="880" height="200" fill="#171311"/>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="104">
+    <text x="252.8" y="139.0" textLength="249.6" lengthAdjust="spacingAndGlyphs"
+      fill="#e6d5c2">cend</text>
+    <text x="502.4" y="139.0" textLength="124.8" lengthAdjust="spacingAndGlyphs"
+      fill="#ea9875">re</text>
+  </g>
+</svg>

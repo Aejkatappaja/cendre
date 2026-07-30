@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 276" width="880" height="276"
+  role="img" aria-label="Neovim showing Go code in cendre, with git signs, diagnostics and a statusline">
+  <rect width="880" height="276" fill="#171311"/>
+  <rect width="880" height="48" fill="#201b19"/>
+  <line x1="0" y1="48" x2="880" y2="48" stroke="#362f2c" stroke-width="1"/>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="13">
+    <text x="68.0" y="34" textLength="85.8" lengthAdjust="spacingAndGlyphs" fill="#e6d5c2">captures.go</text>
+    <rect x="56.0" y="46" width="109.8" height="2" fill="#ea9875"/>
+    <text x="187.8" y="34" textLength="85.8" lengthAdjust="spacingAndGlyphs" fill="#73665b">registry.go</text>
+    <text x="307.6" y="34" textLength="85.8" lengthAdjust="spacingAndGlyphs" fill="#73665b">palette.lua</text>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="15">
+    <text x="44" y="89.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">1</text>
+    <text x="68.0" y="89.0" textLength="45.0" lengthAdjust="spacingAndGlyphs" fill="#d1766e" xml:space="preserve">func </text>
+    <text x="113.0" y="89.0" textLength="108.0" lengthAdjust="spacingAndGlyphs" fill="#fcba81" xml:space="preserve">LoadCaptures</text>
+    <text x="221.0" y="89.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">(</text>
+    <text x="230.0" y="89.0" textLength="36.0" lengthAdjust="spacingAndGlyphs" fill="#ea9875" xml:space="preserve">path</text>
+    <text x="275.0" y="89.0" textLength="54.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">string</text>
+    <text x="329.0" y="89.0" textLength="45.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">) ([]</text>
+    <text x="374.0" y="89.0" textLength="63.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">Capture</text>
+    <text x="437.0" y="89.0" textLength="18.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">, </text>
+    <text x="455.0" y="89.0" textLength="45.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">error</text>
+    <text x="500.0" y="89.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">) {</text>
+    <text x="44" y="115.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">2</text>
+    <rect x="52" y="103.0" width="2" height="17" fill="#43b16a"/>
+    <text x="68.0" y="115.0" textLength="99.0" lengthAdjust="spacingAndGlyphs" fill="#e6d5c2" xml:space="preserve">  raw, err </text>
+    <text x="167.0" y="115.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">:= </text>
+    <text x="194.0" y="115.0" textLength="18.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">os</text>
+    <text x="212.0" y="115.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">.</text>
+    <text x="221.0" y="115.0" textLength="72.0" lengthAdjust="spacingAndGlyphs" fill="#fcba81" xml:space="preserve">ReadFile</text>
+    <text x="293.0" y="115.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">(</text>
+    <text x="302.0" y="115.0" textLength="36.0" lengthAdjust="spacingAndGlyphs" fill="#ea9875" xml:space="preserve">path</text>
+    <text x="338.0" y="115.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">)</text>
+    <text x="44" y="141.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">3</text>
+    <rect x="52" y="129.0" width="2" height="17" fill="#d25780"/>
+    <text x="68.0" y="141.0" textLength="99.0" lengthAdjust="spacingAndGlyphs" fill="#e6d5c2" xml:space="preserve">  raw, err </text>
+    <text x="167.0" y="141.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">:= </text>
+    <text x="194.0" y="141.0" textLength="54.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">ioutil</text>
+    <text x="248.0" y="141.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">.</text>
+    <text x="257.0" y="141.0" textLength="72.0" lengthAdjust="spacingAndGlyphs" fill="#fcba81" xml:space="preserve">ReadFile</text>
+    <text x="329.0" y="141.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">(</text>
+    <text x="338.0" y="141.0" textLength="36.0" lengthAdjust="spacingAndGlyphs" fill="#ea9875" xml:space="preserve">path</text>
+    <text x="374.0" y="141.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">)</text>
+    <text x="44" y="167.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">4</text>
+    <rect x="52" y="155.0" width="2" height="17" fill="#58bdff"/>
+    <rect x="279.0" y="159.0" width="7" height="7" fill="#d25780"/>
+    <text x="68.0" y="167.0" textLength="54.0" lengthAdjust="spacingAndGlyphs" fill="#d1766e" xml:space="preserve">  var </text>
+    <text x="122.0" y="167.0" textLength="63.0" lengthAdjust="spacingAndGlyphs" fill="#e6d5c2" xml:space="preserve">parsed </text>
+    <text x="185.0" y="167.0" textLength="18.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">[]</text>
+    <text x="203.0" y="167.0" textLength="63.0" lengthAdjust="spacingAndGlyphs" fill="#4e89a2" xml:space="preserve">Capture</text>
+    <text x="293.0" y="167.0" textLength="261.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" xml:space="preserve">declared and not used: parsed</text>
+    <text x="44" y="193.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">5</text>
+    <rect x="333.0" y="185.0" width="7" height="7" fill="#f4a21c"/>
+    <text x="68.0" y="193.0" textLength="81.0" lengthAdjust="spacingAndGlyphs" fill="#d1766e" xml:space="preserve">  return </text>
+    <text x="149.0" y="193.0" textLength="81.0" lengthAdjust="spacingAndGlyphs" fill="#fcba81" xml:space="preserve">normalise</text>
+    <text x="230.0" y="193.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">(</text>
+    <text x="239.0" y="193.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#e6d5c2" xml:space="preserve">raw</text>
+    <text x="266.0" y="193.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">), </text>
+    <text x="293.0" y="193.0" textLength="27.0" lengthAdjust="spacingAndGlyphs" fill="#99af6b" xml:space="preserve">nil</text>
+    <text x="347.0" y="193.0" textLength="333.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" xml:space="preserve">prefer 'parsed' over re-reading 'raw'</text>
+    <text x="44" y="219.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#4e4641" text-anchor="end">6</text>
+    <text x="68.0" y="219.0" textLength="9.0" lengthAdjust="spacingAndGlyphs" fill="#a09384" xml:space="preserve">}</text>
+  </g>
+  <rect x="0" y="242" width="880" height="34" fill="#2a2422"/>
+  <rect x="0" y="242" width="88" height="34" fill="#ea9875"/>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="13">
+    <text x="20" y="264" textLength="46.8" lengthAdjust="spacingAndGlyphs" fill="#171311"
+      letter-spacing="2">NORMAL</text>
+    <text x="108" y="264" fill="#a09384" xml:space="preserve">captures.go   main</text>
+    <text x="860" y="264" fill="#4e4641" text-anchor="end" xml:space="preserve">go   31:22</text>
+  </g>
+  <rect x="0.5" y="0.5" width="879" height="275" fill="none" stroke="#362f2c"/>
+</svg>
