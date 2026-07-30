@@ -24,3 +24,7 @@ jobs:
       # key, then asserts the published contrast ratios and the role map.
       - name: Smoke test
         run: nvim --headless --noplugin -u NONE -c "set rtp+=." -c "luafile test/smoke.lua"
+
+      # Now that doc/cendre.txt exists, the tags it advertises have to build.
+      - name: Help tags build
+        run: nvim --headless --noplugin -u NONE -c "set rtp+=." -c "helptags doc" -c q
