@@ -1,0 +1,2161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cendre · one wood fire, taken apart</title>
+<meta name="description" content="A dark colorscheme for Neovim whose every hue was computed from one wood fire: Planck's law for the coals, published emission wavelengths for the rest, through CIE 1931 into OKLCH.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#171311">
+<link rel="canonical" href="https://cendretheme.com/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="cendre">
+<meta property="og:url" content="https://cendretheme.com/">
+<meta property="og:title" content="cendre · one wood fire, taken apart">
+<meta property="og:description" content="A dark colorscheme for Neovim. Five pigments, none of them chosen.">
+<meta property="og:image" content="https://cendretheme.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The cendre wordmark over the five pigments of the palette.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="cendre · one wood fire, taken apart">
+<meta name="twitter:description" content="A dark colorscheme for Neovim. Five pigments, none of them chosen.">
+<meta name="twitter:image" content="https://cendretheme.com/og.png">
+
+<style>
+:root {
+  --g-deep: #0f0c0a;
+  --g0: #171311;
+  --g1: #201b19;
+  --g2: #2a2422;
+  --g3: #362f2c;
+  --g4: #463e3a;
+  --g5: #5a504c;
+
+  --ink: #e6d5c2;
+  --ink2: #a09384;
+  --ink3: #73665b;
+  --gutter: #4e4641;
+
+  --brass: #fcba81;
+  --ember: #ea9875;
+  --sap: #99af6b;
+  --cinder: #d1766e;
+  --frost: #4e89a2;
+
+  --error: #d25780;
+  --warn: #f4a21c;
+  --ok: #43b16a;
+  --hint: #20c9cb;
+  --info: #58bdff;
+
+  --bg-add: #202515;
+  --bg-del: #301d1b;
+  --bg-mod: #12262e;
+  --bg-vis: #2f1e17;
+
+  --rule: #362f2c;
+  --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, "DejaVu Sans Mono", monospace;
+  --serif: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --pad: clamp(1.25rem, 4.5vw, 4.5rem);
+}
+
+/* Depth moves the ground and nothing else, so a screenshot at any depth is
+   recognisably the same theme. */
+:root[data-bg="medium"] {
+  --g-deep: #141110;
+  --g0: #1d1917;
+  --g1: #26211f;
+  --g2: #312a28;
+  --g3: #3d3633;
+  --g4: #4e4541;
+  --g5: #625753;
+  --rule: #3d3633;
+  --bg-add: #262c1b;
+  --bg-del: #372321;
+  --bg-mod: #182c35;
+  --bg-vis: #36241d;
+}
+:root[data-bg="soft"] {
+  --g-deep: #1a1716;
+  --g0: #231f1d;
+  --g1: #2d2725;
+  --g2: #37312e;
+  --g3: #443c39;
+  --g4: #554c48;
+  --g5: #695e5a;
+  --rule: #443c39;
+  --bg-add: #2d3221;
+  --bg-del: #3e2a28;
+  --bg-mod: #1f333b;
+  --bg-vis: #3d2b23;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* No page scrollbar. The bar's rule reports reading position instead, and it is
+   the same colour as the rest of the page rather than the browser's grey. */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar { width: 0; height: 0; }
+
+body {
+  margin: 0;
+  background: var(--g0);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection { background: var(--bg-vis); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+h1, h2, h3, p, figure, dl, dd, fieldset, ul, ol { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+fieldset { padding: 0; border: 0; }
+img, canvas { display: block; max-width: 100%; }
+
+.skip {
+  position: absolute; left: -100vw;
+  font-family: var(--mono); font-size: 0.72rem;
+}
+.skip:focus { left: var(--pad); top: 0.5rem; z-index: 30; color: var(--ember); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+/* ---- layout ---- */
+
+.wrap { max-width: 1180px; margin-inline: auto; padding-inline: var(--pad); }
+
+main > section + section { border-top: 1px solid var(--rule); }
+main > section { padding-block: clamp(2rem, 4vw, 3.25rem); scroll-margin-top: 3.5rem; }
+@media (prefers-reduced-motion: no-preference) {
+  :root { scroll-behavior: smooth; }
+}
+
+h2 {
+  font-family: var(--mono); font-size: 0.74rem; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ember); margin-bottom: 1.25rem;
+}
+/* A hash for lifting a link to the section. Out of the tab order and hidden from
+   assistive tech: it is a pointer convenience, and the address bar already holds
+   the URL it produces, so announcing it on every heading would be noise. */
+.permalink {
+  margin-inline-start: 0.1em; letter-spacing: 0;
+  color: var(--gutter); text-decoration: none;
+  opacity: 0; transition: opacity 0.12s, color 0.12s;
+}
+h2:hover .permalink, .permalink:focus { opacity: 1; }
+.permalink:hover { color: var(--ink); }
+.permalink.done { opacity: 1; color: var(--brass); }
+/* Without hover there is nothing to reveal it, and an invisible tap target beside
+   every heading is worse than no permalink at all. */
+@media (hover: none) { .permalink { display: none; } }
+
+h3 {
+  font-family: var(--mono); font-size: 1.02rem; font-weight: 500;
+  letter-spacing: -0.01em; margin-bottom: 0.35rem; color: var(--ink);
+  text-wrap: balance;
+}
+p + p { margin-top: 0.9rem; }
+code { font-family: var(--mono); font-size: 0.92em; color: var(--ink2); }
+
+.prose { max-width: 62ch; }
+.prose-wide { max-width: none; }
+.lede { font-size: 1.05rem; text-wrap: pretty; max-width: 46ch; margin-top: 1.2rem; }
+.lede em { color: var(--ember); font-style: italic; }
+.note { font-family: var(--mono); font-size: 0.75rem; color: var(--ink3); line-height: 1.6; }
+
+/* One sentence per line above the fold width, ordinary prose below it. */
+.lines { max-width: 78ch; }
+@media (min-width: 760px) { .lines span { display: block; } }
+
+.gap-lg { margin-bottom: 1.5rem; }
+.gap-md { margin-bottom: 1.25rem; }
+.gap-sm { margin-top: 0.85rem; }
+
+/* ---- toolbar ---- */
+
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--g0) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* How far down the page the reader is. The bar's own rule fills with ember to
+   show it, so eleven screens gain an indicator without gaining a control. */
+.bar::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 2px;
+  background: var(--ember);
+  transform: scaleX(var(--read, 0)); transform-origin: left;
+}
+
+/* Three columns, because flex can only centre a middle item when both sides are
+   the same width, and the wordmark and the star link are not. */
+.bar-in {
+  max-width: 1180px; margin-inline: auto; padding: 0.6rem var(--pad);
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 0.6rem;
+  font-family: var(--mono); font-size: 0.72rem;
+}
+
+/* The bar is sticky, so this is the one target on screen at every scroll position.
+   Wiring it to the top is what a back-to-top button would otherwise be for. */
+.bar-mark {
+  justify-self: start; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink);
+  text-decoration: none;
+}
+.bar-mark b { color: var(--ember); font-weight: inherit; }
+.bar-mark:hover b { color: var(--brass); }
+
+.seg { position: relative; display: flex; justify-content: center; }
+/* The legend hangs outside the flow, so what lands dead centre is the control
+   itself rather than the control plus its label. */
+.seg legend {
+  position: absolute; right: 100%; top: 50%; transform: translateY(-50%);
+  padding: 0; margin-inline-end: 0.6rem; white-space: nowrap;
+  color: var(--gutter); letter-spacing: 0.14em;
+  text-transform: uppercase; font-size: 0.62rem;
+}
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label {
+  font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; border: 1px solid var(--rule);
+  color: var(--ink3); padding: 0.28rem 0.55rem;
+}
+.seg input + label:not(:first-of-type) { border-inline-start: 0; }
+.seg label:hover { color: var(--ink); }
+.seg input:checked + label {
+  color: var(--g0); background: var(--ember); border-color: var(--ember);
+}
+.seg input:focus-visible + label { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+.bar-gh {
+  justify-self: end; display: flex; align-items: center; gap: 0.4rem;
+  text-decoration: none; color: var(--ink3);
+  font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase;
+  border: 1px solid var(--rule); padding: 0.33rem 0.6rem;
+  line-height: 1;
+}
+.bar-gh:hover { color: var(--ink); border-color: var(--ink3); }
+/* The glyph is set above the words and its line-height pulled back by the same
+   factor, so it reads as an icon without dragging the box taller than a label. */
+.bar-gh .star {
+  color: var(--brass); font-size: 0.92rem; line-height: 0.78; letter-spacing: 0;
+  transform: translateY(-1px);
+}
+.bar-gh:hover .star { color: var(--ember); }
+.bar-gh .n { color: var(--ink); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+.bar-gh .n:empty { display: none; }
+/* Three words the CSS turns on and off, rather than a string the script
+   rewrites, so a viewport change never fights a fetch that already landed. */
+.bar-gh.has-count .w-on, .bar-gh.has-count .w-gh { display: none; }
+
+@media (max-width: 560px) {
+  .bar-in { gap: 0.45rem; }
+  .bar-mark { letter-spacing: 0.16em; }
+  .seg legend { display: none; }
+  .seg label { padding: 0.45rem 0.42rem; letter-spacing: 0.06em; }
+  .bar-gh { letter-spacing: 0.04em; font-size: 0.6rem; gap: 0.25rem; padding: 0.45rem 0.5rem; }
+  .bar-gh:not(.has-count) .w-stars, .bar-gh:not(.has-count) .w-on { display: none; }
+}
+@media (max-width: 360px) {
+  .bar-gh .w-stars { display: none; }
+}
+
+/* ---- hero ---- */
+
+.hero {
+  padding: clamp(1.75rem, 4vw, 3rem) 0 clamp(1.5rem, 3vw, 2.25rem);
+  display: grid; gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: minmax(0, 1fr); align-items: end;
+}
+@media (min-width: 940px) {
+  .hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+}
+.hero-side { display: flex; }
+/* min-width: 0, or the flex item floors at the width of the code it holds and
+   pushes the page sideways on a narrow phone. The <pre> inside already scrolls. */
+.hero-side .spec { flex: 1; min-width: 0; }
+
+.eyebrow {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--ink3);
+}
+/* Explicit face first: ui-monospace alone falls back to a proportional sans in
+   some engines, which reads far heavier at this size. */
+.wordmark {
+  font-family: "SF Mono", SFMono-Regular, ui-monospace, Menlo, monospace;
+  font-weight: 400; font-size: clamp(3.2rem, 11vw, 6.5rem);
+  letter-spacing: -0.05em; line-height: 0.92;
+  margin-top: 0.35rem; color: var(--ink);
+}
+.wordmark b { color: var(--ember); font-weight: 400; }
+.tagline {
+  font-family: var(--mono); font-size: clamp(0.74rem, 1.4vw, 0.84rem);
+  color: var(--ink2); margin-top: 0.9rem; max-width: 46ch;
+}
+/* the two clauses are inline-block, so a break prefers the boundary between them
+   over splitting "five pigments". balance would equalise the lines instead, and
+   inline-block still lets a clause wrap internally when one alone is too wide. */
+.tagline span { display: inline-block; }
+
+/* ---- call to action ---- */
+
+/* The action for a colorscheme is copying a line into a config, so the plugin
+   spec is the button. The only ember border on the page, which is what makes it
+   the one distinguished box without a filled button outshouting the wordmark. */
+.cta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.4rem; }
+.cta-copy {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-family: var(--mono); font-size: 0.8rem; line-height: 1;
+  color: var(--ink); background: var(--g1);
+  border: 1px solid var(--ember); padding: 0.62rem 0.8rem;
+  cursor: pointer; text-align: left;
+}
+.cta-copy:hover { background: var(--g2); }
+.cta-copy.done, .cta-copy.done i { color: var(--ok); }
+
+/* A fixed box, so no state resizes its container. 8ch and not 7.5, because ch is
+   one glyph advance while letter-spacing adds 0.14em per character on top: the
+   width "copied" needs therefore depends on the font. It is 7.40ch in SF Mono and
+   7.53ch in a 0.55em fallback, and 8 clears both. */
+.label {
+  font-style: normal; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink2); width: 8ch; text-align: right;
+}
+.cta-copy .label { font-size: 0.62rem; }
+.cta-copy:hover .label { color: var(--ember); }
+
+/* inline-flex so the arrow centres against the cap band instead of sitting on
+   the baseline: the text run becomes a flex item whose line box is centred on
+   its capitals, which holds across fonts where a symbol glyph would not. */
+.cta-link {
+  display: inline-flex; align-items: center;
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink2); text-decoration: none;
+}
+.cta-link:hover { color: var(--ember); }
+/* On the text only, never under the drawn arrow, which is why the words are in a
+   span: --ink3 is half the contrast of the text above it, so the rule says "link"
+   without competing with what it underlines. */
+.cta-link span {
+  text-decoration: underline; text-decoration-color: var(--ink3);
+  text-decoration-thickness: 1px; text-underline-offset: 0.4em;
+}
+.cta-link:hover span { text-decoration-color: currentColor; }
+/* Drawn rather than a glyph, so its ink does not depend on the reader's font. */
+.ext {
+  position: relative; flex: none;
+  width: 0.62em; height: 0.62em; margin-inline-start: 0.5em;
+  transform: translateY(-1px);
+}
+.ext::before {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  width: 1px; height: 141%; background: currentColor;
+  transform-origin: bottom left; transform: rotate(45deg);
+}
+.ext::after {
+  content: ""; position: absolute; right: 0; top: 0;
+  width: 58%; height: 58%;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+}
+/* the same geometry turned a further 135°, so one arrow serves both directions */
+/* rotating moves where the ink sits in the box, so the optical nudge is measured
+   again for this orientation rather than inherited from the diagonal one */
+.ext.down { transform: translateY(0.5px) rotate(135deg); }
+/* this one measured within a quarter pixel of the text's ink centre, so unlike the
+   other two it wants no nudge */
+.ext.up { transform: rotate(-45deg); }
+
+/* ---- code ---- */
+
+.spec { border: 1px solid var(--rule); background: var(--g0); }
+.spec-head {
+  display: flex; align-items: baseline; gap: 0.7rem;
+  padding: 0.45rem 0.8rem; border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 0.68rem; color: var(--gutter);
+}
+.spec-head b { color: var(--ink); font-weight: 400; }
+.spec-head span { margin-inline-start: auto; letter-spacing: 0.16em; text-transform: uppercase; }
+
+.code {
+  margin: 0; padding: 0.8rem 0.8rem 1rem;
+  font-family: var(--mono); font-size: clamp(0.7rem, 1.25vw, 0.8rem);
+  line-height: 1.62; color: var(--ink);
+  white-space: normal; overflow-x: auto;
+  counter-reset: line;
+}
+/* Each line is its own block with the number in a generated inline gutter, so
+   whitespace between lines in the source collapses and does not render. */
+.code .row { display: block; white-space: pre; counter-increment: line; }
+.code .row::before {
+  content: counter(line);
+  display: inline-block; width: 2.5ch; margin-inline-end: 1.2rem;
+  color: var(--gutter); text-align: right; font-variant-numeric: tabular-nums;
+}
+/* a whole line the editor tints: the cursor's line, and the three diff states.
+   these are the only place on the page where add, del and mod are seen rather
+   than listed. */
+.code .row.on { background: var(--g1); }
+.code .row.add { background: var(--bg-add); }
+.code .row.del { background: var(--bg-del); }
+.code .row.mod { background: var(--bg-mod); }
+
+.kw { color: var(--cinder); }
+.fn { color: var(--brass); }
+.ty { color: var(--frost); }
+.pr { color: var(--ember); }
+.st, .cn { color: var(--sap); }
+.op { color: var(--ink2); }
+.cm { color: var(--ink3); font-style: italic; }
+.err { color: var(--error); }
+.wrn { color: var(--warn); }
+.virt { color: var(--gutter); font-style: italic; }
+.squig { border-bottom: 2px dotted var(--error); }
+
+/* ---- specimen tabs ---- */
+
+/* Radios rather than a scripted tablist: the keyboard support and the selected
+   state come from the platform, and switching panels costs no JavaScript. */
+.specimen input { position: absolute; opacity: 0; pointer-events: none; }
+/* five tabs are wider than a phone, so the strip scrolls rather than wrapping:
+   a second row would change the figure's height, which is the one thing this
+   section holds constant. */
+.specimen .tabline { overflow-x: auto; scrollbar-width: none; }
+.specimen .tabline::-webkit-scrollbar { display: none; }
+.specimen .tabline li { flex: none; }
+/* the li carries the mock's padding, so here the label takes it over: otherwise
+   the highlighted surface is inset from its own cell on all four sides. */
+.specimen .tabline li { padding: 0; }
+.specimen .tabline label {
+  display: flex; align-items: center; height: 100%;
+  padding: 0.42rem 0.95rem; cursor: pointer; color: var(--ink3);
+}
+.specimen .tabline label:hover { color: var(--ink); }
+.specimen input:focus-visible + label,
+.specimen input:focus-visible ~ .tabline label[for] { outline: none; }
+.specimen input:focus-visible ~ .tabline label[for] { color: var(--ink); }
+.specimen pre { display: none; }
+/* every panel is padded to the same line count, so the box never resizes */
+#spec-go:checked ~ .tabline label[for="spec-go"] { color: var(--ink); background: var(--g0); box-shadow: inset 0 -2px 0 var(--ember); }
+#spec-go:checked ~ #panel-go { display: block; }
+#spec-rust:checked ~ .tabline label[for="spec-rust"] { color: var(--ink); background: var(--g0); box-shadow: inset 0 -2px 0 var(--ember); }
+#spec-rust:checked ~ #panel-rust { display: block; }
+#spec-c:checked ~ .tabline label[for="spec-c"] { color: var(--ink); background: var(--g0); box-shadow: inset 0 -2px 0 var(--ember); }
+#spec-c:checked ~ #panel-c { display: block; }
+#spec-zig:checked ~ .tabline label[for="spec-zig"] { color: var(--ink); background: var(--g0); box-shadow: inset 0 -2px 0 var(--ember); }
+#spec-zig:checked ~ #panel-zig { display: block; }
+#spec-odin:checked ~ .tabline label[for="spec-odin"] { color: var(--ink); background: var(--g0); box-shadow: inset 0 -2px 0 var(--ember); }
+#spec-odin:checked ~ #panel-odin { display: block; }
+
+/* ---- editor mock ---- */
+
+.nvim { border: 1px solid var(--rule); background: var(--g0); }
+.tabline {
+  display: flex; font-family: var(--mono); font-size: 0.68rem;
+  border-bottom: 1px solid var(--rule); background: var(--g1);
+}
+.tabline li { padding: 0.38rem 0.85rem; color: var(--ink3); }
+.tabline li[aria-current] {
+  color: var(--ink); background: var(--g0);
+  box-shadow: inset 0 -2px 0 var(--ember);
+}
+.nvim .code { padding-block: 0.7rem 0.85rem; }
+.nvim .code .row::before { margin-inline-end: 0.85rem; }
+.sign { display: inline-block; width: 1ch; margin-inline-end: 0.5rem; }
+.sign.a { color: var(--ok); }
+.sign.c { color: var(--info); }
+.sign.d { color: var(--error); }
+
+.statusline {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.85rem;
+  font-family: var(--mono); font-size: 0.68rem;
+  background: var(--g2); color: var(--ink2);
+  border-top: 1px solid var(--rule); padding-inline-end: 0.8rem;
+}
+.statusline .mode {
+  background: var(--ember); color: var(--g0);
+  padding: 0.4rem 0.8rem; letter-spacing: 0.16em; font-weight: 500;
+}
+.statusline .diag { margin-inline-start: auto; display: flex; gap: 0.85rem; }
+.statusline .e { color: var(--error); }
+.statusline .w { color: var(--warn); }
+.statusline .h { color: var(--hint); }
+
+/* ---- swatches ---- */
+
+.swatch { display: flex; gap: 3px; }
+.swatch li { flex: 1; height: 1.4rem; }
+
+/* ---- depth cards ---- */
+
+.depths {
+  display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+.depth {
+  background: var(--g0); padding: 0.9rem 1rem 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.depth[data-live] { background: var(--g1); }
+.depth .swatch { outline: 1px solid var(--g4); }
+.depth h3 { font-size: 0.9rem; margin: 0; }
+.depth[data-live] h3 { color: var(--ember); }
+.depth h3 small {
+  font-size: 0.6rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ember);
+}
+.depth p { font-size: 0.9rem; color: var(--ink2); line-height: 1.45; }
+.depth .facts {
+  font-family: var(--mono); font-size: 0.66rem; color: var(--gutter);
+  line-height: 1.85; margin-top: auto; padding-top: 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+.facts b { color: var(--ink3); font-weight: 400; }
+
+/* ---- colour families ---- */
+
+.families { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 760px) {
+  .families { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.families figcaption {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink3); margin-bottom: 0.45rem;
+}
+/* A border, or bg0 vanishes into the page it is the background of. */
+.families .swatch { border: 1px solid var(--rule); padding: 3px; }
+.families .swatch li { height: 2.2rem; }
+
+/* ---- pigment cards ---- */
+
+.pigments {
+  display: grid; gap: 1px;
+  background: var(--rule); border: 1px solid var(--rule);
+}
+@media (min-width: 620px) { .pigments { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 980px) { .pigments { grid-template-columns: 1fr 1fr 1fr; } }
+.pig {
+  background: var(--g0); padding: 0.9rem 1rem 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.pig-bar { height: 0.45rem; }
+.pig h3 { font-size: 0.9rem; margin: 0; }
+.pig .role { font-family: var(--mono); font-size: 0.7rem; color: var(--ink3); }
+.pig .src { font-family: var(--mono); font-size: 0.7rem; color: var(--ember); }
+.pig p { font-size: 0.9rem; color: var(--ink2); line-height: 1.45; }
+.pig .facts {
+  font-family: var(--mono); font-size: 0.66rem; color: var(--gutter);
+  margin-top: auto; padding-top: 0.35rem; font-variant-numeric: tabular-nums;
+}
+.pig.aside { background: var(--g1); }
+.pig.aside p { color: var(--ink3); }
+
+/* ---- geometry ---- */
+
+/* minmax(0, 1fr), not 1fr: a 1fr track floors at the item's min-content, and the
+   panels are wider than a phone before they are allowed to shrink. */
+.split { display: grid; gap: 1.75rem; grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+@media (min-width: 980px) { .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+.panel { border: 1px solid var(--rule); background: var(--g1); padding: 0.9rem; }
+.panel-head {
+  display: flex; justify-content: space-between; gap: 1rem;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink2); margin-bottom: 0.8rem;
+}
+.panel-head span { color: var(--gutter); letter-spacing: 0.03em; text-transform: none; }
+
+.wheel { display: flex; flex-direction: column; }
+/* The canvas is taken out of flow so it cannot feed its own height back into the
+   grid row it is being sized by. */
+.wheel-box { position: relative; aspect-ratio: 1.35; }
+.wheel-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (min-width: 980px) {
+  .wheel-box { aspect-ratio: auto; flex: 1; min-height: 13rem; }
+}
+.wheel figcaption {
+  font-family: var(--mono); font-size: 0.66rem; color: var(--gutter);
+  text-align: center; margin-top: 0.6rem; line-height: 1.7;
+}
+.wheel figcaption b { color: var(--ember); font-weight: 400; }
+
+.ramp { display: flex; border: 1px solid var(--rule); }
+.ramp li {
+  flex: 1; height: clamp(3rem, 6vw, 4rem);
+  display: flex; align-items: flex-end; padding: 0.35rem;
+  font-family: var(--mono); font-size: 0.56rem; color: var(--ink3);
+}
+.ramp-legend {
+  font-family: var(--mono); font-size: 0.7rem; color: var(--gutter);
+  display: flex; justify-content: space-between; margin-top: 0.45rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- tables ---- */
+
+.scroll { overflow-x: auto; border: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; min-width: 31rem; }
+/* This one lives in a half column, so it fits rather than scrolls. */
+.fit table { min-width: 0; }
+.fit :is(th, td) { padding-inline: 0.55rem; }
+
+caption {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink3); text-align: left;
+  padding: 0.6rem 0.8rem; background: var(--g1);
+  border-bottom: 1px solid var(--rule);
+}
+th, td {
+  font-family: var(--mono); font-size: 0.73rem; text-align: left;
+  padding: 0.36rem 0.8rem; border-bottom: 1px solid var(--rule);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+th {
+  color: var(--ink3); font-weight: 400; letter-spacing: 0.08em;
+  text-transform: uppercase; font-size: 0.62rem;
+}
+/* :is(td, th), because a row-header cell is a th and would otherwise keep its
+   border and draw a partial rule under the last row */
+tbody tr:last-child :is(td, th) { border-bottom: 0; }
+td.role { color: var(--ink); }
+td.num { color: var(--ink3); }
+td.hex { color: var(--ink2); }
+td.pass { color: var(--ok); }
+td.under { color: var(--warn); }
+/* An outline keeps bg0 visible in a table drawn on bg0. */
+.chip {
+  display: inline-block; width: 2.3rem; height: 0.9rem;
+  vertical-align: -0.16rem; outline: 1px solid var(--rule); outline-offset: -1px;
+}
+
+/* ---- surfaces ---- */
+
+.surfaces .grp th {
+  background: var(--g1); color: var(--ember);
+  font-size: 0.62rem; letter-spacing: 0.16em;
+}
+.surfaces .grp b { color: var(--gutter); font-weight: 400; letter-spacing: 0.04em; }
+.surfaces td.surf { color: var(--ink); }
+.surfaces td.where { color: var(--ink3); }
+.surfaces td.cmd { width: 99%; padding: 0; }
+.surfaces td.cmd button {
+  display: flex; align-items: center; gap: 0.7rem; width: 100%;
+  font: inherit; text-align: left; cursor: pointer;
+  background: transparent; border: 0; color: var(--ink2);
+  padding: 0.36rem 0.8rem;
+}
+.surfaces td.cmd button:hover { color: var(--ember); background: var(--g1); }
+.surfaces td.cmd .label { margin-inline-start: auto; font-size: 0.6rem; color: var(--gutter); }
+.surfaces td.cmd button:hover .label { color: var(--ember); }
+.surfaces td.cmd.done :is(button, .label) { color: var(--ok); }
+.surfaces .local { color: var(--warn); }
+
+/* ---- rules ---- */
+
+.rules th[scope="row"] { color: var(--ink); font-weight: 400; text-transform: none;
+  letter-spacing: 0; font-size: 0.73rem; white-space: normal; }
+.rules td:last-child { color: var(--ink3); white-space: normal; }
+.rules td.num { width: 2rem; color: var(--ember); }
+@media (min-width: 900px) {
+  .rules th[scope="row"] { width: 34%; }
+}
+
+/* ---- install ---- */
+
+.block { border: 1px solid var(--rule); margin-top: 1.1rem; }
+.block-head {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.45rem 0.8rem; border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 0.68rem; color: var(--ink3);
+  letter-spacing: 0.05em; background: var(--g1);
+}
+.copy {
+  margin-inline-start: auto; font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+  background: transparent; border: 1px solid var(--rule); color: var(--ink2);
+  padding: 0.22rem 0.5rem; width: 8.5ch; text-align: center;
+}
+.copy:hover { color: var(--ember); border-color: var(--ember); }
+.copy.done { color: var(--ok); border-color: var(--ok); }
+.block pre {
+  margin: 0; padding: 0.85rem 0.8rem; overflow-x: auto; max-height: 24rem;
+  font-family: var(--mono); font-size: 0.72rem; line-height: 1.65;
+  color: var(--ink); background: var(--g-deep);
+}
+
+/* ---- footer ---- */
+
+footer {
+  position: relative; padding-block: 2rem 3rem;
+  font-family: var(--mono); font-size: 0.7rem; color: var(--gutter);
+  line-height: 1.85;
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: end;
+}
+/* Edge to edge, like the toolbar's rule and unlike a section's. A border on the
+   footer itself would land on its padding box and come out 2×--pad wider than
+   every section rule, which is neither of the two widths the page uses. */
+footer::before {
+  content: ""; position: absolute; top: 0; left: calc(50% - 50vw);
+  width: 100vw; height: 1px; background: var(--rule);
+}
+/* pushed to the far edge, so it reads as a control rather than a fourth item in
+   the licence line */
+.to-top { margin-inline-start: auto; }
+footer a { color: var(--ink3); }
+/* the wordmark keeps its ember tail here too, as in the hero and the toolbar */
+footer b { color: var(--ember); font-weight: inherit; }
+/* inline-flex so the arrow centres on the cap band, as in .cta-link */
+.to-top { display: inline-flex; align-items: center; text-decoration: none; }
+.to-top:hover { color: var(--ink2); }
+
+/* ---- motion ---- */
+
+.fade { opacity: 0; animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--delay, 0s) forwards; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.4rem); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade { animation: none; opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="bar-mark" href="#" data-top aria-label="cendre · back to top">cend<b>re</b></a>
+
+    <fieldset class="seg">
+      <legend>Background</legend>
+      <input type="radio" name="bg" id="bg-hard" value="hard" checked>
+      <label for="bg-hard">hard</label>
+      <input type="radio" name="bg" id="bg-medium" value="medium">
+      <label for="bg-medium">medium</label>
+      <input type="radio" name="bg" id="bg-soft" value="soft">
+      <label for="bg-soft">soft</label>
+    </fieldset>
+
+    <a class="bar-gh" href="https://github.com/Aejkatappaja/cendre" aria-label="cendre on GitHub">
+      <span class="star" aria-hidden="true">&#9733;</span><span class="n" id="stars"></span>
+      <span class="w-stars">stars</span><span class="w-on">on</span><span class="w-gh">github</span>
+    </a>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <section class="hero">
+    <div>
+      <p class="eyebrow fade" style="--delay: 0.05s">a dark colorscheme for neovim</p>
+      <h1 class="wordmark fade" style="--delay: 0.1s">cend<b>re</b></h1>
+      <p class="tagline fade" style="--delay: 0.18s"><span>one wood fire, taken apart</span> <span>five pigments, none of them chosen</span></p>
+      <p class="lede fade" style="--delay: 0.26s">The ground is the <em>ash bed</em>: wood ash is
+        spectrally flat, so under a flame it returns the fire's own colour and nothing else. One hue
+        at seven depths, which is why a float over a statusline over a cursorline reads as the same
+        bed at different depths.</p>
+
+      <p class="cta">
+        <a class="cta-link" href="#in-the-editor"><span>see it in an editor</span><i class="ext down" aria-hidden="true"></i></a>
+      </p>
+    </div>
+
+    <div class="hero-side fade" style="--delay: 0.34s">
+      <figure class="spec">
+        <figcaption class="spec-head"><b>derive.go</b><span>go</span></figcaption>
+        <pre class="code"><span class="row"><span class="cm">// every hue on this page came out of this</span></span>
+<span class="row"><span class="kw">func</span> <span class="fn">hueOf</span><span class="op">(</span><span class="pr">nm</span> <span class="ty">float64</span><span class="op">)</span> <span class="ty">float64</span> <span class="op">{</span></span>
+<span class="row">  x<span class="op">,</span> y<span class="op">,</span> z <span class="op">:=</span> <span class="fn">cie1931</span><span class="op">(</span><span class="pr">nm</span><span class="op">)</span></span>
+<span class="row">  <span class="op">_,</span> a<span class="op">,</span> b <span class="op">:=</span> <span class="fn">oklab</span><span class="op">(</span>x<span class="op">,</span> y<span class="op">,</span> z<span class="op">)</span></span>
+<span class="row"> </span>
+<span class="row">  deg <span class="op">:=</span> <span class="ty">math</span><span class="op">.</span><span class="fn">Atan2</span><span class="op">(</span>b<span class="op">,</span> a<span class="op">) *</span> <span class="cn">180</span> <span class="op">/</span> <span class="ty">math</span><span class="op">.</span>Pi</span>
+<span class="row">  <span class="kw">if</span> deg <span class="op">&lt;</span> <span class="cn">0</span> <span class="op">{</span></span>
+<span class="row">    deg <span class="op">+=</span> <span class="cn">360</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row">  <span class="kw">return</span> deg</span>
+<span class="row"><span class="op">}</span></span></pre>
+      </figure>
+    </div>
+  </section>
+
+  <section id="depths" aria-labelledby="depths-h">
+    <h2 id="depths-h">Three depths, one palette<a class="permalink" href="#depths" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="prose prose-wide gap-lg">
+      <p>Cendre started with a rule that nothing readable may fall under 4.5:1, comments
+        included. That rule was wrong, and measuring the dark themes people actually keep is what
+        showed it: every one of them puts comments <em>below</em> that line, most around 3.3:1. A
+        comment as loud as the code it explains is noise. Softness is partly low contrast, and a
+        contrast floor applied without judgement removes it.</p>
+      <p>The variants move the ground and nothing else. That is deliberate: the pigments are the
+        identity, and a theme whose screenshots don't look like each other never becomes anyone's
+        default. Pick a depth at the top of the page and every number below is remeasured against
+        it.</p>
+    </div>
+    <div class="depths" id="depth-cards"></div>
+  </section>
+
+  <section id="in-the-editor" aria-labelledby="editor-h">
+    <h2 id="editor-h">In the editor<a class="permalink" href="#in-the-editor" aria-hidden="true" tabindex="-1">#</a></h2>
+    <p class="prose prose-wide gap-md">Diagnostics, git signs, diff and statusline draw from the
+      semantic family. An error never wears the same red as a keyword, and the three diff tints
+      below are the ones every terminal file carries.</p>
+
+    <figure class="nvim">
+      <ul class="tabline">
+        <li aria-current="page">captures.go</li>
+        <li>registry.go</li>
+        <li>palette.lua</li>
+      </ul>
+      <pre class="code"><span class="row"><span class="sign"> </span><span class="kw">func</span> <span class="fn">LoadCaptures</span><span class="op">(</span><span class="pr">path</span> <span class="ty">string</span><span class="op">) ([]</span><span class="ty">Capture</span><span class="op">,</span> <span class="ty">error</span><span class="op">) {</span></span>
+<span class="row add"><span class="sign a">▎</span>  raw<span class="op">,</span> err <span class="op">:=</span> <span class="ty">os</span><span class="op">.</span><span class="fn">ReadFile</span><span class="op">(</span><span class="pr">path</span><span class="op">)</span></span>
+<span class="row del"><span class="sign d">▎</span>  raw<span class="op">,</span> err <span class="op">:=</span> <span class="ty">ioutil</span><span class="op">.</span><span class="fn">ReadFile</span><span class="op">(</span><span class="pr">path</span><span class="op">)</span></span>
+<span class="row mod"><span class="sign c">▎</span>  <span class="kw">var</span> <span class="squig">parsed</span> <span class="op">[]</span><span class="ty">Capture</span>  <span class="err">■</span> <span class="virt">declared and not used: parsed</span></span>
+<span class="row on"><span class="sign"> </span>  <span class="kw">return</span> <span class="fn">normalise</span><span class="op">(</span>raw<span class="op">),</span> <span class="cn">nil</span>  <span class="wrn">▲</span> <span class="virt">prefer 'parsed' over re-reading 'raw'</span></span>
+<span class="row"><span class="sign"> </span><span class="op">}</span></span></pre>
+      <div class="statusline">
+        <span class="mode">NORMAL</span>
+        <span>captures.go</span>
+        <span>main</span>
+        <span class="diag">
+          <span class="e">■ 1</span><span class="w">▲ 1</span><span class="h">◆ 2</span>
+          <span>go</span><span>31:22</span>
+        </span>
+      </div>
+    </figure>
+  </section>
+
+  <section id="specimen" aria-labelledby="specimen-h">
+    <h2 id="specimen-h">Specimen<a class="permalink" href="#specimen" aria-hidden="true" tabindex="-1">#</a></h2>
+    <p class="prose prose-wide gap-md">The same file in five languages, so the claim is testable
+      rather than asserted: a role keeps its pigment whatever the syntax around it.</p>
+
+    <figure class="spec specimen">
+      <input type="radio" name="specimen" id="spec-go" checked>
+      <input type="radio" name="specimen" id="spec-rust">
+      <input type="radio" name="specimen" id="spec-c">
+      <input type="radio" name="specimen" id="spec-zig">
+      <input type="radio" name="specimen" id="spec-odin">
+      <ul class="tabline">
+        <li><label for="spec-go">captures.go</label></li>
+        <li><label for="spec-rust">captures.rs</label></li>
+        <li><label for="spec-c">captures.c</label></li>
+        <li><label for="spec-zig">captures.zig</label></li>
+        <li><label for="spec-odin">captures.odin</label></li>
+      </ul>
+      <pre class="code" id="panel-go"><span class="row"><span class="kw">package</span> registry</span>
+<span class="row"> </span>
+<span class="row"><span class="kw">import</span> <span class="op">(</span></span>
+<span class="row">  <span class="st">&quot;encoding/json&quot;</span></span>
+<span class="row">  <span class="st">&quot;os&quot;</span></span>
+<span class="row"><span class="op">)</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">type</span> <span class="ty">Role</span> <span class="ty">uint8</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">const</span> <span class="op">(</span></span>
+<span class="row">  RoleKeyword <span class="ty">Role</span> <span class="op">=</span> <span class="cn">iota</span></span>
+<span class="row">  RoleString</span>
+<span class="row">  RoleType</span>
+<span class="row"><span class="op">)</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">type</span> <span class="ty">Capture</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span class="row">  <span class="pr">Name</span>    <span class="ty">string</span>  <span class="st">`json:&quot;name&quot;`</span></span>
+<span class="row">  <span class="ty">Role</span>    <span class="ty">Role</span>    <span class="st">`json:&quot;role&quot;`</span></span>
+<span class="row">  <span class="pr">Weight</span>  <span class="ty">float32</span> <span class="st">`json:&quot;weight&quot;`</span></span>
+<span class="row">  <span class="pr">Enabled</span> <span class="ty">bool</span>    <span class="st">`json:&quot;enabled&quot;`</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">const</span> MaxDepth <span class="op">=</span> <span class="cn">24</span></span>
+<span class="row"> </span>
+<span class="row"><span class="cm">// resolve a treesitter capture into a semantic role</span></span>
+<span class="row"><span class="kw">func</span> <span class="fn">LoadCaptures</span><span class="op">(</span><span class="pr">path</span> <span class="ty">string</span><span class="op">)</span> <span class="op">(</span><span class="op">[</span><span class="op">]</span><span class="ty">Capture</span><span class="op">,</span> <span class="ty">error</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">  raw<span class="op">,</span> err <span class="op">:</span><span class="op">=</span> <span class="ty">os</span><span class="op">.</span><span class="fn">ReadFile</span><span class="op">(</span><span class="pr">path</span><span class="op">)</span></span>
+<span class="row">  <span class="kw">if</span> err <span class="op">!</span><span class="op">=</span> <span class="kw">nil</span> <span class="op">{</span></span>
+<span class="row">    <span class="kw">return</span> <span class="kw">nil</span><span class="op">,</span> err</span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row">  <span class="kw">var</span> parsed <span class="op">[</span><span class="op">]</span><span class="ty">Capture</span></span>
+<span class="row">  <span class="kw">if</span> err <span class="op">:</span><span class="op">=</span> <span class="ty">json</span><span class="op">.</span><span class="fn">Unmarshal</span><span class="op">(</span>raw<span class="op">,</span> <span class="op">&amp;</span>parsed<span class="op">)</span><span class="op">;</span> err <span class="op">!</span><span class="op">=</span> <span class="kw">nil</span> <span class="op">{</span></span>
+<span class="row">    <span class="kw">return</span> <span class="kw">nil</span><span class="op">,</span> err</span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row">  <span class="kw">return</span> parsed<span class="op">[</span><span class="op">:</span><span class="fn">min</span><span class="op">(</span><span class="fn">len</span><span class="op">(</span>parsed<span class="op">)</span><span class="op">,</span> MaxDepth<span class="op">)</span><span class="op">]</span><span class="op">,</span> <span class="kw">nil</span></span>
+<span class="row"><span class="op">}</span></span></pre>
+      <pre class="code" id="panel-rust"><span class="row"><span class="kw">use</span> std<span class="op">:</span><span class="op">:</span><span class="ty">fs</span><span class="op">;</span></span>
+<span class="row"><span class="kw">use</span> std<span class="op">:</span><span class="op">:</span><span class="pr">path</span><span class="op">:</span><span class="op">:</span><span class="ty">Path</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="op">#</span><span class="op">[</span><span class="fn">derive</span><span class="op">(</span><span class="ty">Debug</span><span class="op">,</span> <span class="ty">Clone</span><span class="op">,</span> <span class="ty">Copy</span><span class="op">)</span><span class="op">]</span></span>
+<span class="row"><span class="kw">pub</span> <span class="kw">enum</span> <span class="ty">Role</span> <span class="op">{</span></span>
+<span class="row">  Keyword<span class="op">,</span></span>
+<span class="row">  <span class="ty">String</span><span class="op">,</span></span>
+<span class="row">  Type<span class="op">,</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"><span class="op">#</span><span class="op">[</span><span class="fn">derive</span><span class="op">(</span><span class="ty">Debug</span><span class="op">,</span> <span class="ty">Deserialize</span><span class="op">)</span><span class="op">]</span></span>
+<span class="row"><span class="kw">pub</span> <span class="kw">struct</span> <span class="ty">Capture</span> <span class="op">{</span></span>
+<span class="row">  <span class="kw">pub</span> <span class="pr">name</span><span class="op">:</span> <span class="ty">String</span><span class="op">,</span></span>
+<span class="row">  <span class="kw">pub</span> <span class="pr">role</span><span class="op">:</span> <span class="ty">Role</span><span class="op">,</span></span>
+<span class="row">  <span class="kw">pub</span> <span class="pr">weight</span><span class="op">:</span> <span class="ty">f32</span><span class="op">,</span></span>
+<span class="row">  <span class="kw">pub</span> <span class="pr">enabled</span><span class="op">:</span> <span class="ty">bool</span><span class="op">,</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">const</span> MAX_DEPTH<span class="op">:</span> <span class="ty">usize</span> <span class="op">=</span> <span class="cn">24</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="cm">// resolve a treesitter capture into a semantic role</span></span>
+<span class="row"><span class="kw">pub</span> <span class="kw">fn</span> <span class="fn">load</span><span class="op">(</span><span class="pr">path</span><span class="op">:</span> <span class="op">&amp;</span><span class="ty">Path</span><span class="op">)</span> <span class="op">-</span><span class="op">&gt;</span> <span class="ty">Result</span><span class="op">&lt;</span><span class="ty">Vec</span><span class="op">&lt;</span><span class="ty">Capture</span><span class="op">&gt;</span><span class="op">,</span> <span class="ty">Error</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span class="row">  <span class="kw">let</span> raw <span class="op">=</span> <span class="ty">fs</span><span class="op">:</span><span class="op">:</span><span class="fn">read_to_string</span><span class="op">(</span><span class="pr">path</span><span class="op">)</span><span class="op">?</span><span class="op">;</span></span>
+<span class="row">  <span class="kw">let</span> parsed<span class="op">:</span> <span class="ty">Vec</span><span class="op">&lt;</span><span class="ty">Capture</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ty">serde_json</span><span class="op">:</span><span class="op">:</span><span class="fn">from_str</span><span class="op">(</span><span class="op">&amp;</span>raw<span class="op">)</span><span class="op">?</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row">  <span class="fn">Ok</span><span class="op">(</span>parsed</span>
+<span class="row">    <span class="op">.</span><span class="fn">into_iter</span><span class="op">(</span><span class="op">)</span></span>
+<span class="row">    <span class="op">.</span><span class="fn">filter</span><span class="op">(</span><span class="op">|</span>c<span class="op">|</span> c<span class="op">.</span><span class="pr">weight</span> <span class="op">&gt;</span> <span class="cn">0.0</span> <span class="op">&amp;</span><span class="op">&amp;</span> c<span class="op">.</span><span class="pr">enabled</span><span class="op">)</span></span>
+<span class="row">    <span class="op">.</span><span class="fn">take</span><span class="op">(</span>MAX_DEPTH<span class="op">)</span></span>
+<span class="row">    <span class="op">.</span><span class="fn">collect</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span></pre>
+      <pre class="code" id="panel-c"><span class="row"><span class="op">#</span><span class="kw">include</span> <span class="op">&lt;</span>stdio<span class="op">.</span>h<span class="op">&gt;</span></span>
+<span class="row"><span class="op">#</span><span class="kw">include</span> <span class="op">&lt;</span>stdlib<span class="op">.</span>h<span class="op">&gt;</span></span>
+<span class="row"><span class="op">#</span><span class="kw">include</span> <span class="op">&lt;</span>stdbool<span class="op">.</span>h<span class="op">&gt;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">typedef</span> <span class="kw">enum</span> <span class="op">{</span></span>
+<span class="row">  ROLE_KEYWORD<span class="op">,</span></span>
+<span class="row">  ROLE_STRING<span class="op">,</span></span>
+<span class="row">  ROLE_TYPE<span class="op">,</span></span>
+<span class="row"><span class="op">}</span> <span class="ty">Role</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span class="row">  <span class="kw">const</span> <span class="ty">char</span> <span class="op">*</span><span class="pr">name</span><span class="op">;</span></span>
+<span class="row">  <span class="ty">Role</span>        <span class="pr">role</span><span class="op">;</span></span>
+<span class="row">  <span class="ty">float</span>       <span class="pr">weight</span><span class="op">;</span></span>
+<span class="row">  <span class="ty">bool</span>        <span class="pr">enabled</span><span class="op">;</span></span>
+<span class="row"><span class="op">}</span> <span class="ty">Capture</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="op">#</span><span class="kw">define</span> MAX_DEPTH <span class="cn">24</span></span>
+<span class="row"> </span>
+<span class="row"><span class="cm">/* resolve a treesitter capture into a semantic role */</span></span>
+<span class="row"><span class="ty">int</span> <span class="fn">load_captures</span><span class="op">(</span><span class="kw">const</span> <span class="ty">char</span> <span class="op">*</span><span class="pr">path</span><span class="op">,</span> <span class="ty">Capture</span> <span class="op">*</span><span class="op">*</span><span class="pr">out</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">  <span class="ty">FILE</span> <span class="op">*</span>f <span class="op">=</span> <span class="fn">fopen</span><span class="op">(</span><span class="pr">path</span><span class="op">,</span> <span class="st">&quot;rb&quot;</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row">  <span class="kw">if</span> <span class="op">(</span>f <span class="op">=</span><span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">    <span class="kw">return</span> <span class="op">-</span><span class="cn">1</span><span class="op">;</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row">  <span class="op">*</span><span class="pr">out</span> <span class="op">=</span> <span class="fn">calloc</span><span class="op">(</span>MAX_DEPTH<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="ty">Capture</span><span class="op">)</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row">  <span class="kw">if</span> <span class="op">(</span><span class="op">*</span><span class="pr">out</span> <span class="op">=</span><span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">    <span class="fn">fclose</span><span class="op">(</span>f<span class="op">)</span><span class="op">;</span></span>
+<span class="row">    <span class="kw">return</span> <span class="op">-</span><span class="cn">1</span><span class="op">;</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row">  <span class="kw">return</span> <span class="fn">parse</span><span class="op">(</span>f<span class="op">,</span> <span class="op">*</span><span class="pr">out</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span></pre>
+      <pre class="code" id="panel-zig"><span class="row"><span class="kw">const</span> <span class="ty">std</span> <span class="op">=</span> <span class="op">@</span><span class="fn">import</span><span class="op">(</span><span class="st">&quot;std&quot;</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">pub</span> <span class="kw">const</span> <span class="ty">Role</span> <span class="op">=</span> <span class="kw">enum</span><span class="op">(</span><span class="ty">u8</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">  keyword<span class="op">,</span></span>
+<span class="row">  string<span class="op">,</span></span>
+<span class="row">  type<span class="op">,</span></span>
+<span class="row"><span class="op">}</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">pub</span> <span class="kw">const</span> <span class="ty">Capture</span> <span class="op">=</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span class="row">  <span class="pr">name</span><span class="op">:</span> <span class="op">[</span><span class="op">]</span><span class="kw">const</span> <span class="ty">u8</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">role</span><span class="op">:</span> <span class="ty">Role</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">weight</span><span class="op">:</span> <span class="ty">f32</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">enabled</span><span class="op">:</span> <span class="ty">bool</span><span class="op">,</span></span>
+<span class="row"><span class="op">}</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="kw">const</span> max_depth<span class="op">:</span> <span class="ty">usize</span> <span class="op">=</span> <span class="cn">24</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="cm">// resolve a treesitter capture into a semantic role</span></span>
+<span class="row"><span class="kw">pub</span> <span class="kw">fn</span> <span class="fn">load</span><span class="op">(</span><span class="pr">alloc</span><span class="op">:</span> <span class="ty">std</span><span class="op">.</span><span class="ty">mem</span><span class="op">.</span><span class="ty">Allocator</span><span class="op">,</span> <span class="pr">path</span><span class="op">:</span> <span class="op">[</span><span class="op">]</span><span class="kw">const</span> <span class="ty">u8</span><span class="op">)</span> <span class="op">!</span><span class="op">[</span><span class="op">]</span><span class="ty">Capture</span> <span class="op">{</span></span>
+<span class="row">  <span class="kw">const</span> raw <span class="op">=</span> <span class="kw">try</span> <span class="ty">std</span><span class="op">.</span><span class="ty">fs</span><span class="op">.</span><span class="fn">cwd</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="fn">readFileAlloc</span><span class="op">(</span><span class="pr">alloc</span><span class="op">,</span> <span class="pr">path</span><span class="op">,</span> <span class="cn">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="cn">20</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row">  <span class="kw">defer</span> <span class="pr">alloc</span><span class="op">.</span><span class="fn">free</span><span class="op">(</span>raw<span class="op">)</span><span class="op">;</span></span>
+<span class="row"> </span>
+<span class="row">  <span class="kw">var</span> out <span class="op">=</span> <span class="ty">std</span><span class="op">.</span><span class="fn">ArrayList</span><span class="op">(</span><span class="ty">Capture</span><span class="op">)</span><span class="op">.</span><span class="fn">init</span><span class="op">(</span><span class="pr">alloc</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row">  <span class="kw">for</span> <span class="op">(</span><span class="kw">try</span> <span class="fn">parse</span><span class="op">(</span>raw<span class="op">)</span><span class="op">)</span> <span class="op">|</span>c<span class="op">|</span> <span class="op">{</span></span>
+<span class="row">    <span class="kw">if</span> <span class="op">(</span>c<span class="op">.</span><span class="pr">weight</span> <span class="op">&gt;</span> <span class="cn">0</span> <span class="kw">and</span> c<span class="op">.</span><span class="pr">enabled</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">      <span class="kw">try</span> out<span class="op">.</span><span class="fn">append</span><span class="op">(</span>c<span class="op">)</span><span class="op">;</span></span>
+<span class="row">    <span class="op">}</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row">  <span class="kw">return</span> out<span class="op">.</span><span class="fn">toOwnedSlice</span><span class="op">(</span><span class="op">)</span><span class="op">;</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span></pre>
+      <pre class="code" id="panel-odin"><span class="row"><span class="kw">package</span> registry</span>
+<span class="row"> </span>
+<span class="row"><span class="kw">import</span> <span class="st">&quot;core:encoding/json&quot;</span></span>
+<span class="row"><span class="kw">import</span> <span class="st">&quot;core:os&quot;</span></span>
+<span class="row"> </span>
+<span class="row"><span class="ty">Role</span> <span class="op">:</span><span class="op">:</span> <span class="kw">enum</span> <span class="ty">u8</span> <span class="op">{</span></span>
+<span class="row">  Keyword<span class="op">,</span></span>
+<span class="row">  String<span class="op">,</span></span>
+<span class="row">  Type<span class="op">,</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"><span class="ty">Capture</span> <span class="op">:</span><span class="op">:</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span class="row">  <span class="pr">name</span><span class="op">:</span>    <span class="ty">string</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">role</span><span class="op">:</span>    <span class="ty">Role</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">weight</span><span class="op">:</span>  <span class="ty">f32</span><span class="op">,</span></span>
+<span class="row">  <span class="pr">enabled</span><span class="op">:</span> <span class="ty">bool</span><span class="op">,</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row">MAX_DEPTH <span class="op">:</span><span class="op">:</span> <span class="cn">24</span></span>
+<span class="row"> </span>
+<span class="row"><span class="cm">// resolve a treesitter capture into a semantic role</span></span>
+<span class="row"><span class="fn">load</span> <span class="op">:</span><span class="op">:</span> <span class="kw">proc</span><span class="op">(</span><span class="pr">path</span><span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">-</span><span class="op">&gt;</span> <span class="op">(</span><span class="op">[</span><span class="op">]</span><span class="ty">Capture</span><span class="op">,</span> <span class="ty">bool</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="row">  raw<span class="op">,</span> ok <span class="op">:</span><span class="op">=</span> <span class="ty">os</span><span class="op">.</span><span class="fn">read_entire_file</span><span class="op">(</span><span class="pr">path</span><span class="op">)</span></span>
+<span class="row">  <span class="kw">if</span> <span class="op">!</span>ok <span class="op">{</span></span>
+<span class="row">    <span class="kw">return</span> <span class="kw">nil</span><span class="op">,</span> <span class="cn">false</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row">  parsed<span class="op">:</span> <span class="op">[</span><span class="op">]</span><span class="ty">Capture</span></span>
+<span class="row">  <span class="kw">if</span> <span class="ty">json</span><span class="op">.</span><span class="fn">unmarshal</span><span class="op">(</span>raw<span class="op">,</span> <span class="op">&amp;</span>parsed<span class="op">)</span> <span class="op">!</span><span class="op">=</span> <span class="kw">nil</span> <span class="op">{</span></span>
+<span class="row">    <span class="kw">return</span> <span class="kw">nil</span><span class="op">,</span> <span class="cn">false</span></span>
+<span class="row">  <span class="op">}</span></span>
+<span class="row">  <span class="kw">return</span> parsed<span class="op">[</span><span class="op">:</span><span class="fn">min</span><span class="op">(</span><span class="fn">len</span><span class="op">(</span>parsed<span class="op">)</span><span class="op">,</span> MAX_DEPTH<span class="op">)</span><span class="op">]</span><span class="op">,</span> <span class="cn">true</span></span>
+<span class="row"><span class="op">}</span></span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span>
+<span class="row"> </span></pre>
+    </figure>
+    <p class="note gap-sm">Whatever the language, a field or a parameter is orange, every literal
+      green, a type blue. A name someone declared, <code>MaxDepth</code> or <code>MAX_DEPTH</code>
+      or <code>max_depth</code>, is left in plain text: what a thing is called is not a role, and
+      only the value it holds takes a pigment.</p>
+  </section>
+
+  <section id="derivation" aria-labelledby="derivation-h">
+    <h2 id="derivation-h">Derivation<a class="permalink" href="#derivation" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="prose prose-wide gap-lg">
+      <p>A theme with a story usually has the story painted on afterwards. This one runs the other
+        way. Every hue below was computed from a physical source in a burning log, using Planck's
+        law for the coals and published emission wavelengths for everything else, then pushed
+        through the CIE 1931 colour matching functions into OKLCH. Nothing was nudged toward a
+        nicer number.</p>
+      <p>What we chose is lightness and chroma, because a spectral line is far outside sRGB and has
+        to be brought into gamut anyway. Hue survived that trip intact; the last column is what
+        actually shipped.</p>
+    </div>
+    <div class="scroll">
+      <table>
+        <caption>Hue in, hue out</caption>
+        <thead>
+          <tr>
+            <th scope="col">pigment</th><th scope="col">source</th>
+            <th scope="col">derived</th><th scope="col">shipped</th><th scope="col">drift</th>
+          </tr>
+        </thead>
+        <tbody id="t-derivation"></tbody>
+      </table>
+    </div>
+    <p class="note gap-sm">Ground: wood-ash reflectance under a 1300 K illuminant gives hue 42.9°,
+      less than a degree off the bare flame. A fire is generous with warm hues and stingy about
+      spacing them, which is why cinder, ember and brass sit 17.9° and 17.6° apart instead of the
+      54° an unconstrained palette would take. That is the cost of deriving rather than choosing.</p>
+  </section>
+
+  <section id="pigments" aria-labelledby="pigments-h">
+    <h2 id="pigments-h">Pigments<a class="permalink" href="#pigments" aria-hidden="true" tabindex="-1">#</a></h2>
+    <p class="prose prose-wide gap-md">Three families, at the depth you have selected: one ground
+      hue at seven steps, four levels of ink shared by every depth, and five pigments in order of
+      lightness.</p>
+
+    <div class="families gap-lg">
+      <figure>
+        <figcaption>ground · hue 43°</figcaption>
+        <ul class="swatch" id="sw-ash"></ul>
+      </figure>
+      <figure>
+        <figcaption>ink</figcaption>
+        <ul class="swatch" id="sw-ink"></ul>
+      </figure>
+      <figure>
+        <figcaption>pigments</figcaption>
+        <ul class="swatch" id="sw-pig"></ul>
+      </figure>
+    </div>
+
+    <div class="pigments" id="pigment-cards"></div>
+  </section>
+
+  <section id="geometry" aria-labelledby="geometry-h">
+    <h2 id="geometry-h">Geometry<a class="permalink" href="#geometry" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="split">
+      <figure class="panel wheel">
+        <p class="panel-head">hue × chroma <span>angle = hue, radius = chroma</span></p>
+        <div class="wheel-box">
+          <canvas id="wheel" role="img" aria-label="A polar plot of the five pigments, showing hue angles and chroma radii."></canvas>
+        </div>
+        <figcaption>
+          radius = chroma, outer ring = 0.15<br>
+          <b>arc <span id="wheel-arc"></span>, smallest gap <span id="wheel-gap"></span></b>
+        </figcaption>
+      </figure>
+
+      <div>
+        <figure class="panel">
+          <p class="panel-head">ground <span id="ground-cap">hue 43°, hard</span></p>
+          <ul class="ramp" id="ramp"></ul>
+          <figcaption class="ramp-legend">
+            <span id="ramp-lo">L 0.156</span><span id="ramp-hi">L 0.440</span>
+          </figcaption>
+        </figure>
+
+        <div class="scroll fit" style="margin-top: 1.75rem">
+          <table>
+            <caption>Semantic family</caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="vh">swatch</span></th><th scope="col">role</th>
+                <th scope="col">hex</th><th scope="col">hue</th><th scope="col">ratio</th>
+              </tr>
+            </thead>
+            <tbody id="t-semantic"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll" style="margin-top: 1.75rem">
+      <table>
+        <caption>Full palette · ratios against the editor ground</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="vh">swatch</span></th><th scope="col">token</th>
+            <th scope="col">hex</th><th scope="col">hue</th><th scope="col">L</th>
+            <th scope="col">chroma</th><th scope="col">ratio</th>
+          </tr>
+        </thead>
+        <tbody id="t-palette"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="rules" aria-labelledby="rules-h">
+    <h2 id="rules-h">Rules it obeys<a class="permalink" href="#rules" aria-hidden="true" tabindex="-1">#</a></h2>
+    <p class="prose prose-wide gap-md">Six rules, and the measurement each one answers to. The
+      sections above are the evidence; this is the summary.</p>
+    <div class="scroll">
+      <table class="rules">
+        <caption>The rule, and the number behind it</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="vh">number</span></th>
+            <th scope="col">rule</th><th scope="col">measured</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">1</td>
+            <th scope="row">Hue comes from the source, separation is bought with lightness</th>
+            <td>cinder, ember and brass 17.9° and 17.6° apart, so 0.089 and 0.084 of lightness carry them</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <th scope="row">Lightness follows the temperature of the source</th>
+            <td>0.238 spread, brass L 0.838 down to frost L 0.600. Normalising it gave 0.14</td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <th scope="row">Orange does syntax work</th>
+            <td>ember on properties, fields and parameters, not reserved for the cursor</td>
+          </tr>
+          <tr>
+            <td class="num">4</td>
+            <th scope="row">Punctuation is not a token</th>
+            <td>operators, commas and brackets on fg_dim at L 0.670, under the body text</td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <th scope="row">Diagnostics are their own family</th>
+            <td>chroma 0.125 to 0.160 over the pigments' 0.072 to 0.115, and 0.08 minimum in OKLab from the nearest. An earlier set had 0.036</td>
+          </tr>
+          <tr>
+            <td class="num">6</td>
+            <th scope="row">Contrast is chosen, not maximised</th>
+            <td>comments at <b id="floor-note">3.32:1</b> on purpose, measured against the ground you selected</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note gap-sm">Nothing in the theme depends on bold or italic. Every row above is
+      asserted in <code>test/smoke.lua</code>, not just written here.</p>
+  </section>
+
+  <section id="install" aria-labelledby="install-h">
+    <h2 id="install-h">Install<a class="permalink" href="#install" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="lines">
+      <p><span>The palette below is generated at the depth you have selected.</span>
+        <span>Italics off, and the background painted rather than left transparent.</span>
+        <span>The ash bed is a colour the theme chose, so it may as well be on screen.</span></p>
+    </div>
+
+    <figure class="block">
+      <figcaption class="block-head">lua/cendre/palette.lua
+        <button class="copy" type="button" data-code="palette">copy</button>
+      </figcaption>
+      <pre id="code-palette"></pre>
+    </figure>
+
+    <figure class="block">
+      <figcaption class="block-head">lua/plugins/colorscheme.lua
+        <button class="copy" type="button" data-code="lazy">copy</button>
+      </figcaption>
+      <pre id="code-lazy"></pre>
+    </figure>
+
+    <figure class="block">
+      <figcaption class="block-head">~/.config/ghostty/themes/cendre
+        <button class="copy" type="button" data-code="ghostty">copy</button>
+      </figcaption>
+      <pre id="code-ghostty"></pre>
+    </figure>
+  </section>
+
+  <section id="surfaces" aria-labelledby="surfaces-h">
+    <h2 id="surfaces-h">Everywhere else<a class="permalink" href="#surfaces" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="lines" style="margin-bottom: 1.4rem">
+      <p><span>The editor is where it starts, not where it stops.</span>
+        <span>Every file under <code>extras/</code> is rendered from the same palette module the
+        colorscheme reads, so a colour cannot be right in Neovim and stale in a terminal.</span>
+        <span>Each one ships at all three depths: the command below is the default, and
+        <code>-medium</code> or <code>-soft</code> sits beside it.</span>
+        <span>Click a command to copy it.</span></p>
+    </div>
+    <div class="scroll">
+      <table class="surfaces">
+        <caption><span id="surface-count">26</span> surfaces · every file generated, never hand-edited</caption>
+        <thead>
+          <tr><th scope="col">surface</th><th scope="col">lands in</th><th scope="col">command</th></tr>
+        </thead>
+        <tbody id="t-surfaces"></tbody>
+      </table>
+    </div>
+    <p class="note gap-sm">Zed and Obsidian are local installs for now. Both have a theme store, and
+      neither listing exists until the submission is through, so the page is not going to pretend
+      otherwise.</p>
+  </section>
+
+  <section id="get" aria-labelledby="get-h">
+    <h2 id="get-h">Get cendre<a class="permalink" href="#get" aria-hidden="true" tabindex="-1">#</a></h2>
+    <div class="lines gap-md">
+      <p><span>Nothing above was chosen.</span>
+        <span>Every hue came out of a fire, every ratio is measured, every file generated from
+        one module.</span>
+        <span>What is left is three lines in your config.</span></p>
+    </div>
+
+    <div class="cta">
+      <button class="cta-copy" type="button" data-cmd="{ &quot;Aejkatappaja/cendre&quot; }">
+        <span>{ "Aejkatappaja/cendre" }</span><i class="label">copy</i>
+      </button>
+      <a class="cta-link" href="https://github.com/Aejkatappaja/cendre"><span>github</span><i class="ext" aria-hidden="true"></i></a>
+    </div>
+    <p class="note gap-sm">Neovim 0.9 or newer, with <code>termguicolors</code>.
+      <code>:help cendre</code> once it is installed.</p>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>
+    cend<b>re</b> · dark only, on purpose<br>
+    palette generated in oklch, gamut-clipped by chroma reduction, every ratio measured<br>
+    <span id="foot"></span><br>
+    <a href="https://github.com/Aejkatappaja/cendre">github.com/Aejkatappaja/cendre</a> · MIT
+  </p>
+  <a class="to-top" href="#" data-top>top<i class="ext up" aria-hidden="true"></i></a>
+</footer>
+
+<script>
+"use strict";
+
+/**
+ * @typedef {"hard" | "medium" | "soft"} Depth
+ * @typedef {{ name: string, hex: string, L: number }} Ground
+ * @typedef {{ name: string, hex: string, hue: number, L: number, C: number,
+ *             hard: number, medium: number, soft: number }} Swatch
+ * @typedef {Swatch & { src: string, derived: number }} Pigment
+ * @typedef {{ vis: string, add: string, del: string, mod: string }} Tints
+ * @typedef {[string, string, number, number, number | null, number | null]} PaletteRow
+ */
+
+/** @type {Depth[]} */
+const DEPTHS = ["hard", "medium", "soft"];
+
+/** @type {Record<Depth, Ground[]>} */
+const GROUNDS = {
+  hard: [
+    { name: "bg_deep", hex: "#0f0c0a", L: 0.156 },
+    { name: "bg0", hex: "#171311", L: 0.191 },
+    { name: "bg1", hex: "#201b19", L: 0.227 },
+    { name: "bg2", hex: "#2a2422", L: 0.266 },
+    { name: "bg3", hex: "#362f2c", L: 0.312 },
+    { name: "bg4", hex: "#463e3a", L: 0.371 },
+    { name: "bg5", hex: "#5a504c", L: 0.440 },
+  ],
+  medium: [
+    { name: "bg_deep", hex: "#141110", L: 0.182 },
+    { name: "bg0", hex: "#1d1917", L: 0.217 },
+    { name: "bg1", hex: "#26211f", L: 0.253 },
+    { name: "bg2", hex: "#312a28", L: 0.292 },
+    { name: "bg3", hex: "#3d3633", L: 0.338 },
+    { name: "bg4", hex: "#4e4541", L: 0.397 },
+    { name: "bg5", hex: "#625753", L: 0.466 },
+  ],
+  soft: [
+    { name: "bg_deep", hex: "#1a1716", L: 0.208 },
+    { name: "bg0", hex: "#231f1d", L: 0.243 },
+    { name: "bg1", hex: "#2d2725", L: 0.279 },
+    { name: "bg2", hex: "#37312e", L: 0.318 },
+    { name: "bg3", hex: "#443c39", L: 0.364 },
+    { name: "bg4", hex: "#554c48", L: 0.423 },
+    { name: "bg5", hex: "#695e5a", L: 0.492 },
+  ],
+};
+
+/** @type {Record<Depth, string>} */
+const DEPTH_NOTE = {
+  hard: "The deepest of the three, and darker than any theme this was measured against. Best on OLED, and the reason the ramp above it has to be finely stepped.",
+  medium: "Halfway. Keeps most of the depth while pulling every ratio down a notch.",
+  soft: "Lifted to where the dark themes people keep for years actually sit. Softens the whole screen without touching a single pigment.",
+};
+
+/** @type {Swatch[]} */
+const INK = [
+  { name: "fg", hex: "#e6d5c2", hue: 70.5, L: 0.882, C: 0.032, hard: 12.89, medium: 12.19, soft: 11.42 },
+  { name: "fg_dim", hex: "#a09384", hue: 71.3, L: 0.670, C: 0.027, hard: 6.15, medium: 5.82, soft: 5.45 },
+  { name: "comment", hex: "#73665b", hue: 62.0, L: 0.520, C: 0.024, hard: 3.32, medium: 3.14, soft: 2.94 },
+  { name: "gutter", hex: "#4e4641", hue: 56.4, L: 0.400, C: 0.014, hard: 2.00, medium: 1.89, soft: 1.77 },
+];
+
+/**
+ * Hue is not ours: each comes from something measurable in a burning log, and
+ * `derived` is what the source computed to before gamut clipping moved it.
+ * Lightness and chroma are ours, set to buy back the separation the warm end of
+ * a fire refuses to give.
+ * @type {Pigment[]}
+ */
+const PIGMENTS = [
+  { name: "cinder", hex: "#d1766e", hue: 25.9, derived: 25.5, L: 0.665, C: 0.115,
+    hard: 5.74, medium: 5.43, soft: 5.08, src: "CaOH band · 622 nm" },
+  { name: "ember", hex: "#ea9875", hue: 43.8, derived: 43.8, L: 0.754, C: 0.110,
+    hard: 8.13, medium: 7.69, soft: 7.20, src: "blackbody · 1300 K" },
+  { name: "brass", hex: "#fcba81", hue: 61.4, derived: 61.4, L: 0.838, C: 0.106,
+    hard: 10.97, medium: 10.37, soft: 9.72, src: "sodium D · 589 nm" },
+  { name: "sap", hex: "#99af6b", hue: 123.4, derived: 123.2, L: 0.721, C: 0.095,
+    hard: 7.65, medium: 7.23, soft: 6.77, src: "C₂ Swan · 563 nm" },
+  { name: "frost", hex: "#4e89a2", hue: 227.4, derived: 226.6, L: 0.600, C: 0.072,
+    hard: 4.77, medium: 4.51, soft: 4.22, src: "C₂ Swan · 474 nm" },
+];
+
+/** @type {Record<string, string>} */
+const ROLE = {
+  cinder: "keywords · control flow · storage",
+  ember: "properties · fields · parameters · UI",
+  brass: "functions · methods · calls",
+  frost: "types · classes · constructors",
+  sap: "strings · numbers · booleans · every literal",
+};
+
+/** @type {Record<string, string>} */
+const WHY = {
+  cinder: "Not a chosen red. Wood carries calcium, and calcium hydroxide burns at 622 nm, which is the colour at the heart of a flame before the soot lights up.",
+  ember: "The coals. Soot at 1300 K, straight off the Planck curve, which is why it lands where every glowing thing lands. It does the most syntax work here.",
+  brass: "The flare when a log shifts and ash drops back into the heat. Sodium's D line, and the brightest thing on screen because that is what it is in a fire.",
+  sap: "The first C₂ Swan band head, a couple of degrees off where both earthy references put their string green. It takes every literal: strings, numbers, booleans, nil.",
+  frost: "The second C₂ band the eye can catch, at the base of the flame where combustion is coolest. So it is the coolest and dimmest thing here, and it carries types alone.",
+};
+
+/** @type {Swatch[]} */
+const SEMANTIC = [
+  { name: "error", hex: "#d25780", hue: 2.0, L: 0.639, C: 0.160, hard: 4.76, medium: 4.50, soft: 4.21 },
+  { name: "warning", hex: "#f4a21c", hue: 71.7, L: 0.760, C: 0.160, hard: 8.82, medium: 8.33, soft: 7.81 },
+  { name: "ok · git add", hex: "#43b16a", hue: 152.1, L: 0.681, C: 0.145, hard: 6.80, medium: 6.43, soft: 6.02 },
+  { name: "hint", hex: "#20c9cb", hue: 196.2, L: 0.759, C: 0.125, hard: 9.03, medium: 8.54, soft: 8.00 },
+  { name: "info · git change", hex: "#58bdff", hue: 240.4, L: 0.766, C: 0.133, hard: 8.91, medium: 8.42, soft: 7.89 },
+];
+
+/** @type {Record<Depth, Tints>} */
+const TINTS = {
+  hard: { vis: "#2f1e17", add: "#202515", del: "#301d1b", mod: "#12262e" },
+  medium: { vis: "#36241d", add: "#262c1b", del: "#372321", mod: "#182c35" },
+  soft: { vis: "#3d2b23", add: "#2d3221", del: "#3e2a28", mod: "#1f333b" },
+};
+
+/** ANSI wants six hues where the editor needs five, so this one is terminal only. */
+const POTASSIUM = { hex: "#9480ba", L: 0.640, C: 0.088, hue: 299.8, ratio: 5.32 };
+
+/** The two bright slots with no editor role: the same hues, lightness raised 0.06. */
+const POTASSIUM_BRIGHT = "#a692cd";
+const INFO_BRIGHT = "#8bcfff";
+
+/** @type {Depth} */
+let depth = "hard";
+
+/** @type {Record<string, string>} */
+const CODE = {};
+
+/**
+ * Contrast ratio of a swatch against the ground currently selected.
+ * @param {Swatch} s
+ * @returns {number}
+ */
+function ratio(s) {
+  return s[depth];
+}
+
+/**
+ * Hue spacing and chroma spread of the pigment set.
+ * @param {Pigment[]} list
+ * @returns {{ hues: number[], minGap: number, arc: number, cLo: number, cHi: number }}
+ */
+function geometry(list) {
+  const hues = list.map((p) => p.hue).sort((a, b) => a - b);
+  const gaps = hues.map((h, i) => (hues[(i + 1) % hues.length] - h + 360) % 360);
+  const chromas = list.map((p) => p.C);
+  return {
+    hues,
+    minGap: Math.min(...gaps),
+    arc: 360 - Math.max(...gaps),
+    cLo: Math.min(...chromas),
+    cHi: Math.max(...chromas),
+  };
+}
+
+/**
+ * One row of the full palette table. A function rather than an array literal at each
+ * call site, because a literal widens to (string | number | null)[] and the columns
+ * are destructured by type further down.
+ * @param {string} name
+ * @param {string} hex
+ * @param {number} hue degrees
+ * @param {number} L OKLCH lightness, 0 to 1
+ * @param {number | null} C chroma, null for the ground, whose seven steps share one
+ * @param {number | null} r contrast against bg0, null where the row publishes none
+ * @returns {PaletteRow}
+ */
+function paletteRow(name, hex, hue, L, C, r) {
+  return [name, hex, hue, L, C, r];
+}
+
+/**
+ * Look up an element the markup is expected to provide. Every caller writes into what
+ * it gets back, so a null returned quietly would surface later as an empty panel
+ * rather than as the missing id it actually is.
+ * @param {string} id
+ * @returns {HTMLElement}
+ * @throws {Error} if no element carries that id
+ */
+function el(id) {
+  const node = document.getElementById(id);
+  if (!node) throw new Error(`missing element: ${id}`);
+  return node;
+}
+
+/**
+ * Escape text on its way into an HTML string. The tables and cards are assembled as
+ * markup rather than as nodes, so every install command and path that passes through
+ * them has to be neutralised here.
+ * @param {string} text
+ * @returns {string}
+ */
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/**
+ * Fill a swatch strip with one list item per colour.
+ * @param {HTMLElement} list
+ * @param {string[]} hexes
+ * @returns {void}
+ */
+function paintSwatch(list, hexes) {
+  list.innerHTML = hexes.map((hex) => `<li style="background:${hex}"></li>`).join("");
+}
+
+/**
+ * Rebuild the three depth cards and mark whichever one is on screen. Their numbers are
+ * read from the palette tables, not from the colours the page is currently painted in,
+ * so a card cannot claim a ratio the palette does not hold.
+ * @returns {void}
+ */
+function renderDepths() {
+  el("depth-cards").innerHTML = DEPTHS.map((name) => {
+    const ground = GROUNDS[name];
+    const dimmest = Math.min(...PIGMENTS.map((p) => p[name]));
+    const live = name === depth;
+    return `
+      <article class="depth"${live ? " data-live" : ""}>
+        <ul class="swatch">${ground.map((g) => `<li style="background:${g.hex}"></li>`).join("")}</ul>
+        <h3>${name}${live ? " <small>showing</small>" : ""}</h3>
+        <p>${DEPTH_NOTE[name]}</p>
+        <p class="facts">
+          <b>bg0</b> ${ground[1].hex} · <b>L</b> ${ground[1].L.toFixed(3)}<br>
+          <b>text</b> ${INK[0][name].toFixed(2)}:1 · <b>comment</b> ${INK[2][name].toFixed(2)}:1<br>
+          <b>dimmest pigment</b> ${dimmest.toFixed(2)}:1
+        </p>
+      </article>`;
+  }).join("");
+}
+
+/**
+ * Rebuild the pigment cards: five that do syntax work, plus potassium, which does not.
+ * @returns {void}
+ */
+function renderPigments() {
+  const cards = PIGMENTS.map((p) => `
+    <article class="pig">
+      <div class="pig-bar" style="background:${p.hex}"></div>
+      <h3 style="color:${p.hex}">${p.name}</h3>
+      <p class="role">${ROLE[p.name]}</p>
+      <p class="src">${p.src} → ${p.hue.toFixed(1)}°</p>
+      <p>${WHY[p.name]}</p>
+      <p class="facts">${p.hex} · L ${p.L.toFixed(3)} · C ${p.C.toFixed(3)} · ${ratio(p).toFixed(2)}:1</p>
+    </article>`);
+
+  // Five cards in a three-column grid leave a hole, so the sixth carries the one
+  // colour that exists for the terminal and not for the editor.
+  cards.push(`
+    <article class="pig aside">
+      <div class="pig-bar" style="background:${POTASSIUM.hex}"></div>
+      <h3 style="color:${POTASSIUM.hex}">potassium</h3>
+      <p class="role">terminal only · ansi 5</p>
+      <p class="src">potassium · 404 nm → ${POTASSIUM.hue}°</p>
+      <p>Potash is wood ash, and it burns lilac. The editor needs five hues and the ANSI palette
+        wants six, so this one lives in <code>terminal_color_5</code> and never touches a token.</p>
+      <p class="facts">${POTASSIUM.hex} · L ${POTASSIUM.L.toFixed(3)} · C ${POTASSIUM.C.toFixed(3)} · ${POTASSIUM.ratio.toFixed(2)}:1</p>
+    </article>`);
+
+  el("pigment-cards").innerHTML = cards.join("");
+}
+
+/**
+ * Read a resolved custom property off the root element. The depth switch rewrites these,
+ * so anything drawn outside CSS, meaning the canvas, has to ask for the value in force
+ * instead of keeping a copy.
+ * @param {string} name a CSS custom property, including the leading dashes
+ * @returns {string}
+ */
+function token(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/**
+ * Plot the pigments as angle for hue, radius for chroma. Both canvas dimensions
+ * are read rather than derived, because the box is sized by its grid row.
+ * @returns {void}
+ */
+function drawWheel() {
+  const canvas = /** @type {HTMLCanvasElement} */ (el("wheel"));
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth || 420;
+  const h = canvas.clientHeight || Math.round(w * 0.74);
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.font = "10px monospace";
+
+  const rule = token("--rule");
+  const label = token("--ink3");
+  const LABEL_GAP = 26;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = Math.max(60, Math.min(w / 2 - 100, h / 2 - LABEL_GAP - 8));
+  const maxChroma = 0.15;
+
+  ctx.strokeStyle = rule;
+  ctx.lineWidth = 1;
+  for (const f of [0.25, 0.5, 0.75, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * f, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  const sorted = PIGMENTS.slice().sort((a, b) => a.hue - b.hue);
+
+  ctx.lineWidth = 2;
+  sorted.forEach((p, i) => {
+    const gap = (sorted[(i + 1) % sorted.length].hue - p.hue + 360) % 360;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 9,
+      (-p.hue - 4) * Math.PI / 180, (-(p.hue + gap) + 4) * Math.PI / 180, true);
+    ctx.stroke();
+  });
+
+  for (const p of sorted) {
+    const angle = -p.hue * Math.PI / 180;
+    const r = (Math.min(p.C, maxChroma) / maxChroma) * radius;
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+
+    ctx.strokeStyle = rule;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+
+    ctx.fillStyle = p.hex;
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = token("--g1");
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    const cos = Math.cos(angle);
+    ctx.fillStyle = label;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = Math.abs(cos) < 0.25 ? "center" : (cos > 0 ? "left" : "right");
+    ctx.fillText(`${p.name}  ${Math.round(p.hue)}°`,
+      cx + cos * (radius + LABEL_GAP), cy + Math.sin(angle) * (radius + LABEL_GAP));
+  }
+}
+
+/**
+ * Wrap a snippet in the page's own token classes, so the install blocks are
+ * themselves a specimen of the theme rather than plain ink.
+ *
+ * Tokens are matched in one pass over the raw text and escaped as each one is
+ * wrapped. Escaping first would turn a quote into an entity and break the string
+ * pattern; chaining replaces over already-wrapped output would re-match the
+ * class names.
+ * @param {string} text
+ * @param {"lua" | "conf"} lang
+ * @returns {string} HTML
+ */
+function highlight(text, lang) {
+  const LUA_KEYWORDS = new Set([
+    "local", "return", "function", "end", "if", "then", "else", "elseif",
+    "for", "in", "do", "while", "repeat", "until", "true", "false", "nil",
+    "and", "or", "not",
+  ]);
+
+  // Two things every alternation here has to get right. Punctuation must not
+  // swallow a hash, or the colour value after an "=" never reaches its own
+  // branch. And the last alternative is a catch-all: without it any character no
+  // branch claims is dropped, which silently rewrites the file on screen.
+  const pattern = lang === "lua"
+    ? /(--[^\n]*)|("(?:[^"\\]|\\.)*")|(\d+(?:\.\d+)?)|([A-Za-z_][\w.]*)|([^\sA-Za-z_\d]+)|(\s+)|([\s\S])/g
+    : /(#(?![0-9a-fA-F]{6})[^\n]*)|(#[0-9a-fA-F]{6})|(\d+)|([A-Za-z_][\w-]*)|([^\sA-Za-z_\d#]+)|(\s+)|([\s\S])/g;
+
+  /** @type {{ cls: string | null, text: string }[]} */
+  const tokens = [];
+  for (const m of text.matchAll(pattern)) {
+    const [, comment, quoted, number, word, punct, space, other] = m;
+    if (comment !== undefined) tokens.push({ cls: "cm", text: comment });
+    else if (quoted !== undefined) tokens.push({ cls: "st", text: quoted });
+    else if (number !== undefined) tokens.push({ cls: "cn", text: number });
+    else if (word !== undefined) {
+      tokens.push({
+        cls: lang === "lua" && LUA_KEYWORDS.has(word) ? "kw" : "id",
+        text: word,
+      });
+    } else if (punct !== undefined) tokens.push({ cls: "op", text: punct });
+    else if (space !== undefined) tokens.push({ cls: null, text: space });
+    else tokens.push({ cls: null, text: other });
+  }
+
+  // highlighting must not edit the file. if a branch ever loses a character the
+  // block would show a config that does not work, so fall back to plain text
+  // rather than display something untrue.
+  if (tokens.reduce((acc, t) => acc + t.text, "") !== text) {
+    return escapeHtml(text);
+  }
+
+  // a bare name that the next non-space token assigns to is a property, which is
+  // the role ember carries everywhere else on this page
+  tokens.forEach((tok, i) => {
+    if (tok.cls !== "id") return;
+    const next = tokens.slice(i + 1).find((t) => t.cls !== null);
+    tok.cls = next && next.text.startsWith("=") ? "pr" : null;
+  });
+
+  return tokens.map((tok) =>
+    tok.cls ? `<span class="${tok.cls}">${escapeHtml(tok.text)}</span>` : escapeHtml(tok.text)
+  ).join("");
+}
+
+/**
+ * Build the three install snippets for the selected depth.
+ * @returns {void}
+ */
+function renderCode() {
+  /** @type {Record<string, string>} */
+  const g = {};
+  for (const x of GROUNDS[depth]) g[x.name] = x.hex;
+  /** @type {Record<string, string>} */
+  const ink = {};
+  for (const x of INK) ink[x.name] = x.hex;
+  /** @type {Record<string, string>} */
+  const pig = {};
+  for (const x of PIGMENTS) pig[x.name] = x.hex;
+  /** @type {Record<string, string>} */
+  const sem = {};
+  for (const x of SEMANTIC) sem[x.name.split(" ")[0]] = x.hex;
+
+  const t = TINTS[depth];
+  const geo = geometry(PIGMENTS);
+  const comment = INK[2][depth];
+  const ramp = GROUNDS[depth];
+
+  CODE.palette = `local M = {}
+
+-- cendre · background = "${depth}"
+-- Generated in OKLCH, gamut-clipped into sRGB by reducing chroma.
+-- Ground: the ash bed under a 1300 K flame, hue 43. L ${ramp[0].L} to ${ramp[6].L}.
+-- Pigments: ${geo.hues.map(Math.round).join(" / ")}  (arc ${Math.round(geo.arc)}, smallest gap ${Math.round(geo.minGap)})
+-- Comments sit at ${comment.toFixed(2)}:1 on purpose. Softness is partly low contrast.
+
+M.colors = {
+  bg_deep = "${g.bg_deep}", -- floats, sidebars
+  bg0     = "${g.bg0}", -- editor
+  bg1     = "${g.bg1}", -- cursorline
+  bg2     = "${g.bg2}", -- statusline
+  bg3     = "${g.bg3}", -- borders, splits
+  bg4     = "${g.bg4}", -- hover
+  bg5     = "${g.bg5}", -- highest layer
+
+  fg      = "${ink.fg}", -- ${INK[0][depth].toFixed(2)}:1
+  fg_dim  = "${ink.fg_dim}", -- operators, delimiters
+  comment = "${ink.comment}", -- ${comment.toFixed(2)}:1
+  gutter  = "${ink.gutter}",
+
+  -- hue from a wood fire; L and C set for legibility
+  cinder    = "${pig.cinder}", --  ${Math.round(PIGMENTS[0].hue)}  CaOH 622 nm       keywords, control flow
+  ember     = "${pig.ember}", --  ${Math.round(PIGMENTS[1].hue)}  blackbody 1300 K  properties, params, UI
+  brass     = "${pig.brass}", --  ${Math.round(PIGMENTS[2].hue)}  sodium D 589 nm   functions, methods
+  sap       = "${pig.sap}", -- ${Math.round(PIGMENTS[3].hue)} C2 Swan 563 nm    every literal value
+  frost     = "${pig.frost}", -- ${Math.round(PIGMENTS[4].hue)} C2 Swan 474 nm    types, classes
+
+  error = "${sem.error}", warn = "${sem.warning}", ok = "${sem.ok}",
+  hint  = "${sem.hint}", info = "${sem.info}",
+
+  vis = "${t.vis}", add = "${t.add}", del = "${t.del}", mod = "${t.mod}",
+
+  terminal_black          = "${g.bg1}",
+  terminal_red            = "${pig.cinder}",
+  terminal_green          = "${pig.sap}",
+  terminal_yellow         = "${pig.brass}",
+  terminal_blue           = "${sem.info}",
+  -- ANSI wants six hues, the editor only needs five. Potassium 404 nm, terminal only.
+  terminal_magenta        = "${POTASSIUM.hex}",
+  terminal_cyan           = "${pig.frost}",
+  terminal_white          = "${ink.fg_dim}",
+  terminal_bright_black   = "${ink.comment}",
+  terminal_bright_white   = "${ink.fg}",
+}
+
+return M`;
+
+  CODE.lazy = `{
+  "Aejkatappaja/cendre",
+  lazy = false,
+  priority = 1000,
+  config = function()
+    require("cendre").setup({
+      background = "${depth}", -- "hard" | "medium" | "soft"
+      italic = false,
+    })
+  end,
+},
+{
+  "LazyVim/LazyVim",
+  opts = { colorscheme = "cendre" },
+}`;
+
+  // byte for byte what scripts/extras.lua writes, since the block is labelled with
+  // the path it belongs at. a shortened version would be a file that is not the file.
+  CODE.ghostty = `# cendre · ${depth} · https://github.com/Aejkatappaja/cendre
+# generated by scripts/extras.lua, do not edit
+
+background = ${g.bg0}
+foreground = ${ink.fg}
+cursor-color = ${pig.ember}
+cursor-text = ${g.bg0}
+selection-background = ${t.vis}
+selection-foreground = ${ink.fg}
+
+palette = 0=${g.bg1}
+palette = 1=${pig.cinder}
+palette = 2=${pig.sap}
+palette = 3=${pig.brass}
+palette = 4=${sem.info}
+palette = 5=${POTASSIUM.hex}
+palette = 6=${pig.frost}
+palette = 7=${ink.fg_dim}
+palette = 8=${ink.comment}
+palette = 9=${sem.error}
+palette = 10=${sem.ok}
+palette = 11=${sem.warning}
+palette = 12=${INFO_BRIGHT}
+palette = 13=${POTASSIUM_BRIGHT}
+palette = 14=${sem.hint}
+palette = 15=${ink.fg}`;
+
+  /** @type {Record<string, "lua" | "conf">} */
+  const LANG = { palette: "lua", lazy: "lua", ghostty: "conf" };
+  for (const key of Object.keys(CODE)) {
+    el(`code-${key}`).innerHTML = highlight(CODE[key], LANG[key]);
+  }
+}
+
+/**
+ * Repaint everything that depends on the selected depth.
+ * @returns {void}
+ */
+function render() {
+  const ground = GROUNDS[depth];
+  const geo = geometry(PIGMENTS);
+  const comment = INK[2][depth];
+
+  paintSwatch(el("sw-ash"), ground.map((x) => x.hex));
+  paintSwatch(el("sw-ink"), INK.map((x) => x.hex));
+  paintSwatch(el("sw-pig"),
+    PIGMENTS.slice().sort((a, b) => a.hue - b.hue).map((p) => p.hex));
+
+  renderDepths();
+  renderPigments();
+
+  el("t-derivation").innerHTML = PIGMENTS.map((p) => {
+    const drift = p.hue - p.derived;
+    return `
+      <tr>
+        <td class="role">${p.name}</td>
+        <td class="hex">${p.src}</td>
+        <td class="num">${p.derived.toFixed(1)}°</td>
+        <td class="num">${p.hue.toFixed(1)}°</td>
+        <td class="${Math.abs(drift) < 0.5 ? "pass" : "num"}">${drift >= 0 ? "+" : ""}${drift.toFixed(1)}°</td>
+      </tr>`;
+  }).join("");
+
+  el("ramp").innerHTML = ground
+    .map((x) => `<li style="background:${x.hex}"><span>${x.name}</span></li>`).join("");
+  el("ramp-lo").textContent = `L ${ground[0].L.toFixed(3)}`;
+  el("ramp-hi").textContent = `L ${ground[6].L.toFixed(3)}`;
+  el("ground-cap").textContent = `hue 43°, ${depth}`;
+
+  el("t-semantic").innerHTML = SEMANTIC.map((s) => `
+    <tr>
+      <td><span class="chip" style="background:${s.hex}"></span></td>
+      <td class="role">${s.name}</td>
+      <td class="hex">${s.hex}</td>
+      <td class="num">${s.hue.toFixed(1)}°</td>
+      <td class="pass">${ratio(s).toFixed(2)}:1</td>
+    </tr>`).join("");
+
+  /** @type {PaletteRow[]} */
+  const rows = [
+    ...PIGMENTS.map((p) => paletteRow(p.name, p.hex, p.hue, p.L, p.C, ratio(p))),
+    ...INK.map((x) => paletteRow(x.name, x.hex, x.hue, x.L, x.C, ratio(x))),
+    ...ground.map((x) => paletteRow(x.name, x.hex, 42.9, x.L, null, x.name === "bg0" ? 1 : null)),
+  ];
+
+  el("t-palette").innerHTML = rows.map(([name, hex, hue, L, C, r]) => `
+    <tr>
+      <td><span class="chip" style="background:${hex}"></span></td>
+      <td class="role">${name}</td>
+      <td class="hex">${hex}</td>
+      <td class="num">${hue.toFixed(1)}°</td>
+      <td class="num">${L.toFixed(3)}</td>
+      <td class="num">${C === null ? "&middot;" : C.toFixed(3)}</td>
+      <td class="${r === null ? "num" : (r >= 4.5 ? "pass" : "under")}">${r === null ? "&middot;" : `${r.toFixed(2)}:1`}</td>
+    </tr>`).join("");
+
+  el("floor-note").textContent = `${comment.toFixed(2)}:1`;
+  el("wheel-arc").textContent = `${Math.round(geo.arc)}°`;
+  el("wheel-gap").textContent = `${Math.round(geo.minGap)}°`;
+  el("foot").textContent =
+    `background ${depth} · pigments ${geo.hues.map(Math.round).join(" / ")}` +
+    ` · arc ${Math.round(geo.arc)}° · comments ${comment.toFixed(2)}:1`;
+
+  renderCode();
+  drawWheel();
+}
+
+/**
+ * Put text on the clipboard by whichever route the host allows. The async
+ * clipboard API needs a permission a sandboxed frame does not grant, so a
+ * selection plus execCommand picks up the slack; if both fail the text is left
+ * selected, which is the only state where telling somebody to press cmd+c is true.
+ * @param {string} text
+ * @param {Element | null} source node holding the same text, selected as a last resort
+ * @returns {Promise<"copied" | "selected">}
+ */
+async function putOnClipboard(text, source) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return "copied";
+    }
+  } catch { /* permission not granted in this frame */ }
+
+  const field = document.createElement("textarea");
+  field.value = text;
+  field.setAttribute("readonly", "");
+  field.style.cssText = "position:fixed;top:0;left:-9999px;opacity:0";
+  document.body.append(field);
+  field.select();
+  field.setSelectionRange(0, text.length);
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  field.remove();
+  if (ok) return "copied";
+
+  if (source) {
+    const range = document.createRange();
+    range.selectNodeContents(source);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
+  return "selected";
+}
+
+/**
+ * Flash the outcome of a copy on the control that triggered it.
+ * @param {HTMLElement} flag element that carries the done state
+ * @param {HTMLElement} label element that carries the wording
+ * @param {"copied" | "selected"} how
+ * @returns {void}
+ */
+function flashCopy(flag, label, how) {
+  label.textContent = how === "copied" ? "copied" : "cmd+c";
+  flag.classList.add("done");
+  setTimeout(() => {
+    label.textContent = "copy";
+    flag.classList.remove("done");
+  }, 1400);
+}
+
+/**
+ * Every entry maps to a file under extras/, except the two marked local: Zed and
+ * Obsidian both have a theme store and neither listing exists yet, so the command
+ * installs from the checkout instead of claiming a search.
+ * @type {[string, [string, string, string, string?][]][]}
+ */
+const SURFACES = [
+  ["Editors", [
+    ["Neovim", "lazy.nvim", '{ "Aejkatappaja/cendre" }'],
+    ["Vim", "colors dir", "cp extras/vim/cendre.vim ~/.vim/colors/"],
+    ["Helix", "themes", "cp extras/helix/cendre.toml ~/.config/helix/themes/"],
+    ["Zed", "themes", "cp extras/zed/cendre.json ~/.config/zed/themes/", "local"],
+  ]],
+  ["Terminals", [
+    ["Ghostty", "themes", "cp extras/ghostty/cendre ~/.config/ghostty/themes/"],
+    ["Kitty", "themes", "cp extras/kitty/cendre.conf ~/.config/kitty/"],
+    ["Alacritty", "config dir", "cp extras/alacritty/cendre.toml ~/.config/alacritty/"],
+    ["WezTerm", "colors dir", "cp extras/wezterm/cendre.toml ~/.config/wezterm/colors/"],
+    ["Foot", "config dir", "cp extras/foot/cendre.ini ~/.config/foot/"],
+    ["macOS Terminal", "import", "open extras/macos-terminal/cendre.terminal"],
+    ["iTerm2", "Profiles, Colors", "import extras/macos-terminal/cendre.itermcolors"],
+  ]],
+  ["Prompt and shell", [
+    ["tmux", "config dir", "cp extras/tmux/cendre.tmux.conf ~/.config/tmux/"],
+    ["Starship", "starship.toml", "cp extras/starship/cendre.toml ~/.config/starship.toml"],
+    ["fzf", "shell rc", "source extras/fzf/cendre.sh"],
+    ["eza", "shell rc", "source extras/eza/cendre.sh"],
+    ["Herdr", "config.toml", "cp extras/herdr/cendre.toml ~/.config/herdr/config.toml"],
+  ]],
+  ["Tools and TUIs", [
+    ["bat", "config dir", 'cp extras/bat/cendre.tmTheme "$(bat --config-dir)/themes/" && bat cache --build'],
+    ["Delta", ".gitconfig", "[include] path = extras/delta/cendre.gitconfig"],
+    ["Lazygit", "config.yml", "merge extras/lazygit/cendre.yml into ~/.config/lazygit/config.yml"],
+    ["btop", "themes", "cp extras/btop/cendre.theme ~/.config/btop/themes/"],
+    ["Yazi", "theme.toml", "cp extras/yazi/cendre.toml ~/.config/yazi/theme.toml"],
+    ["OpenCode", "themes", "cp extras/opencode/cendre.json ~/.config/opencode/themes/"],
+    ["Hunk", "config.toml", "cp extras/hunk/cendre.toml ~/.config/hunk/config.toml"],
+  ]],
+  ["Notes and chat", [
+    ["Obsidian", "vault themes", "cp -r extras/obsidian/cendre .obsidian/themes/", "local"],
+    ["Slack", "sidebar theme", "paste extras/slack/cendre.txt"],
+    ["Firefox", "about:debugging", "load extras/firefox/cendre as a temporary add-on"],
+  ]],
+];
+
+/**
+ * Build the surfaces table and publish its own row count, so the number quoted in the
+ * prose cannot drift from the number of rows under it.
+ * @returns {void}
+ */
+function renderSurfaces() {
+  el("t-surfaces").innerHTML = SURFACES.map(([group, apps]) => {
+    const head = `<tr class="grp"><th colspan="3" scope="colgroup">${group} <b>${apps.length}</b></th></tr>`;
+    return head + apps.map(([app, where, cmd, tag]) => `
+      <tr>
+        <td class="surf">${escapeHtml(app)}${tag ? ` <span class="local">· ${tag}</span>` : ""}</td>
+        <td class="where">${escapeHtml(where)}</td>
+        <td class="cmd">
+          <button type="button" data-cmd="${escapeHtml(cmd)}">
+            <span>${escapeHtml(cmd)}</span><i class="label">copy</i>
+          </button>
+        </td>
+      </tr>`).join("");
+  }).join("");
+
+  el("surface-count").textContent =
+    String(SURFACES.reduce((n, [, apps]) => n + apps.length, 0));
+}
+
+/**
+ * Read the star count from the GitHub API. Never hardcoded, so the page cannot
+ * claim a number the repo does not have, and silent on failure so a blocked
+ * request just leaves the link showing its call to action.
+ * @returns {void}
+ */
+function loadStars() {
+  const count = el("stars");
+  const link = /** @type {HTMLElement} */ (count.closest(".bar-gh"));
+
+  fetch("https://api.github.com/repos/Aejkatappaja/cendre")
+    .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+    .then((repo) => {
+      if (typeof repo.stargazers_count !== "number") return;
+      count.textContent = repo.stargazers_count.toLocaleString("en");
+      const word = link.querySelector(".w-stars");
+      if (word) word.textContent = repo.stargazers_count === 1 ? "star" : "stars";
+      link.classList.add("has-count");
+    })
+    .catch(() => {});
+}
+
+/**
+ * Publish the reading position as 0..1 on --read, which the toolbar's rule is
+ * drawn from.
+ * @returns {void}
+ */
+function trackProgress() {
+  const bar = /** @type {HTMLElement} */ (document.querySelector(".bar"));
+
+  /**
+   * Recompute the fraction and hand it to the stylesheet. The travel is read each
+   * time rather than cached, because a depth switch and a tab switch both change the
+   * page's height under it.
+   * @returns {void}
+   */
+  const paint = () => {
+    const travel = document.documentElement.scrollHeight - window.innerHeight;
+    const read = travel > 0 ? window.scrollY / travel : 0;
+    bar.style.setProperty("--read", String(Math.min(1, Math.max(0, read))));
+  };
+
+  // One paint per frame: scroll fires far more often than the screen refreshes,
+  // and each paint reads a layout property.
+  let queued = false;
+  window.addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      paint();
+    });
+  }, { passive: true });
+
+  window.addEventListener("resize", paint);
+  paint();
+}
+
+/**
+ * Attach the page's listeners. The clicks are delegated from the document rather than
+ * bound to each control, because the cards and tables holding those controls are
+ * rewritten on every depth change and a listener bound to a node would go with it.
+ * @returns {void}
+ */
+function wire() {
+  document.querySelectorAll('input[name="bg"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      depth = /** @type {Depth} */ (/** @type {HTMLInputElement} */ (input).value);
+      document.documentElement.dataset.bg = depth;
+      render();
+    });
+  });
+
+  document.addEventListener("click", async (event) => {
+    const target = /** @type {HTMLElement} */ (event.target);
+
+    const cmd = target.closest("[data-cmd]");
+    if (cmd instanceof HTMLElement) {
+      const how = await putOnClipboard(cmd.dataset.cmd ?? "", cmd.querySelector("span"));
+      // the table marks the cell, the call to action marks the button itself
+      const flag = /** @type {HTMLElement} */ (cmd.closest("td") ?? cmd);
+      flashCopy(flag, /** @type {HTMLElement} */ (cmd.querySelector(".label")), how);
+      return;
+    }
+
+    const top = target.closest("[data-top]");
+    if (top) {
+      // Instant, not the page's smooth default: eleven screens of easing is a
+      // wait, not an animation. Preventing the default also keeps the bare "#"
+      // out of the address bar, and leaves the links working without this script.
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+
+    const permalink = target.closest(".permalink");
+    if (permalink instanceof HTMLAnchorElement) {
+      // The browser still follows the href, so the address bar updates either
+      // way. Only a real copy is flashed: claiming one that failed is worse
+      // than saying nothing, and there is no visible node to fall back to.
+      const how = await putOnClipboard(permalink.href, null);
+      if (how === "copied") {
+        permalink.classList.add("done");
+        setTimeout(() => permalink.classList.remove("done"), 1400);
+      }
+      return;
+    }
+
+    const code = target.closest("[data-code]");
+    if (code instanceof HTMLElement) {
+      const key = code.dataset.code ?? "";
+      const how = await putOnClipboard(CODE[key], el(`code-${key}`));
+      flashCopy(code, code, how);
+    }
+  });
+
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawWheel, 120);
+  });
+}
+
+renderSurfaces();
+wire();
+trackProgress();
+loadStars();
+render();
+</script>
+</body>
+</html>
