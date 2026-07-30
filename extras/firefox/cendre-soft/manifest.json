@@ -1,0 +1,48 @@
+{
+  "manifest_version": 2,
+  "name": "cendre-soft",
+  "version": "1.0.0",
+  "description": "One wood fire, taken apart. https://github.com/Aejkatappaja/cendre",
+  "theme": {
+    "colors": {
+      "frame": "#1a1716",
+      "frame_inactive": "#1a1716",
+      "tab_background_text": "#73665b",
+      "tab_selected": "#231f1d",
+      "tab_text": "#e6d5c2",
+      "tab_line": "#ea9875",
+      "tab_loading": "#ea9875",
+      "toolbar": "#231f1d",
+      "toolbar_text": "#e6d5c2",
+      "toolbar_field": "#2d2725",
+      "toolbar_field_text": "#e6d5c2",
+      "toolbar_field_border": "#443c39",
+      "toolbar_field_focus": "#2d2725",
+      "toolbar_field_highlight": "#3d2b23",
+      "toolbar_top_separator": "#443c39",
+      "toolbar_bottom_separator": "#443c39",
+      "toolbar_vertical_separator": "#443c39",
+      "popup": "#1a1716",
+      "popup_text": "#e6d5c2",
+      "popup_border": "#443c39",
+      "popup_highlight": "#ea9875",
+      "popup_highlight_text": "#231f1d",
+      "ntp_background": "#231f1d",
+      "ntp_text": "#e6d5c2",
+      "sidebar": "#1a1716",
+      "sidebar_text": "#a09384",
+      "sidebar_border": "#443c39",
+      "sidebar_highlight": "#ea9875",
+      "sidebar_highlight_text": "#231f1d",
+      "bookmark_text": "#a09384",
+      "button_background_hover": "#2d2725",
+      "button_background_active": "#37312e",
+      "icons": "#a09384",
+      "icons_attention": "#ea9875"
+    },
+    "properties": {
+      "color_scheme": "dark",
+      "content_color_scheme": "dark"
+    }
+  }
+}

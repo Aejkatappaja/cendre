@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#171311"/>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="156">
+    <text x="319.2" y="300" textLength="374.4" lengthAdjust="spacingAndGlyphs"
+      fill="#e6d5c2">cend</text>
+    <text x="693.6" y="300" textLength="187.2" lengthAdjust="spacingAndGlyphs"
+      fill="#ea9875">re</text>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, &apos;SF Mono&apos;, Menlo, Consolas, &apos;DejaVu Sans Mono&apos;, monospace" font-size="42" fill="#a09384" text-anchor="middle">
+    <text x="600" y="382">one wood fire, taken apart</text>
+  </g>
+  <rect x="230.0" y="452" width="148" height="26" fill="#fcba81"/>
+  <rect x="378.0" y="452" width="148" height="26" fill="#ea9875"/>
+  <rect x="526.0" y="452" width="148" height="26" fill="#99af6b"/>
+  <rect x="674.0" y="452" width="148" height="26" fill="#d1766e"/>
+  <rect x="822.0" y="452" width="148" height="26" fill="#4e89a2"/>
+</svg>
