@@ -1,0 +1,20 @@
+# Changelog
+
+## 1.0.0 (2026-07-30)
+
+
+### Features
+
+* **extras:** commit the generated themes for 24 surfaces ([5d02d8d](https://github.com/Aejkatappaja/cendre/commit/5d02d8d432271c7d3b4d37d6f817339dbe583a51))
+* **extras:** render every surface from the palette ([f7e03fa](https://github.com/Aejkatappaja/cendre/commit/f7e03fa6ae93f9d23b07f2590978646ee8cabff7))
+* **groups:** cover lsp and the plugin integrations ([b8230bc](https://github.com/Aejkatappaja/cendre/commit/b8230bc787445bff5b61b49c9b7bb2282c6a2676))
+* **groups:** map the palette onto the editor and syntax groups ([f638ec9](https://github.com/Aejkatappaja/cendre/commit/f638ec970a64e26f44d4e1474bee0d2bce0c0bdd))
+* load the colorscheme and expose the setup options ([f5ed468](https://github.com/Aejkatappaja/cendre/commit/f5ed468044faadaf6d4069c80c2dc5a98fbd29eb))
+* **lualine:** a theme that follows the active depth ([24b05d0](https://github.com/Aejkatappaja/cendre/commit/24b05d045ef2cab2f753d936b68650019a405899))
+* **palette:** derive every hue from a wood fire spectrum ([da9dd57](https://github.com/Aejkatappaja/cendre/commit/da9dd570ec7ee0e9a17ee9ea7e3a638ffaed074c))
+* **site:** add the landing page ([96f62f3](https://github.com/Aejkatappaja/cendre/commit/96f62f390dad30a205b3f01df2774a56084ab430))
+
+
+### Continuous Integration
+
+* cut releases from the commit history ([416bf2a](https://github.com/Aejkatappaja/cendre/commit/416bf2a4fca1479a86e6944f3b7df8153136bc3d))
