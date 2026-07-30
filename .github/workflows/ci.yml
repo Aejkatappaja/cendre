@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        neovim: [stable, nightly]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.neovim }}
+
+      # Loads every depth through nvim_set_hl, which throws on a missing palette
+      # key, then asserts the published contrast ratios and the role map.
+      - name: Smoke test
+        run: nvim --headless --noplugin -u NONE -c "set rtp+=." -c "luafile test/smoke.lua"
