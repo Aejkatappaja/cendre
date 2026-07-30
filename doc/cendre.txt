@@ -96,6 +96,13 @@ Accepts a table. Every key is optional; pass only what you want to change.
         The float border keeps its stroke when this is on, because a
         transparent float with no border has no edge.
 
+        Plugin windows follow, without being named one by one. which-key, the
+        Snacks picker, Noice, fzf-lua and the rest link their windows to
+        `NormalFloat` and their edges to `FloatBorder`, so stripping those two
+        strips every one of them, including plugins released after this file.
+        The completion menu is the exception and stays painted: a transparent
+        popup over code is not readable.
+
     italic              boolean     default false
 
         Italics across the theme. Every role keeps a real gap from the
