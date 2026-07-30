@@ -20,11 +20,11 @@ jobs:
           neovim: true
           version: ${{ matrix.neovim }}
 
-      # Loads every depth through nvim_set_hl, which throws on a missing palette
-      # key, then asserts the published contrast ratios and the role map.
+      # Loads every depth, asserts the published contrast ratios, the role map,
+      # the help tags, and that every committed file under extras/, assets/ and
+      # docs/ still matches a fresh render of the palette.
       - name: Smoke test
         run: nvim --headless --noplugin -u NONE -c "set rtp+=." -c "luafile test/smoke.lua"
 
-      # Now that doc/cendre.txt exists, the tags it advertises have to build.
       - name: Help tags build
         run: nvim --headless --noplugin -u NONE -c "set rtp+=." -c "helptags doc" -c q
