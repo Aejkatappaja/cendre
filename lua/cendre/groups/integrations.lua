@@ -1,6 +1,14 @@
 local M = {}
 
 -- Plugins you actually run, per lazyvim.json + your colorscheme.lua.
+--
+-- Only what a plugin colours differently from a plain float belongs here. The
+-- window surfaces themselves are deliberately absent: every one of these plugins
+-- already links its window to NormalFloat and its edge to FloatBorder, so naming
+-- them again would render identically while pinning the colour, and a pinned
+-- colour is one `transparent = true` cannot strip. That is what used to leave
+-- which-key, the Snacks picker, Noice and fzf-lua opaque over the terminal.
+-- Colour NormalFloat and FloatBorder, and the windows follow.
 function M.get(c)
   return {
     -- gitsigns
@@ -21,17 +29,9 @@ function M.get(c)
     SnacksNormalNC          = { fg = c.fg, bg = c.bg_deep },
     SnacksWinBar            = { fg = c.ember, bold = true },
     SnacksBackdrop          = { bg = c.bg_deep },
-    SnacksPicker            = { fg = c.fg, bg = c.bg_deep },
-    SnacksPickerBorder      = { fg = c.bg3, bg = c.bg_deep },
     SnacksPickerTitle       = { fg = c.ember, bold = true },
     SnacksPickerBoxTitle    = { fg = c.ember, bold = true },
-    SnacksPickerInput       = { fg = c.fg, bg = c.bg_deep },
-    SnacksPickerInputBorder = { fg = c.bg3, bg = c.bg_deep },
     SnacksPickerInputTitle  = { fg = c.ember, bold = true },
-    SnacksPickerList        = { fg = c.fg, bg = c.bg_deep },
-    SnacksPickerListBorder  = { fg = c.bg3, bg = c.bg_deep },
-    SnacksPickerPreview     = { fg = c.fg, bg = c.bg_deep },
-    SnacksPickerPreviewBorder = { fg = c.bg3, bg = c.bg_deep },
     SnacksPickerMatch       = { fg = c.ember, bold = true },
     SnacksPickerDir         = { fg = c.comment },
     SnacksPickerFile        = { fg = c.fg },
@@ -83,11 +83,7 @@ function M.get(c)
     BlinkCmpGhostText      = { fg = c.gutter, italic = true },
 
     -- fzf-lua
-    FzfLuaNormal      = { fg = c.fg, bg = c.bg_deep },
-    FzfLuaBorder      = { fg = c.bg3, bg = c.bg_deep },
     FzfLuaTitle       = { fg = c.ember, bold = true },
-    FzfLuaPreviewNormal = { fg = c.fg, bg = c.bg_deep },
-    FzfLuaPreviewBorder = { fg = c.bg3, bg = c.bg_deep },
     FzfLuaCursorLine  = { bg = c.bg2 },
     FzfLuaFzfMatch    = { fg = c.ember, bold = true },
     FzfLuaHeaderText  = { fg = c.cinder },
@@ -95,8 +91,6 @@ function M.get(c)
 
     -- which-key
     WhichKey          = { fg = c.ember },
-    WhichKeyNormal    = { fg = c.fg, bg = c.bg_deep },
-    WhichKeyBorder    = { fg = c.bg3, bg = c.bg_deep },
     WhichKeyTitle     = { fg = c.ember, bold = true },
     WhichKeyGroup     = { fg = c.frost },
     WhichKeyDesc      = { fg = c.fg },
@@ -105,16 +99,9 @@ function M.get(c)
     WhichKeyIcon      = { fg = c.brass },
 
     -- noice
-    NoiceCmdline          = { fg = c.fg, bg = c.bg_deep },
-    NoiceCmdlinePopup     = { fg = c.fg, bg = c.bg_deep },
-    NoiceCmdlinePopupBorder = { fg = c.bg3, bg = c.bg_deep },
     NoiceCmdlinePopupTitle = { fg = c.ember, bold = true },
     NoiceCmdlineIcon      = { fg = c.ember },
     NoiceCmdlineIconSearch = { fg = c.brass },
-    NoiceConfirm          = { fg = c.fg, bg = c.bg_deep },
-    NoiceConfirmBorder    = { fg = c.bg3, bg = c.bg_deep },
-    NoicePopup            = { fg = c.fg, bg = c.bg_deep },
-    NoicePopupBorder      = { fg = c.bg3, bg = c.bg_deep },
     NoiceMini             = { fg = c.fg_dim, bg = c.bg1 },
     NoiceVirtualText      = { fg = c.gutter, italic = true },
     NoiceLspProgressTitle = { fg = c.fg },

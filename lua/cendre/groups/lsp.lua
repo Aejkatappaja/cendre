@@ -44,7 +44,6 @@ function M.get(c)
     LspInlayHint      = { fg = c.gutter, bg = c.bg1, italic = true },
     LspCodeLens       = { fg = c.comment, italic = true },
     LspCodeLensSeparator = { fg = c.bg3 },
-    LspInfoBorder     = { fg = c.bg3, bg = c.bg_deep },
 
     -- semantic tokens: follow the same role mapping as treesitter
     ["@lsp.type.class"]         = { fg = c.frost },

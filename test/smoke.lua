@@ -87,6 +87,65 @@ check("transparent = true keeps the float border stroke", function()
   assert(hl.fg ~= nil, "FloatBorder lost its stroke")
 end)
 
+check("no group repeats a float surface, so plugin windows can inherit it", function()
+  reload()
+  local c = require("cendre.palette").get("hard")
+  local built = {}
+  for _, mod in ipairs({ "editor", "syntax", "treesitter", "lsp", "integrations" }) do
+    for name, hl in pairs(require("cendre.groups." .. mod).get(c)) do built[name] = hl end
+  end
+
+  -- A group that copies NormalFloat or FloatBorder renders identically and buys
+  -- nothing, because every plugin already links its window to those two. What it
+  -- does buy is a pinned colour, which `transparent = true` cannot strip: that is
+  -- what used to leave which-key, the Snacks picker, Noice and fzf-lua opaque over
+  -- the terminal. Colour the two surfaces, and the windows follow.
+  local function signature(hl)
+    local parts = {}
+    for _, key in ipairs({ "fg", "bg", "sp", "bold", "italic", "underline", "reverse" }) do
+      if hl[key] ~= nil then
+        parts[#parts + 1] = key .. "=" .. tostring(hl[key])
+      end
+    end
+    return table.concat(parts, " ")
+  end
+
+  local surfaces = { NormalFloat = true, FloatBorder = true }
+  -- these two carry bg_deep against a bg0 fallback, so they say something the
+  -- surface groups do not
+  local allowed = { SnacksNormal = true, SnacksNormalNC = true, NeoTreeWinSeparator = true }
+  for name, hl in pairs(built) do
+    if not surfaces[name] and not allowed[name] then
+      for surface in pairs(surfaces) do
+        assert(signature(hl) ~= signature(built[surface]),
+          name .. " is a verbatim copy of " .. surface ..
+          ", which pins a colour transparent = true then cannot strip")
+      end
+    end
+  end
+end)
+
+check("transparent = true leaves no window surface painted", function()
+  reload()
+  require("cendre").setup({ transparent = true })
+  require("cendre").load()
+  local c = require("cendre.palette").get("hard")
+  local grounds = {}
+  for _, key in ipairs({ "bg_deep", "bg0" }) do
+    grounds[tonumber(c[key]:sub(2), 16)] = key
+  end
+
+  -- Anything a plugin points a window at ends in one of these. A ground colour
+  -- surviving here means the reader asked to see their terminal and got a panel.
+  for name, hl in pairs(vim.api.nvim_get_hl(0, {})) do
+    if hl.bg and grounds[hl.bg] and
+      (name:match("Normal$") or name:match("NormalNC$") or name:match("Float$")
+       or name:match("Border$") or name:match("Popup$") or name:match("Cmdline$")) then
+      error(name .. " still paints " .. grounds[hl.bg] .. " under transparent = true")
+    end
+  end
+end)
+
 check("transparent = false keeps Normal bg", function()
   reload()
   require("cendre").setup({ background = "hard", transparent = false })
