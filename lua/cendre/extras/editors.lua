@@ -263,23 +263,19 @@ end
 --- @return string
 function M.zed(bg)
   local c = palette.get(bg)
-
-  --- @param hex string
-  --- @param alpha string|nil two hex digits
-  --- @return string
-  local function a(hex, alpha)
-    return '"' .. hex .. (alpha or "ff") .. '"'
-  end
+  local name = palette.name(bg)
 
   --- @param scope string
   --- @param hex string
   --- @param style string|nil
   --- @return string
   local function syn(scope, hex, style)
-    return ('        "%s": { "color": %s, "font_style": %s, "font_weight": null }')
-      :format(scope, a(hex), style and ('"' .. style .. '"') or "null")
+    return ('        "%s": { "color": "%sff", "font_style": %s, "font_weight": null }')
+      :format(scope, hex, style and ('"' .. style .. '"') or "null")
   end
 
+  -- Every capture takes the colour its Neovim counterpart takes, so the two
+  -- editors cannot disagree about what a parameter or a field looks like.
   local syntax = {
     syn("comment", c.comment, "italic"),
     syn("comment.doc", c.comment, "italic"),
@@ -316,7 +312,184 @@ function M.zed(bg)
     syn("primary", c.fg),
     syn("predictive", c.gutter, "italic"),
     syn("hint", c.hint),
+    syn("variable.parameter", c.ember),
+    syn("variable.member", c.ember),
+    syn("variable.builtin", c.cinder),
+    syn("enum", c.frost),
+    syn("variant", c.frost),
+    syn("preproc", c.cinder),
+    syn("embedded", c.fg),
+    syn("string.doc", c.sap, "italic"),
+    syn("string.special.symbol", c.ember),
+    syn("text.literal", c.sap),
+    syn("tag.attribute", c.ember),
+    syn("tag.delimiter", c.fg_dim),
+    syn("punctuation.list_marker", c.ember),
   }
+
+  -- Ordered pairs rather than one positional format string. At 140 keys a
+  -- template means an inserted line silently shifts every colour after it onto
+  -- its neighbour's key, and nothing short of reading the output would catch it.
+  local style = {
+    { "background.appearance", "opaque" },
+    { "accents", { c.cinder, c.ember, c.brass, c.sap, c.frost } },
+    { "background", c.bg0 },
+    { "editor.background", c.bg0 },
+    { "editor.foreground", c.fg },
+    { "editor.gutter.background", c.bg0 },
+    { "editor.line_number", c.gutter },
+    { "editor.active_line_number", c.ember },
+    { "editor.active_line.background", c.bg1 },
+    { "editor.highlighted_line.background", c.bg2 },
+    { "editor.wrap_guide", c.bg3 },
+    { "editor.active_wrap_guide", c.bg4 },
+    { "editor.document_highlight.read_background", c.bg2 },
+    { "editor.document_highlight.write_background", c.bg2 },
+    { "editor.document_highlight.bracket_background", c.bg2 },
+    { "editor.invisible", c.bg4 },
+    { "editor.indent_guide", c.bg2 },
+    { "editor.indent_guide_active", c.bg4 },
+    { "editor.subheader.background", c.bg1 },
+    { "elevated_surface.background", c.bg_deep },
+    { "surface.background", c.bg1 },
+    { "text", c.fg },
+    { "text.muted", c.fg_dim },
+    { "text.placeholder", c.gutter },
+    { "text.disabled", c.gutter },
+    { "text.accent", c.ember },
+    { "link_text.hover", c.ember },
+    { "icon", c.fg },
+    { "icon.accent", c.ember },
+    { "icon.muted", c.fg_dim },
+    { "icon.disabled", c.gutter },
+    { "icon.placeholder", c.gutter },
+    { "border", c.bg3 },
+    { "border.variant", c.bg2 },
+    { "border.focused", c.ember },
+    { "border.selected", c.ember },
+    { "border.transparent", c.bg0 },
+    { "pane.focused_border", c.ember },
+    { "pane_group.border", c.bg3 },
+    { "border.disabled", c.bg2 },
+    { "element.background", c.bg1 },
+    { "element.hover", c.bg2 },
+    { "element.active", c.bg3 },
+    { "element.selected", c.vis },
+    { "search.match_background", c.vis },
+    { "element.disabled", c.bg1 },
+    { "ghost_element.background", "#00000000" },
+    { "ghost_element.hover", c.bg2 },
+    { "ghost_element.active", c.bg3 },
+    { "ghost_element.selected", c.vis },
+    { "ghost_element.disabled", c.bg1 },
+    { "drop_target.background", c.vis },
+    { "title_bar.background", c.bg_deep },
+    { "title_bar.inactive_background", c.bg_deep },
+    { "status_bar.background", c.bg2 },
+    { "toolbar.background", c.bg0 },
+    { "tab_bar.background", c.bg1 },
+    { "tab.active_background", c.bg0 },
+    { "tab.inactive_background", c.bg1 },
+    { "panel.background", c.bg_deep },
+    { "panel.focused_border", c.ember },
+    { "panel.indent_guide", c.bg2 },
+    { "panel.indent_guide_active", c.bg4 },
+    { "panel.indent_guide_hover", c.bg3 },
+    { "scrollbar.thumb.background", c.bg4 },
+    { "scrollbar.thumb.hover_background", c.bg5 },
+    { "scrollbar.thumb.border", c.bg3 },
+    { "scrollbar.track.background", c.bg0 },
+    { "scrollbar.track.border", c.bg3 },
+    { "terminal.background", c.bg0 },
+    { "terminal.foreground", c.fg },
+    { "terminal.bright_foreground", c.fg },
+    { "terminal.dim_foreground", c.fg_dim },
+    { "terminal.ansi.black", c.terminal_black },
+    { "terminal.ansi.red", c.terminal_red },
+    { "terminal.ansi.green", c.terminal_green },
+    { "terminal.ansi.yellow", c.terminal_yellow },
+    { "terminal.ansi.blue", c.terminal_blue },
+    { "terminal.ansi.magenta", c.terminal_magenta },
+    { "terminal.ansi.cyan", c.terminal_cyan },
+    { "terminal.ansi.white", c.terminal_white },
+    { "terminal.ansi.bright_black", c.terminal_bright_black },
+    { "terminal.ansi.bright_red", c.terminal_bright_red },
+    { "terminal.ansi.bright_green", c.terminal_bright_green },
+    { "terminal.ansi.bright_yellow", c.terminal_bright_yellow },
+    { "terminal.ansi.bright_blue", c.terminal_bright_blue },
+    { "terminal.ansi.bright_magenta", c.terminal_bright_magenta },
+    { "terminal.ansi.bright_cyan", c.terminal_bright_cyan },
+    { "terminal.ansi.bright_white", c.terminal_bright_white },
+    { "terminal.ansi.background", c.bg0 },
+    { "terminal.ansi.dim_black", c.terminal_black },
+    { "terminal.ansi.dim_red", c.terminal_red },
+    { "terminal.ansi.dim_green", c.terminal_green },
+    { "terminal.ansi.dim_yellow", c.terminal_yellow },
+    { "terminal.ansi.dim_blue", c.terminal_blue },
+    { "terminal.ansi.dim_magenta", c.terminal_magenta },
+    { "terminal.ansi.dim_cyan", c.terminal_cyan },
+    { "terminal.ansi.dim_white", c.terminal_white },
+    { "error", c.error },
+    { "error.background", c.del },
+    { "error.border", c.error },
+    { "warning", c.warn },
+    { "warning.background", c.bg1 },
+    { "warning.border", c.warn },
+    { "info", c.info },
+    { "info.background", c.mod },
+    { "info.border", c.info },
+    { "hint", c.hint },
+    { "hint.background", c.bg1 },
+    { "hint.border", c.hint },
+    { "success", c.ok },
+    { "success.background", c.add },
+    { "success.border", c.ok },
+    { "created", c.ok },
+    { "created.background", c.add },
+    { "created.border", c.ok },
+    { "modified", c.info },
+    { "modified.background", c.mod },
+    { "modified.border", c.info },
+    { "deleted", c.error },
+    { "deleted.background", c.del },
+    { "deleted.border", c.error },
+    { "conflict", c.warn },
+    { "conflict.background", c.bg1 },
+    { "conflict.border", c.warn },
+    { "ignored", c.gutter },
+    { "ignored.background", c.bg1 },
+    { "ignored.border", c.gutter },
+    { "renamed", c.info },
+    { "renamed.background", c.mod },
+    { "renamed.border", c.info },
+    { "predictive", c.gutter },
+    { "predictive.background", c.bg1 },
+    { "predictive.border", c.gutter },
+    { "hidden", c.gutter },
+    { "hidden.background", c.bg1 },
+    { "hidden.border", c.gutter },
+    { "unreachable", c.gutter },
+    { "unreachable.background", c.bg1 },
+    { "unreachable.border", c.gutter },
+  }
+
+  --- @param v string|string[] a six digit hex, a list of them, or a literal
+  --- @return string the JSON value
+  local function value(v)
+    if type(v) == "table" then
+      local out = {}
+      for i, hex in ipairs(v) do out[i] = ('"%sff"'):format(hex) end
+      return "[" .. table.concat(out, ", ") .. "]"
+    end
+    -- eight digits already carry their alpha, and the enums are not colours
+    if v:match("^#%x%x%x%x%x%x$") then return ('"%sff"'):format(v) end
+    return ('"%s"'):format(v)
+  end
+
+  local rows = {}
+  for _, entry in ipairs(style) do
+    rows[#rows + 1] = ('        "%s": %s,'):format(entry[1], value(entry[2]))
+  end
 
   return ([[
 {
@@ -328,105 +501,9 @@ function M.zed(bg)
       "name": "%s",
       "appearance": "dark",
       "style": {
-        "background": %s,
-        "editor.background": %s,
-        "editor.foreground": %s,
-        "editor.gutter.background": %s,
-        "editor.line_number": %s,
-        "editor.active_line_number": %s,
-        "editor.active_line.background": %s,
-        "editor.highlighted_line.background": %s,
-        "editor.wrap_guide": %s,
-        "editor.document_highlight.read_background": %s,
-        "editor.document_highlight.write_background": %s,
-        "editor.invisible": %s,
-        "editor.indent_guide": %s,
-        "editor.indent_guide_active": %s,
-        "editor.subheader.background": %s,
-        "elevated_surface.background": %s,
-        "surface.background": %s,
-        "text": %s,
-        "text.muted": %s,
-        "text.placeholder": %s,
-        "text.disabled": %s,
-        "text.accent": %s,
-        "border": %s,
-        "border.variant": %s,
-        "border.focused": %s,
-        "border.selected": %s,
-        "border.transparent": %s,
-        "border.disabled": %s,
-        "element.background": %s,
-        "element.hover": %s,
-        "element.active": %s,
-        "element.selected": %s,
-        "element.disabled": %s,
-        "ghost_element.background": "#00000000",
-        "ghost_element.hover": %s,
-        "ghost_element.active": %s,
-        "ghost_element.selected": %s,
-        "ghost_element.disabled": %s,
-        "drop_target.background": %s,
-        "title_bar.background": %s,
-        "status_bar.background": %s,
-        "toolbar.background": %s,
-        "tab_bar.background": %s,
-        "tab.active_background": %s,
-        "tab.inactive_background": %s,
-        "panel.background": %s,
-        "panel.focused_border": %s,
-        "scrollbar.thumb.background": %s,
-        "scrollbar.thumb.hover_background": %s,
-        "scrollbar.thumb.border": %s,
-        "scrollbar.track.background": %s,
-        "scrollbar.track.border": %s,
-        "terminal.background": %s,
-        "terminal.foreground": %s,
-        "terminal.bright_foreground": %s,
-        "terminal.dim_foreground": %s,
-        "terminal.ansi.black": %s,
-        "terminal.ansi.red": %s,
-        "terminal.ansi.green": %s,
-        "terminal.ansi.yellow": %s,
-        "terminal.ansi.blue": %s,
-        "terminal.ansi.magenta": %s,
-        "terminal.ansi.cyan": %s,
-        "terminal.ansi.white": %s,
-        "terminal.ansi.bright_black": %s,
-        "terminal.ansi.bright_red": %s,
-        "terminal.ansi.bright_green": %s,
-        "terminal.ansi.bright_yellow": %s,
-        "terminal.ansi.bright_blue": %s,
-        "terminal.ansi.bright_magenta": %s,
-        "terminal.ansi.bright_cyan": %s,
-        "terminal.ansi.bright_white": %s,
-        "error": %s,
-        "error.background": %s,
-        "error.border": %s,
-        "warning": %s,
-        "warning.background": %s,
-        "warning.border": %s,
-        "info": %s,
-        "info.background": %s,
-        "info.border": %s,
-        "hint": %s,
-        "hint.background": %s,
-        "hint.border": %s,
-        "success": %s,
-        "success.background": %s,
-        "success.border": %s,
-        "created": %s,
-        "created.background": %s,
-        "modified": %s,
-        "modified.background": %s,
-        "deleted": %s,
-        "deleted.background": %s,
-        "conflict": %s,
-        "ignored": %s,
-        "renamed": %s,
-        "predictive": %s,
+%s
         "players": [
-          { "cursor": %s, "background": %s, "selection": %s }
+          { "cursor": "%sff", "background": "%sff", "selection": "%sff" }
         ],
         "syntax": {
 %s
@@ -435,37 +512,7 @@ function M.zed(bg)
     }
   ]
 }
-]]):format(
-    palette.name(bg), palette.name(bg),
-    a(c.bg0), a(c.bg0), a(c.fg), a(c.bg0), a(c.gutter), a(c.ember),
-    a(c.bg1), a(c.bg2), a(c.bg3), a(c.bg2), a(c.bg2), a(c.bg4),
-    a(c.bg2), a(c.bg4), a(c.bg1),
-    a(c.bg_deep), a(c.bg1),
-    a(c.fg), a(c.fg_dim), a(c.gutter), a(c.gutter), a(c.ember),
-    a(c.bg3), a(c.bg2), a(c.ember), a(c.ember), a(c.bg0), a(c.bg2),
-    a(c.bg1), a(c.bg2), a(c.bg3), a(c.vis), a(c.bg1),
-    a(c.bg2), a(c.bg3), a(c.vis), a(c.bg1),
-    a(c.vis),
-    a(c.bg_deep), a(c.bg2), a(c.bg0),
-    a(c.bg1), a(c.bg0), a(c.bg1),
-    a(c.bg_deep), a(c.ember),
-    a(c.bg4), a(c.bg5), a(c.bg3), a(c.bg0), a(c.bg3),
-    a(c.bg0), a(c.fg), a(c.fg), a(c.fg_dim),
-    a(c.terminal_black), a(c.terminal_red), a(c.terminal_green), a(c.terminal_yellow),
-    a(c.terminal_blue), a(c.terminal_magenta), a(c.terminal_cyan), a(c.terminal_white),
-    a(c.terminal_bright_black), a(c.terminal_bright_red), a(c.terminal_bright_green),
-    a(c.terminal_bright_yellow), a(c.terminal_bright_blue), a(c.terminal_bright_magenta),
-    a(c.terminal_bright_cyan), a(c.terminal_bright_white),
-    a(c.error), a(c.del), a(c.error),
-    a(c.warn), a(c.bg1), a(c.warn),
-    a(c.info), a(c.mod), a(c.info),
-    a(c.hint), a(c.bg1), a(c.hint),
-    a(c.ok), a(c.add), a(c.ok),
-    a(c.ok), a(c.add),
-    a(c.info), a(c.mod),
-    a(c.error), a(c.del),
-    a(c.warn), a(c.gutter), a(c.info), a(c.gutter),
-    a(c.ember), a(c.ember), a(c.vis),
+]]):format(name, name, table.concat(rows, "\n"), c.ember, c.ember, c.vis,
     table.concat(syntax, ",\n"))
 end
 
