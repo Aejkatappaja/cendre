@@ -59,6 +59,9 @@ local ONCE = {
   -- Zed lists an extension once and its themes inside it, so the manifest does
   -- not take a depth suffix even though the three themes beside it do.
   ["extras/zed/extension.toml"] = editors.zed_extension,
+  -- their packaging step looks for the licence beside the manifest, not at the
+  -- root of the repository, so the extension carries its own copy
+  ["extras/zed/LICENSE"] = editors.zed_licence,
 
   ["assets/banner.svg"] = art.banner,
   ["assets/editor.svg"] = art.editor,
