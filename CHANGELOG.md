@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/Aejkatappaja/cendre/compare/v1.4.0...v1.4.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* **ci:** run the Obsidian sync inside the release job ([ec7419f](https://github.com/Aejkatappaja/cendre/commit/ec7419f5a351b3c21c3218d6d74647df65755654))
+
 ## [1.4.0](https://github.com/Aejkatappaja/cendre/compare/v1.3.0...v1.4.0) (2026-07-31)
 
 
