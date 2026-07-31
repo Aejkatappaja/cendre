@@ -1,0 +1,62 @@
+name: sync-obsidian
+
+# Obsidian's registry points at a repository, never at a path inside one, and every
+# theme in it keeps theme.css at its root. So unlike Zed, which reads this repo
+# directly through a path field, Obsidian needs a second repository, and a second
+# repository means a copy. This keeps that copy an output of the generator rather
+# than something somebody remembers to update.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stamp the released version into the manifest
+        run: |
+          set -euo pipefail
+          # read from the release manifest rather than the tag, so a manual run
+          # produces the same result as a published release
+          version=$(jq -r '.["."]' .release-please-manifest.json)
+          echo "version=$version" >> "$GITHUB_ENV"
+
+          mkdir -p out
+          cp extras/obsidian/cendre/theme.css out/theme.css
+          cp LICENSE out/LICENSE
+          jq --arg v "$version" '.version = $v' \
+            extras/obsidian/cendre/manifest.json > out/manifest.json
+
+          echo "Syncing cendre $version"
+          cat out/manifest.json
+
+      - name: Push to the theme repository
+        env:
+          GH_TOKEN: ${{ secrets.OBSIDIAN_SYNC_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/Aejkatappaja/cendre-obsidian.git" theme
+          # only the three generated files are replaced: the screenshot and the
+          # readme live in that repository and are not ours to overwrite
+          cp out/theme.css out/manifest.json out/LICENSE theme/
+
+          cd theme
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet; then
+            echo "Already in step with cendre $version, nothing to push"
+            exit 0
+          fi
+
+          git add theme.css manifest.json LICENSE
+          git commit -m "Sync cendre $version"
+          git push

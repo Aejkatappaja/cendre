@@ -832,11 +832,18 @@ function M.obsidian(bg)
 ]]):format(bg, LINK, h, s, l, channels(c.error),
     table.concat(rows, "\n"), table.concat(edit, "\n\n"))
 end
+--- The Obsidian manifest. Its version reads 0.0.0 here on purpose: Obsidian compares
+--- it against the installed copy to offer an update, so it has to follow the releases,
+--- and the sync workflow stamps the released number in as it pushes. Reading
+--- .release-please-manifest.json here instead would fail the drift check on every
+--- release pull request, which bumps that manifest without re-rendering this file.
+--- @param bg string
+--- @return string
 function M.obsidian_manifest(bg)
   return ([[
 {
   "name": "%s",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "minAppVersion": "1.0.0",
   "author": "Aejkatappaja",
   "authorUrl": "%s"
