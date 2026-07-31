@@ -60,6 +60,7 @@
   --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, "DejaVu Sans Mono", monospace;
   --serif: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --pad: clamp(1.25rem, 4.5vw, 4.5rem);
+  --ctl-h: 1.75rem;
 }
 
 /* Depth moves the ground and nothing else, so a screenshot at any depth is
@@ -224,26 +225,32 @@ code { font-family: var(--mono); font-size: 0.92em; color: var(--ink2); }
   text-transform: uppercase; font-size: 0.62rem;
 }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
-.seg label {
-  font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase;
-  cursor: pointer; border: 1px solid var(--rule);
-  color: var(--ink3); padding: 0.28rem 0.55rem;
+
+/* The two controls in the toolbar, written once because they are the same control.
+   Their height is declared rather than left to fall out of their contents: the
+   switcher used to take it from the body's line-height and the star box from the
+   star glyph, so the two never agreed, and a star count arriving later would have
+   moved one of them again. */
+.seg label, .bar-gh {
+  height: var(--ctl-h); line-height: 1;
+  display: inline-flex; align-items: center;
+  font-size: 0.64rem; text-transform: uppercase;
+  color: var(--ink3); border: 1px solid var(--rule);
 }
+.seg label:hover, .bar-gh:hover { color: var(--ink); }
+
+.seg label { letter-spacing: 0.1em; cursor: pointer; padding-inline: 0.55rem; }
 .seg input + label:not(:first-of-type) { border-inline-start: 0; }
-.seg label:hover { color: var(--ink); }
 .seg input:checked + label {
   color: var(--g0); background: var(--ember); border-color: var(--ember);
 }
 .seg input:focus-visible + label { outline: 2px solid var(--ember); outline-offset: 2px; }
 
 .bar-gh {
-  justify-self: end; display: flex; align-items: center; gap: 0.4rem;
-  text-decoration: none; color: var(--ink3);
-  font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase;
-  border: 1px solid var(--rule); padding: 0.33rem 0.6rem;
-  line-height: 1;
+  justify-self: end; gap: 0.4rem; text-decoration: none;
+  letter-spacing: 0.14em; padding-inline: 0.6rem;
 }
-.bar-gh:hover { color: var(--ink); border-color: var(--ink3); }
+.bar-gh:hover { border-color: var(--ink3); }
 /* The glyph is set above the words and its line-height pulled back by the same
    factor, so it reads as an icon without dragging the box taller than a label. */
 .bar-gh .star {
@@ -258,11 +265,13 @@ code { font-family: var(--mono); font-size: 0.92em; color: var(--ink2); }
 .bar-gh.has-count .w-on, .bar-gh.has-count .w-gh { display: none; }
 
 @media (max-width: 560px) {
+  /* taller on a phone, where these are tap targets rather than click targets */
+  :root { --ctl-h: 2rem; }
   .bar-in { gap: 0.45rem; }
   .bar-mark { letter-spacing: 0.16em; }
   .seg legend { display: none; }
-  .seg label { padding: 0.45rem 0.42rem; letter-spacing: 0.06em; }
-  .bar-gh { letter-spacing: 0.04em; font-size: 0.6rem; gap: 0.25rem; padding: 0.45rem 0.5rem; }
+  .seg label { padding-inline: 0.42rem; letter-spacing: 0.06em; }
+  .bar-gh { letter-spacing: 0.04em; font-size: 0.6rem; gap: 0.25rem; padding-inline: 0.5rem; }
   .bar-gh:not(.has-count) .w-stars, .bar-gh:not(.has-count) .w-on { display: none; }
 }
 @media (max-width: 360px) {
