@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/Aejkatappaja/cendre/compare/v1.1.0...v1.2.0) (2026-07-31)
+
+
+### Features
+
+* **extras:** cover the whole Zed theme schema ([741bd43](https://github.com/Aejkatappaja/cendre/commit/741bd438b168c5c697a91d2bd1dedae0f70a58db))
+
+
+### Bug Fixes
+
+* **site:** give the toolbar controls one declared height ([91ed5d1](https://github.com/Aejkatappaja/cendre/commit/91ed5d1f00e9717364515b0e319a295871dbb89b))
+
 ## [1.1.0](https://github.com/Aejkatappaja/cendre/compare/v1.0.0...v1.1.0) (2026-07-30)
 
 
