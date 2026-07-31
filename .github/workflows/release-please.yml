@@ -66,3 +66,23 @@ jobs:
           git add theme.css manifest.json LICENSE
           git commit -m "Sync cendre $VERSION"
           git push
+
+      # Obsidian offers an update by comparing the version in a release asset, so
+      # a version without a release never reaches anybody who already installed the
+      # theme. The tag carries no v prefix, which is the shape their directory reads.
+      - name: Release the Obsidian theme
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ secrets.OBSIDIAN_SYNC_TOKEN }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          repo=Aejkatappaja/cendre-obsidian
+          if gh release view "$VERSION" --repo "$repo" >/dev/null 2>&1; then
+            echo "Release $VERSION already exists on $repo"
+            exit 0
+          fi
+          gh release create "$VERSION" --repo "$repo" \
+            --title "$VERSION" \
+            --notes "cendre $VERSION for Obsidian. Generated from the palette in Aejkatappaja/cendre." \
+            out/manifest.json out/theme.css
