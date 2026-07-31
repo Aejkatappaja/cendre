@@ -23,7 +23,7 @@ local DEFAULT = "hard"
 local PER_DEPTH = {
   ["extras/vim/cendre.vim"] = editors.vim,
   ["extras/helix/cendre.toml"] = editors.helix,
-  ["extras/zed/cendre.json"] = editors.zed,
+  ["extras/zed/themes/cendre.json"] = editors.zed,
 
   ["extras/ghostty/cendre"] = terminals.ghostty,
   ["extras/kitty/cendre.conf"] = terminals.kitty,
@@ -56,6 +56,10 @@ local PER_DEPTH = {
 -- Artwork ships once. The landing page carries its own depth switcher, and a
 -- README does not need three of each picture.
 local ONCE = {
+  -- Zed lists an extension once and its themes inside it, so the manifest does
+  -- not take a depth suffix even though the three themes beside it do.
+  ["extras/zed/extension.toml"] = editors.zed_extension,
+
   ["assets/banner.svg"] = art.banner,
   ["assets/editor.svg"] = art.editor,
   ["docs/favicon.svg"] = art.favicon,
