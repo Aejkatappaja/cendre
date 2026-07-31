@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Aejkatappaja/cendre/compare/v1.3.0...v1.4.0) (2026-07-31)
+
+
+### Features
+
+* **extras:** raise the Obsidian theme to a usable coverage ([14d4610](https://github.com/Aejkatappaja/cendre/commit/14d461043ad6635da5b0e4af0177a06512cfc8b5))
+
 ## [1.3.0](https://github.com/Aejkatappaja/cendre/compare/v1.2.0...v1.3.0) (2026-07-31)
 
 
