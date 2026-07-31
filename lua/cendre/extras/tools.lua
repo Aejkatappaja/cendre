@@ -560,84 +560,278 @@ end
 --- @return string
 function M.obsidian(bg)
   local c = palette.get(bg)
+
+  --- The accent as HSL components, which Obsidian derives several elements from
+  --- rather than reading the hex. Computed here so it cannot drift from ember.
+  --- @param hex string
+  --- @return integer h, integer s, integer l
+  local function hsl(hex)
+    local r = tonumber(hex:sub(2, 3), 16) / 255
+    local g = tonumber(hex:sub(4, 5), 16) / 255
+    local b = tonumber(hex:sub(6, 7), 16) / 255
+    local hi, lo = math.max(r, g, b), math.min(r, g, b)
+    local l = (hi + lo) / 2
+    if hi == lo then return 0, 0, math.floor(l * 100 + 0.5) end
+    local d = hi - lo
+    local s = l > 0.5 and d / (2 - hi - lo) or d / (hi + lo)
+    local h
+    if hi == r then h = (g - b) / d + (g < b and 6 or 0)
+    elseif hi == g then h = (b - r) / d + 2
+    else h = (r - g) / d + 4 end
+    return math.floor(h * 60 + 0.5), math.floor(s * 100 + 0.5), math.floor(l * 100 + 0.5)
+  end
+
+  --- @param hex string
+  --- @return string the three channels, for a variable Obsidian wants as rgb
+  local function channels(hex)
+    return ("%d, %d, %d"):format(
+      tonumber(hex:sub(2, 3), 16), tonumber(hex:sub(4, 5), 16), tonumber(hex:sub(6, 7), 16))
+  end
+
+  local h, s, l = hsl(c.ember)
+
+  -- Every variable, as ordered pairs rather than one positional template: at
+  -- 147 of them a format string means an inserted line silently shifts every
+  -- colour after it onto its neighbour's variable.
+  local vars = {
+    { "--background-primary", c.bg0 },
+    { "--background-primary-alt", c.bg1 },
+    { "--background-secondary", c.bg_deep },
+    { "--background-secondary-alt", c.bg1 },
+    { "--background-modifier-border", c.bg3 },
+    { "--background-modifier-border-hover", c.bg4 },
+    { "--background-modifier-hover", c.bg1 },
+    { "--background-modifier-error", c.del },
+    { "--background-modifier-success", c.add },
+    { "--text-normal", c.fg },
+    { "--text-muted", c.fg_dim },
+    { "--text-faint", c.comment },
+    { "--text-accent", c.ember },
+    { "--text-accent-hover", c.brass },
+    { "--text-on-accent", c.bg0 },
+    { "--text-selection", c.vis },
+    { "--text-highlight-bg", c.vis },
+    { "--text-error", c.error },
+    { "--text-success", c.ok },
+    { "--interactive-accent", c.ember },
+    { "--interactive-accent-hover", c.brass },
+    { "--interactive-normal", c.bg2 },
+    { "--interactive-hover", c.bg3 },
+    { "--h1-color", c.ember },
+    { "--h2-color", c.brass },
+    { "--h3-color", c.frost },
+    { "--h4-color", c.sap },
+    { "--h5-color", c.cinder },
+    { "--h6-color", c.fg_dim },
+    { "--code-normal", c.fg },
+    { "--code-background", c.bg_deep },
+    { "--code-keyword", c.cinder },
+    { "--code-function", c.brass },
+    { "--code-string", c.sap },
+    { "--code-value", c.sap },
+    { "--code-comment", c.comment },
+    { "--code-property", c.ember },
+    { "--code-tag", c.cinder },
+    { "--code-operator", c.fg_dim },
+    { "--blockquote-border-color", c.ember },
+    { "--hr-color", c.bg3 },
+    { "--tag-color", c.frost },
+    { "--tag-background", c.bg1 },
+    { "--checkbox-color", c.ember },
+    { "--link-color", c.frost },
+    { "--link-unresolved-color", c.error },
+    { "--graph-line", c.bg3 },
+    { "--graph-node", c.ember },
+    { "--graph-node-tag", c.frost },
+
+    -- accent
+    { "--color-accent", c.ember },
+    { "--color-accent-1", c.brass },
+    { "--color-accent-2", c.cinder },
+
+    -- surfaces and dividers
+    { "--background-modifier-cover", c.bg_deep },
+    { "--background-modifier-box-shadow", c.bg_deep },
+    { "--background-modifier-form-field", c.bg1 },
+    { "--background-modifier-form-field-highlighted", c.bg2 },
+    { "--background-modifier-error-hover", c.error },
+    { "--divider-color", c.bg3 },
+    { "--divider-color-hover", c.ember },
+    { "--indentation-guide-color", c.bg3 },
+    { "--indentation-guide-color-active", c.bg5 },
+    { "--flashing-background", c.vis },
+
+    -- text
+    { "--bold-color", c.fg },
+    { "--italic-color", c.fg },
+    { "--text-error-hover", c.error },
+    { "--text-highlight-bg-active", c.vis },
+    { "--text-on-accent-inverted", c.fg },
+
+    -- links
+    { "--link-color-hover", c.brass },
+    { "--link-external-color", c.frost },
+    { "--link-external-color-hover", c.brass },
+
+    -- inline code
+    { "--inline-code-color", c.sap },
+    { "--inline-code-background", c.bg1 },
+    { "--code-important", c.cinder },
+
+    -- lists and checkboxes
+    { "--list-marker-color", c.ember },
+    { "--list-marker-color-hover", c.brass },
+    { "--list-marker-color-collapsed", c.cinder },
+    { "--checkbox-border-color", c.gutter },
+    { "--checkbox-border-color-hover", c.ember },
+    { "--checkbox-color-hover", c.brass },
+
+    -- icons
+    { "--icon-color", c.fg_dim },
+    { "--icon-color-hover", c.fg },
+    { "--icon-color-active", c.ember },
+    { "--icon-color-focused", c.fg },
+
+    -- callouts, on the semantic family so an admonition never wears a syntax pigment
+    { "--callout-default", c.info },
+    { "--callout-info", c.info },
+    { "--callout-todo", c.info },
+    { "--callout-tip", c.ok },
+    { "--callout-success", c.ok },
+    { "--callout-question", c.hint },
+    { "--callout-warning", c.warn },
+    { "--callout-fail", c.error },
+    { "--callout-error", c.error },
+    { "--callout-bug", c.error },
+    { "--callout-example", c.frost },
+    { "--callout-quote", c.comment },
+
+    -- blockquotes
+    { "--blockquote-background-color", c.bg1 },
+
+    -- navigation
+    { "--nav-item-color", c.fg_dim },
+    { "--nav-item-color-hover", c.fg },
+    { "--nav-item-color-active", c.fg },
+    { "--nav-item-background-hover", c.bg1 },
+    { "--nav-item-background-active", c.bg2 },
+    { "--nav-heading-color", c.ember },
+    { "--nav-heading-color-collapsed", c.fg_dim },
+    { "--nav-indentation-guide-color", c.bg3 },
+    { "--vault-name-color", c.ember },
+    { "--ribbon-background", c.bg_deep },
+    { "--ribbon-background-collapsed", c.bg_deep },
+
+    -- tabs
+    { "--tab-background-active", c.bg0 },
+    { "--tab-text-color", c.fg_dim },
+    { "--tab-text-color-focused", c.fg_dim },
+    { "--tab-text-color-focused-active", c.fg },
+    { "--tab-text-color-focused-active-current", c.ember },
+    { "--tab-divider-color", c.bg3 },
+    { "--tab-outline-color", c.bg3 },
+
+    -- title bar and status bar
+    { "--titlebar-background", c.bg_deep },
+    { "--titlebar-background-focused", c.bg_deep },
+    { "--titlebar-text-color", c.fg_dim },
+    { "--titlebar-text-color-focused", c.fg },
+    { "--status-bar-background", c.bg_deep },
+    { "--status-bar-border-color", c.bg3 },
+    { "--status-bar-text-color", c.fg_dim },
+    { "--prompt-border-color", c.bg3 },
+
+    -- tables
+    { "--table-border-color", c.bg3 },
+    { "--table-header-background", c.bg1 },
+    { "--table-header-background-hover", c.bg2 },
+    { "--table-row-alt-background", c.bg1 },
+
+    -- tags
+    { "--tag-color-hover", c.brass },
+    { "--tag-background-hover", c.bg2 },
+    { "--tag-border-color", c.bg3 },
+    { "--tag-border-color-hover", c.frost },
+
+    -- scrollbars
+    { "--scrollbar-bg", c.bg0 },
+    { "--scrollbar-thumb-bg", c.bg3 },
+    { "--scrollbar-active-thumb-bg", c.bg4 },
+
+    -- toggles and sliders
+    { "--toggle-thumb-color", c.fg },
+    { "--slider-thumb-border-color", c.bg4 },
+    { "--interactive-before", c.bg2 },
+
+    -- graph
+    { "--graph-node-unresolved", c.error },
+    { "--graph-node-focused", c.brass },
+    { "--graph-node-attachment", c.sap },
+  }
+
+  local rows = {}
+  for _, v in ipairs(vars) do
+    rows[#rows + 1] = ("  %s: %s;"):format(v[1], v[2])
+  end
+
+  -- Every capture takes the colour its Neovim counterpart takes, so a code block
+  -- in a note reads the same way as the file it was copied from.
+  local cm = {
+    { "keyword", c.cinder },
+    { "builtin", c.cinder },
+    { "meta", c.cinder },
+    { "tag", c.cinder },
+    { "def", c.brass },
+    { "callee", c.brass },
+    { "type", c.frost },
+    { "variable-3", c.frost },
+    { "string", c.sap },
+    { "string-2", c.sap },
+    { "number", c.sap },
+    { "atom", c.sap },
+    { "property", c.ember },
+    { "qualifier", c.ember },
+    { "attribute", c.ember },
+    { "variable", c.fg },
+    { "variable-2", c.fg },
+    { "operator", c.fg_dim },
+    { "punctuation", c.fg_dim },
+    { "comment", c.comment },
+  }
+
+  local edit = {}
+  for _, entry in ipairs(cm) do
+    edit[#edit + 1] = (".theme-dark .cm-s-obsidian .cm-%s,\n.theme-dark .cm-%s {\n  color: %s !important;\n}")
+      :format(entry[1], entry[1], entry[2])
+  end
+
   return ([[
 /* cendre for Obsidian · %s
    %s
    generated by scripts/extras.lua, do not edit
 
    Install: copy this folder to <vault>/.obsidian/themes/cendre, then pick
-   cendre under Appearance. Dark only, like the colorscheme. */
+   cendre under Appearance. Dark only, like the colorscheme.
+
+   Sizes, weights and thicknesses are left alone on purpose: this is a
+   colorscheme, so it sets colour and nothing else. */
 
 .theme-dark {
-  --background-primary: %s;
-  --background-primary-alt: %s;
-  --background-secondary: %s;
-  --background-secondary-alt: %s;
-  --background-modifier-border: %s;
-  --background-modifier-border-hover: %s;
-  --background-modifier-hover: %s;
-  --background-modifier-error: %s;
-  --background-modifier-success: %s;
+  --accent-h: %d;
+  --accent-s: %d%%;
+  --accent-l: %d%%;
+  --interactive-accent-hsl: var(--accent-h), var(--accent-s), var(--accent-l);
+  --background-modifier-error-rgb: %s;
 
-  --text-normal: %s;
-  --text-muted: %s;
-  --text-faint: %s;
-  --text-accent: %s;
-  --text-accent-hover: %s;
-  --text-on-accent: %s;
-  --text-selection: %s;
-  --text-highlight-bg: %s;
-  --text-error: %s;
-  --text-success: %s;
-
-  --interactive-accent: %s;
-  --interactive-accent-hover: %s;
-  --interactive-normal: %s;
-  --interactive-hover: %s;
-
-  --h1-color: %s;
-  --h2-color: %s;
-  --h3-color: %s;
-  --h4-color: %s;
-  --h5-color: %s;
-  --h6-color: %s;
-
-  --code-normal: %s;
-  --code-background: %s;
-  --code-keyword: %s;
-  --code-function: %s;
-  --code-string: %s;
-  --code-value: %s;
-  --code-comment: %s;
-  --code-property: %s;
-  --code-tag: %s;
-  --code-operator: %s;
-
-  --blockquote-border-color: %s;
-  --hr-color: %s;
-  --tag-color: %s;
-  --tag-background: %s;
-  --checkbox-color: %s;
-  --link-color: %s;
-  --link-unresolved-color: %s;
-  --graph-line: %s;
-  --graph-node: %s;
-  --graph-node-tag: %s;
+%s
 }
-]]):format(bg, LINK,
-    c.bg0, c.bg1, c.bg_deep, c.bg1, c.bg3, c.bg4, c.bg1, c.del, c.add,
-    c.fg, c.fg_dim, c.comment, c.ember, c.brass, c.bg0, c.vis, c.vis,
-    c.error, c.ok,
-    c.ember, c.brass, c.bg2, c.bg3,
-    c.ember, c.brass, c.frost, c.sap, c.cinder, c.fg_dim,
-    c.fg, c.bg_deep, c.cinder, c.brass, c.sap, c.sap, c.comment,
-    c.ember, c.cinder, c.fg_dim,
-    c.ember, c.bg3, c.frost, c.bg1, c.ember, c.frost, c.error,
-    c.bg3, c.ember, c.frost)
-end
 
---- @param bg string
---- @return string
+/* Syntax inside a code block while editing. Obsidian styles these through
+   CodeMirror rather than through variables, so they have to be named. */
+%s
+]]):format(bg, LINK, h, s, l, channels(c.error),
+    table.concat(rows, "\n"), table.concat(edit, "\n\n"))
+end
 function M.obsidian_manifest(bg)
   return ([[
 {
