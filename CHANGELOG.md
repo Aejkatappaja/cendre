@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/Aejkatappaja/cendre/compare/v1.4.1...v1.5.0) (2026-07-31)
+
+
+### Features
+
+* **ci:** cut an Obsidian release on every version ([dbcee06](https://github.com/Aejkatappaja/cendre/commit/dbcee06725a096e857a0bc91b22729b68cb21009))
+
 ## [1.4.1](https://github.com/Aejkatappaja/cendre/compare/v1.4.0...v1.4.1) (2026-07-31)
 
 
