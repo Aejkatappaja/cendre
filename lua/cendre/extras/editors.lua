@@ -261,6 +261,27 @@ end
 
 --- @param bg string
 --- @return string
+--- The Zed extension manifest. One for the three themes, since Zed lists an
+--- extension once and its themes inside it.
+---
+--- The version is a literal on purpose. It could be read from
+--- .release-please-manifest.json, but then a release pull request would bump the
+--- manifest, the drift check would re-render this file at the new number, compare
+--- it to the committed one at the old number, and fail. Zed versions extensions
+--- independently anyway: bump this line when submitting a store update.
+--- @return string
+function M.zed_extension()
+  return ([[
+id = "cendre-theme"
+name = "cendre"
+version = "0.1.0"
+schema_version = 1
+authors = ["Aejkatappaja"]
+description = "%s"
+repository = "https://github.com/Aejkatappaja/cendre"
+]]):format("Dark colorscheme with every hue computed from a wood fire's emission spectrum.")
+end
+
 function M.zed(bg)
   local c = palette.get(bg)
   local name = palette.name(bg)

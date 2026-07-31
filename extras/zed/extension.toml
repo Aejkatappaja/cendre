@@ -1,0 +1,7 @@
+id = "cendre-theme"
+name = "cendre"
+version = "0.1.0"
+schema_version = 1
+authors = ["Aejkatappaja"]
+description = "Dark colorscheme with every hue computed from a wood fire's emission spectrum."
+repository = "https://github.com/Aejkatappaja/cendre"

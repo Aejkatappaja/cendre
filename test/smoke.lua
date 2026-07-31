@@ -392,16 +392,26 @@ check("every surface ships at all three depths", function()
   reload()
   package.loaded["cendre.extras"] = nil
   local files = require("cendre.extras").files()
-  local surfaces = {}
+  -- Counted per theme name rather than per directory, because a directory can
+  -- also hold something that is not a depth: Zed lists an extension once and its
+  -- themes inside it, so extras/zed carries a manifest beside its three themes.
+  local surfaces, depths = {}, {}
   for path in pairs(files) do
     local dir = path:match("^extras/([^/]+)/")
-    if dir then surfaces[dir] = (surfaces[dir] or 0) + 1 end
+    if dir then
+      surfaces[dir] = true
+      local stem = path:match("cendre%-?(%a*)")
+      if stem == "" or stem == "medium" or stem == "soft" then
+        depths[dir] = (depths[dir] or 0) + 1
+      end
+    end
   end
   local n = 0
-  for dir, count in pairs(surfaces) do
+  for dir in pairs(surfaces) do
     n = n + 1
-    assert(count % 3 == 0,
-      string.format("%s has %d files, not a multiple of three depths", dir, count))
+    assert(depths[dir] and depths[dir] % 3 == 0,
+      string.format("%s has %s depth files, not a multiple of three",
+        dir, tostring(depths[dir])))
   end
   assert(n >= 24, n .. " surfaces under extras/, expected at least 24")
 end)
@@ -423,7 +433,7 @@ check("no two depths of one surface share a theme name", function()
     local name = palette.name(bg)
     local suffix = bg == palette.default and "" or ("-" .. bg)
     for _, target in ipairs({
-      "extras/zed/cendre%s.json",
+      "extras/zed/themes/cendre%s.json",
       "extras/wezterm/cendre%s.toml",
       "extras/bat/cendre%s.tmTheme",
       "extras/hunk/cendre%s.toml",
