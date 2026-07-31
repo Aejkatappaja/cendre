@@ -6,9 +6,11 @@ name: sync-obsidian
 # repository means a copy. This keeps that copy an output of the generator rather
 # than something somebody remembers to update.
 
+# Manual only. A release trigger would never fire: release-please publishes with
+# GITHUB_TOKEN, and GitHub refuses to let an event raised by that token start
+# another workflow, so the sync runs inside the release-please job instead. This
+# stays for re-pushing a release by hand, and for testing the token.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:

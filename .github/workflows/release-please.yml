@@ -13,6 +13,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # The Obsidian theme lives in its own repository, because their registry
+      # points at a repository and never at a path inside one. Pushing it from here
+      # rather than from an `on: release` workflow is not a preference: release-please
+      # publishes the release with GITHUB_TOKEN, and GitHub refuses to let an event
+      # raised by that token start another workflow, so a release trigger never fires.
+      # Running in this same job sidesteps that, because nothing new is triggered.
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Stamp the released version into the Obsidian manifest
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          cp extras/obsidian/cendre/theme.css out/theme.css
+          cp LICENSE out/LICENSE
+          jq --arg v "$VERSION" '.version = $v' \
+            extras/obsidian/cendre/manifest.json > out/manifest.json
+          echo "Syncing cendre $VERSION"
+          cat out/manifest.json
+
+      - name: Push to the Obsidian theme repository
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ secrets.OBSIDIAN_SYNC_TOKEN }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          git clone --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/Aejkatappaja/cendre-obsidian.git" theme
+          # only the three generated files are replaced: the screenshot and the
+          # readme live in that repository and are not ours to overwrite
+          cp out/theme.css out/manifest.json out/LICENSE theme/
+
+          cd theme
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet; then
+            echo "Already in step with cendre $VERSION, nothing to push"
+            exit 0
+          fi
+
+          git add theme.css manifest.json LICENSE
+          git commit -m "Sync cendre $VERSION"
+          git push
