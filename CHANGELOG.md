@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/Aejkatappaja/cendre/compare/v1.2.0...v1.3.0) (2026-07-31)
+
+
+### Features
+
+* **extras:** ship the Zed theme as a publishable extension ([3e4f579](https://github.com/Aejkatappaja/cendre/commit/3e4f57950b2272a5512ed15886db70c6b3b293ab))
+
+
+### Bug Fixes
+
+* **extras:** carry the licence beside the Zed manifest ([c0d78fe](https://github.com/Aejkatappaja/cendre/commit/c0d78fe00472426723d717036b48037e8c2bf847))
+
 ## [1.2.0](https://github.com/Aejkatappaja/cendre/compare/v1.1.0...v1.2.0) (2026-07-31)
 
 
