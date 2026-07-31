@@ -261,6 +261,18 @@ end
 
 --- @param bg string
 --- @return string
+--- The licence, copied beside the Zed manifest. Their packaging step reads it from
+--- the extension directory rather than from the repository root, which with a path
+--- field means extras/zed and not here, so the copy is required and it is read from
+--- the root file rather than retyped, which is what stops the two from diverging.
+--- @return string
+function M.zed_licence()
+  local fd = assert(io.open("LICENSE", "r"), "LICENSE is missing from the repository root")
+  local body = fd:read("*a")
+  fd:close()
+  return body
+end
+
 --- The Zed extension manifest. One for the three themes, since Zed lists an
 --- extension once and its themes inside it.
 ---
