@@ -481,6 +481,82 @@ check("the tmux plugin theme is mapped by role, not by ANSI name", function()
   end
 end)
 
+check("no generated file carries a colour the palette does not define", function()
+  reload()
+  local palette = require("cendre.palette")
+  local known = {}
+  for _, bg in ipairs(palette.backgrounds) do
+    for _, v in pairs(palette.get(bg)) do
+      if type(v) == "string" and v:match("^#%x%x%x%x%x%x$") then known[v:lower()] = true end
+    end
+  end
+
+  -- The drift check compares every file to a fresh render, so a colour written
+  -- into a generator by hand matches itself and passes. This is the check that
+  -- does not: one source of truth means the palette, not the palette plus
+  -- whatever a template happened to hardcode.
+  package.loaded["cendre.extras"] = nil
+  local checked = 0
+  for path, body in pairs(require("cendre.extras").files()) do
+    for hex in body:gmatch("#(%x+)") do
+      -- Zed writes eight digits, the last two being alpha. A fully transparent
+      -- value has no colour to be wrong about.
+      local rgb = #hex == 8 and hex:sub(7) ~= "00" and hex:sub(1, 6) or (#hex == 6 and hex)
+      if rgb then
+        checked = checked + 1
+        assert(known["#" .. rgb:lower()],
+          path .. " carries #" .. rgb .. ", which is not in the palette")
+      end
+    end
+  end
+  assert(checked > 2000, "only " .. checked .. " colours checked, expected thousands")
+end)
+
+check("the yazi theme uses section and key names yazi still knows", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- Taken from yazi's own preset theme. It renamed [manager] to [mgr] and
+  -- [select] to [pick], and moved the tab, mode and hovered keys out into
+  -- [tabs], [mode] and [indicator]. An unknown section is ignored rather than
+  -- refused, so the retired spelling applied nothing and said nothing.
+  local sections = {
+    flavor = true, app = true, mgr = true, tabs = true, mode = true,
+    indicator = true, status = true, which = true, confirm = true, spot = true,
+    notify = true, pick = true, input = true, cmp = true, tasks = true,
+    help = true, filetype = true,
+  }
+  -- Only names that are retired everywhere. `hovered` is not among them: it left
+  -- [mgr] but is still a key of [tasks] and [help], and a bare match would fail
+  -- on the two that are right. Its sibling preview_hovered covers the case.
+  local retired = {
+    "%[manager%]", "%[select%]", "preview_hovered",
+    "tab_active", "tab_inactive", "mode_normal", "mode_select", "mode_unset",
+    "separator_open", "separator_close",
+  }
+
+  for _, bg in ipairs(palette.backgrounds) do
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/yazi/cendre%s.toml"):format(suffix)
+    local body = files[path]
+    assert(body, "missing " .. path)
+
+    local seen = 0
+    for name in body:gmatch("\n%[([a-z]+)%]") do
+      assert(sections[name], path .. " writes [" .. name .. "], which yazi does not read")
+      seen = seen + 1
+    end
+    assert(seen >= 15, path .. " covers only " .. seen .. " sections")
+
+    for _, pattern in ipairs(retired) do
+      assert(not body:find(pattern),
+        path .. " still writes " .. pattern:gsub("%%", "") .. ", retired by yazi")
+    end
+  end
+end)
+
 check("the committed extras match a fresh render of the palette", function()
   reload()
   package.loaded["cendre.extras"] = nil
