@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://github.com/Aejkatappaja/cendre/compare/v1.5.0...v1.6.0) (2026-08-01)
+
+
+### Features
+
+* **extras:** generate a tokyo-night-tmux theme at every depth ([8db1b02](https://github.com/Aejkatappaja/cendre/commit/8db1b026f74aaf8541ad86abcc1a322329658e9d))
+
+
+### Bug Fixes
+
+* **extras:** fill every slot hunk reads, and drop the four it does not ([0260d2a](https://github.com/Aejkatappaja/cendre/commit/0260d2a6f8d8fa2bd7d0295cfb84035e6f65c8fe))
+* **extras:** fill opencode's last seven colours, and split the diff grounds ([f320543](https://github.com/Aejkatappaja/cendre/commit/f320543bc1d588e779e6482715fca15b4bb365ee))
+* **extras:** write the yazi theme against yazi's own schema ([6cc1830](https://github.com/Aejkatappaja/cendre/commit/6cc18309d44c9f8b2839c865e5fe24e195183611))
+
 ## [1.5.0](https://github.com/Aejkatappaja/cendre/compare/v1.4.1...v1.5.0) (2026-07-31)
 
 
