@@ -33,6 +33,7 @@ local PER_DEPTH = {
   ["extras/macos-terminal/cendre.itermcolors"] = terminals.itermcolors,
   ["extras/macos-terminal/cendre.terminal"] = terminals.macos_terminal,
   ["extras/tmux/cendre.tmux.conf"] = terminals.tmux,
+  ["extras/tmux/cendre.tokyo-night.sh"] = terminals.tokyo_night_tmux,
 
   ["extras/starship/cendre.toml"] = tools.starship,
   ["extras/fzf/cendre.sh"] = tools.fzf,
