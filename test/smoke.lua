@@ -552,6 +552,32 @@ check("every path the landing page tells a reader to copy exists", function()
   assert(n >= 20, "only " .. n .. " extras paths found on the page, expected one per surface")
 end)
 
+check("the surface count printed on the page matches the rows under it", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local html = page:read("*a")
+  page:close()
+
+  -- The script recomputes this on load, so the number in the markup is only what a
+  -- reader sees before the script runs, or without one at all. That makes it exactly
+  -- the kind of number that goes stale unnoticed when a surface is added.
+  local printed = html:match('<span id="surface%-count">(%d+)</span>')
+  assert(printed, "docs/index.html no longer prints a surface count")
+
+  -- Counted inside the SURFACES literal only. Every three-string array on the page
+  -- looks alike from the outside, so an unscoped count picks up DEPTHS and whatever
+  -- else gets added next to it.
+  local block = html:match("const SURFACES = (%b[])")
+  assert(block, "docs/index.html no longer declares SURFACES as a literal")
+
+  local rows = 0
+  for _ in block:gmatch('%["[^"]+", "[^"]+", [\'"]') do
+    rows = rows + 1
+  end
+  assert(tonumber(printed) == rows,
+    ("docs/index.html prints %s surfaces but lists %d"):format(printed, rows))
+end)
+
 check("every section of the landing page is a unique deep link", function()
   local page = io.open("docs/index.html", "r")
   assert(page, "docs/index.html is missing")
