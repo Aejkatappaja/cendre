@@ -529,44 +529,169 @@ end
 --- @return string
 function M.hunk(bg)
   local c = palette.get(bg)
-  return ([[
-# cendre theme for Hunk · %s
-# %s
-%s
-#
-# Install: copy into ~/.config/hunk/config.toml, or merge the [custom_theme]
-# block below and set `theme = "custom"`.
 
-theme = "custom"
+  -- The key names and their order come from CUSTOM_THEME_COLOR_KEYS in Hunk's
+  -- own parser, which is the only exhaustive list. It iterates that constant and
+  -- ignores anything else without a word, so the four keys this file used to
+  -- write that are not in it, added, removed, context and lineNumber, were
+  -- dropped in silence.
+  local colors = {
+    { "background", c.bg0 },
+    { "panel", c.bg_deep },
+    { "panelAlt", c.bg1 },
+    { "border", c.bg3 },
+    { "accent", c.ember },
+    { "accentMuted", c.fg_dim },
+    { "text", c.fg },
+    { "muted", c.comment },
 
-[custom_theme]
-base  = "github-dark-default"  # unset keys inherit from this built-in theme
-label = "%s"
+    -- Line grounds. The moved pair keeps the changed tint on the destination and
+    -- leaves the source neutral, since a moved block is one event with a
+    -- direction rather than an addition and a deletion.
+    { "addedBg", c.add },
+    { "removedBg", c.del },
+    { "movedAddedBg", c.mod },
+    { "movedRemovedBg", c.bg2 },
+    { "contextBg", c.bg0 },
 
-background = "%s"
-panel      = "%s"
-panelAlt   = "%s"
-border     = "%s"
-accent     = "%s"
-accentMuted = "%s"
-text       = "%s"
-muted      = "%s"
+    -- The word-level ground inside a changed line. This is the layer, not a
+    -- stronger tint: the same answer DiffText and the GitSigns inline groups
+    -- already give in the editor, so a diff reads the same in both.
+    { "addedContentBg", c.bg3 },
+    { "removedContentBg", c.bg3 },
+    { "contextContentBg", c.bg1 },
 
-addedBg        = "%s"
-removedBg      = "%s"
-movedAddedBg   = "%s"
-movedRemovedBg = "%s"
-contextBg      = "%s"
+    { "addedSignColor", c.ok },
+    { "removedSignColor", c.error },
+    { "lineNumberBg", c.bg_deep },
+    { "lineNumberFg", c.gutter },
+    { "selectedHunk", c.vis },
 
-added    = "%s"
-removed  = "%s"
-context  = "%s"
-lineNumber = "%s"
-]]):format(bg, LINK, GENERATED,
-    palette.name(bg),
-    c.bg0, c.bg_deep, c.bg1, c.bg3, c.ember, c.fg_dim, c.fg, c.comment,
-    c.add, c.del, c.mod, c.bg2, c.bg0,
-    c.ok, c.error, c.fg_dim, c.gutter)
+    { "badgeAdded", c.ok },
+    { "badgeRemoved", c.error },
+    { "badgeNeutral", c.fg_dim },
+
+    -- File states are a status, so they take the semantic family rather than a
+    -- pigment: nothing in a file list should wear the same colour as a keyword.
+    { "fileNew", c.ok },
+    { "fileDeleted", c.error },
+    { "fileRenamed", c.info },
+    { "fileModified", c.warn },
+    { "fileUntracked", c.comment },
+
+    { "noteBorder", c.bg3 },
+    { "noteBackground", c.bg_deep },
+    { "noteTitleBackground", c.bg2 },
+    { "noteTitleText", c.fg },
+  }
+
+  -- The syntax side is written twice on purpose, which is the migration shape
+  -- Hunk documents. The released version, 0.17.7, only reads the flat role table
+  -- and never looks at syntax_scopes. Its successor deprecates the role table and
+  -- translates it approximately. Writing both means the theme is exact on the
+  -- version that has scopes and correct on the version people actually have, and
+  -- neither errors on the other's table: Hunk reads the keys it knows and ignores
+  -- the rest. Drop the role table once scopes ship in a release.
+  --
+  -- These are the eleven roles the released parser reads, and they are also the
+  -- roles cendre's own map is written in, so this half needs no translation.
+  local roles = {
+    { "default", c.fg },
+    { "keyword", c.cinder },
+    { "string", c.sap },
+    { "comment", c.comment },
+    { "number", c.sap },
+    { "function", c.brass },
+    { "property", c.ember },
+    { "type", c.frost },
+    { "variable", c.fg },
+    { "operator", c.fg_dim },
+    { "punctuation", c.fg_dim },
+  }
+
+  --
+  -- The selectors for each role are the ones Hunk's own migration adapter maps
+  -- that role onto, which keeps this agreeing with its idea of equivalence
+  -- rather than inventing a second one. The extra specific selectors exist
+  -- because a narrower selector in the base theme beats a broader override here.
+  local scopes = {
+    { "source", c.fg },
+
+    { "comment", c.comment },
+    { "punctuation.definition.comment", c.comment },
+
+    { "keyword", c.cinder },
+    { "keyword.control", c.cinder },
+    { "storage", c.cinder },
+    { "storage.type", c.cinder },
+    { "storage.modifier", c.cinder },
+
+    -- Punctuation is not a token, so operators and brackets take the dim ink
+    { "keyword.operator", c.fg_dim },
+    { "punctuation", c.fg_dim },
+
+    { "string", c.sap },
+    { "constant.numeric", c.sap },
+    { "constant.language", c.sap },
+
+    { "entity.name.function", c.brass },
+    { "support.function", c.brass },
+    { "variable.function", c.brass },
+
+    { "entity.name.type", c.frost },
+    { "entity.name.class", c.frost },
+    { "support.type", c.frost },
+    { "support.class", c.frost },
+
+    -- A declared name is not a role: variables and constant names stay in the
+    -- body ink, and only what they hold takes a pigment.
+    { "variable", c.fg },
+    { "variable.other.constant", c.fg },
+
+    { "variable.other.property", c.ember },
+    { "support.variable.property", c.ember },
+    { "variable.parameter", c.ember },
+  }
+
+  local out = {
+    ("# cendre theme for Hunk · %s"):format(bg),
+    "# " .. LINK,
+    GENERATED,
+    "#",
+    "# Install: copy into ~/.config/hunk/config.toml, or merge the three",
+    '# [custom_theme] tables below and set `theme = "custom"`.',
+    "",
+    'theme = "custom"',
+    "",
+    "[custom_theme]",
+    'base  = "github-dark-default"  # only supplies scopes not overridden below',
+    ('label = "%s"'):format(palette.name(bg)),
+    "",
+  }
+
+  local width = 0
+  for _, pair in ipairs(colors) do
+    width = math.max(width, #pair[1])
+  end
+  for _, pair in ipairs(colors) do
+    out[#out + 1] = ("%-" .. width .. 's = "%s"'):format(pair[1], pair[2])
+  end
+
+  out[#out + 1] = ""
+  out[#out + 1] = "# Read by Hunk 0.17.7 and deprecated in its successor."
+  out[#out + 1] = "[custom_theme.syntax]"
+  for _, pair in ipairs(roles) do
+    out[#out + 1] = ('%s = "%s"'):format(pair[1], pair[2])
+  end
+
+  out[#out + 1] = ""
+  out[#out + 1] = "# Read by Hunk after 0.17.7, and wins over the table above."
+  out[#out + 1] = "[custom_theme.syntax_scopes]"
+  for _, pair in ipairs(scopes) do
+    out[#out + 1] = ('"%s" = "%s"'):format(pair[1], pair[2])
+  end
+
+  return table.concat(out, "\n") .. "\n"
 end
 
 --- @param bg string
