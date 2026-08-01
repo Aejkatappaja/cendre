@@ -253,75 +253,214 @@ end
 --- @return string
 function M.yazi(bg)
   local c = palette.get(bg)
-  return ([[
-# cendre theme for Yazi · %s
-# %s
-%s
 
-[manager]
-cwd = { fg = "%s" }
-hovered = { bg = "%s" }
-preview_hovered = { bg = "%s" }
-find_keyword = { fg = "%s", bold = true }
-find_position = { fg = "%s", italic = true }
-marker_selected = { fg = "%s", bg = "%s" }
-marker_copied = { fg = "%s", bg = "%s" }
-marker_cut = { fg = "%s", bg = "%s" }
-tab_active = { fg = "%s", bg = "%s" }
-tab_inactive = { fg = "%s", bg = "%s" }
-border_symbol = "│"
-border_style = { fg = "%s" }
+  --- @param body string the inside of an inline table, without the braces
+  --- @return string
+  local function tbl(body)
+    return "{ " .. body .. " }"
+  end
 
-[status]
-separator_open = ""
-separator_close = ""
-separator_style = { fg = "%s", bg = "%s" }
-mode_normal = { fg = "%s", bg = "%s", bold = true }
-mode_select = { fg = "%s", bg = "%s", bold = true }
-mode_unset = { fg = "%s", bg = "%s", bold = true }
-progress_label = { fg = "%s" }
-progress_normal = { fg = "%s" }
-progress_error = { fg = "%s" }
+  --- @param fg string|nil
+  --- @param bg_ string|nil
+  --- @param flags string|nil
+  --- @return string an inline table for one theme key
+  local function style(fg, bg_, flags)
+    local parts = {}
+    if fg then parts[#parts + 1] = ('fg = "%s"'):format(fg) end
+    if bg_ then parts[#parts + 1] = ('bg = "%s"'):format(bg_) end
+    if flags then parts[#parts + 1] = flags end
+    return tbl(table.concat(parts, ", "))
+  end
 
-[input]
-border = { fg = "%s" }
-title = {}
-value = {}
-selected = { reversed = true }
+  -- Every section and key below is taken from yazi's own preset theme, not from
+  -- an older theme carried forward. This file used to write [manager] and
+  -- [select], which no longer exist: yazi renamed them [mgr] and [pick], and
+  -- moved the tab, mode and hovered keys out into [tabs], [mode] and
+  -- [indicator]. An unknown section is ignored rather than refused, so half the
+  -- file applied and nothing said which half.
+  --
+  -- theme.toml merges over the preset, so only what carries colour is written
+  -- here. Glyphs, separators, column counts and the icon table stay yazi's.
+  local sections = {
+    { "mgr", {
+      { "cwd", style(c.ember) },
+      { "find_keyword", style(c.brass, nil, "bold = true") },
+      { "find_position", style(c.ember, nil, "italic = true") },
+      { "symlink_target", style(c.fg_dim, nil, "italic = true") },
 
-[select]
-border = { fg = "%s" }
-active = { fg = "%s" }
-inactive = {}
+      -- The markers are the thin bar down the left of a flagged row, so both
+      -- channels carry the same colour: yazi paints the cell, not a glyph.
+      { "marker_copied", style(c.ok, c.ok) },
+      { "marker_cut", style(c.error, c.error) },
+      { "marker_marked", style(c.info, c.info) },
+      { "marker_selected", style(c.ember, c.ember) },
 
-[tasks]
-border = { fg = "%s" }
-title = {}
-hovered = { underline = true }
+      -- The counts sit on those colours, so they take the ground rather than ink
+      { "count_copied", style(c.bg0, c.ok) },
+      { "count_cut", style(c.bg0, c.error) },
+      { "count_selected", style(c.bg0, c.ember) },
 
-[which]
-mask = { bg = "%s" }
-cand = { fg = "%s" }
-rest = { fg = "%s" }
-desc = { fg = "%s" }
-separator = "  "
-separator_style = { fg = "%s" }
+      { "border_style", style(c.bg3) },
+    } },
 
-[help]
-on = { fg = "%s" }
-run = { fg = "%s" }
-hovered = { reversed = true, bold = true }
-footer = { fg = "%s", bg = "%s" }
-]]):format(bg, LINK, GENERATED,
-    c.ember, c.bg1, c.bg1, c.brass, c.ember,
-    c.ember, c.ember, c.ok, c.ok, c.error, c.error,
-    c.fg, c.bg1, c.comment, c.bg_deep, c.bg3,
-    c.bg2, c.bg2,
-    c.bg0, c.ember, c.bg0, c.info, c.bg0, c.error,
-    c.fg, c.bg3, c.error,
-    c.ember, c.ember, c.ember, c.ember,
-    c.bg_deep, c.hint, c.fg_dim, c.fg, c.bg3,
-    c.ember, c.sap, c.fg_dim, c.bg2)
+    -- The dim ink goes on bg1, never on bg2. That is the pairing the lualine
+    -- theme already uses: fg on bg2, fg_dim on bg1. On bg2 at the soft depth
+    -- fg_dim reads 4.27:1, which would be a fourth quiet colour the rules do
+    -- not name.
+    { "tabs", {
+      { "active", style(c.bg0, c.ember, "bold = true") },
+      { "inactive", style(c.fg_dim, c.bg1) },
+    } },
+
+    { "mode", {
+      { "normal_main", style(c.bg0, c.ember, "bold = true") },
+      { "normal_alt", style(c.ember, c.bg2) },
+      { "select_main", style(c.bg0, c.info, "bold = true") },
+      { "select_alt", style(c.info, c.bg2) },
+      -- Unset is the inverse of select, not a failure, so it takes the caution
+      -- colour. Error on the statusline layer would also land under AA at every
+      -- depth, where warn clears it at 6.11:1 on the lightest ground.
+      { "unset_main", style(c.bg0, c.warn, "bold = true") },
+      { "unset_alt", style(c.warn, c.bg2) },
+    } },
+
+    -- The hovered row in each of the three panes. The preset reverses it, which
+    -- is louder than anything else on screen; bg1 is the layer this palette
+    -- already uses for a cursor line.
+    { "indicator", {
+      { "parent", style(nil, c.bg1) },
+      { "current", style(nil, c.bg1) },
+      { "preview", style(nil, c.bg1) },
+    } },
+
+    { "status", {
+      { "overall", style(c.fg, c.bg2) },
+      { "perm_sep", style(c.gutter) },
+      { "perm_type", style(c.frost) },
+      { "perm_read", style(c.brass) },
+      { "perm_write", style(c.error) },
+      { "perm_exec", style(c.sap) },
+      { "progress_label", style(c.fg, nil, "bold = true") },
+      { "progress_normal", style(c.ember, c.bg2) },
+      -- A badge rather than coloured text, which is the shape yazi's own preset
+      -- uses here, and the only one that keeps error at its published ratio
+      -- instead of losing 0.8 to the lighter statusline ground.
+      { "progress_error", style(c.bg0, c.error) },
+    } },
+
+    { "which", {
+      { "mask", style(nil, c.bg_deep) },
+      { "cand", style(c.ember) },
+      { "rest", style(c.comment) },
+      { "desc", style(c.fg_dim) },
+      { "separator_style", style(c.bg3) },
+    } },
+
+    { "confirm", {
+      { "border", style(c.bg3) },
+      { "title", style(c.ember) },
+      { "body", style(c.fg) },
+      { "list", style(c.fg_dim) },
+      { "btn_yes", style(c.bg0, c.ember, "bold = true") },
+      { "btn_no", style(c.fg_dim) },
+    } },
+
+    { "spot", {
+      { "border", style(c.bg3) },
+      { "title", style(c.ember) },
+      { "tbl_col", style(c.frost) },
+      { "tbl_cell", style(c.bg0, c.ember) },
+    } },
+
+    { "notify", {
+      { "title_info", style(c.info) },
+      { "title_warn", style(c.warn) },
+      { "title_error", style(c.error) },
+    } },
+
+    { "pick", {
+      { "border", style(c.bg3) },
+      { "active", style(c.ember, nil, "bold = true") },
+      { "inactive", style(c.fg_dim) },
+    } },
+
+    { "input", {
+      { "border", style(c.bg3) },
+      { "title", style(c.ember) },
+      { "value", style(c.fg) },
+      { "selected", style(nil, c.vis) },
+    } },
+
+    { "cmp", {
+      { "border", style(c.bg3) },
+      { "active", style(c.bg0, c.ember) },
+      { "inactive", style(c.fg_dim) },
+    } },
+
+    { "tasks", {
+      { "border", style(c.bg3) },
+      { "title", style(c.ember) },
+      { "hovered", style(c.ember, nil, "bold = true") },
+    } },
+
+    { "help", {
+      { "on", style(c.ember) },
+      { "run", style(c.brass) },
+      { "desc", style(c.fg_dim) },
+      { "hovered", style(nil, c.bg1, "bold = true") },
+      { "footer", style(c.fg_dim, c.bg1) },
+    } },
+  }
+
+  local out = {
+    ("# cendre theme for Yazi · %s"):format(bg),
+    "# " .. LINK,
+    GENERATED,
+    "#",
+    "# The file preview highlights code through syntect, which reads a tmTheme",
+    "# rather than any key below. To put this palette there too:",
+    "#   cp extras/bat/cendre.tmTheme ~/.config/yazi/",
+    '#   then add syntect_theme = "cendre.tmTheme" under [mgr]',
+    "# It is not written here because a path that does not resolve leaves",
+    "# previews unhighlighted with no message.",
+  }
+
+  for _, section in ipairs(sections) do
+    out[#out + 1] = ""
+    out[#out + 1] = ("[%s]"):format(section[1])
+    for _, pair in ipairs(section[2]) do
+      out[#out + 1] = ("%s = %s"):format(pair[1], pair[2])
+    end
+  end
+
+  -- The rule kinds are yazi's: a mime glob, a url glob, or one of its `is`
+  -- states. What each kind is worth is this palette's call. Language by
+  -- extension is deliberately absent: no derivation makes Go blue and Python
+  -- green, and a colour nobody can trace is the one thing this theme does not
+  -- ship.
+  local rules = {
+    { "# Image", ('{ mime = "image/*", fg = "%s" }'):format(c.brass) },
+    { "# Media", ('{ mime = "{audio,video}/*", fg = "%s" }'):format(c.terminal_magenta) },
+    { "# Archive", ('{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "%s" }'):format(c.cinder) },
+    { "# Document", ('{ mime = "application/{pdf,doc,rtf}", fg = "%s" }'):format(c.frost) },
+    { "# Virtual file system", ('{ mime = "vfs/{absent,stale}", fg = "%s" }'):format(c.comment) },
+    { "# Broken link, and a file yazi could not read", ('{ url = "*", is = "orphan", bg = "%s" }'):format(c.error) },
+    { nil, ('{ url = "*", is = "dummy", bg = "%s" }'):format(c.error) },
+    { nil, ('{ url = "*/", is = "dummy", bg = "%s" }'):format(c.error) },
+    { "# Executable", ('{ url = "*", is = "exec", fg = "%s" }'):format(c.sap) },
+    { "# Directory, last so the globs above win", ('{ url = "*/", fg = "%s" }'):format(c.ember) },
+  }
+
+  out[#out + 1] = ""
+  out[#out + 1] = "[filetype]"
+  out[#out + 1] = "rules = ["
+  for i, rule in ipairs(rules) do
+    if rule[1] then out[#out + 1] = "  " .. rule[1] end
+    out[#out + 1] = "  " .. rule[2] .. (i < #rules and "," or "")
+  end
+  out[#out + 1] = "]"
+
+  return table.concat(out, "\n") .. "\n"
 end
 
 --- @param bg string
