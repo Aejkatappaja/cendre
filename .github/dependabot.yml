@@ -1,0 +1,17 @@
+version: 2
+
+# Only one ecosystem is listed, because only one exists here. There is no
+# package.json, no Cargo.toml and no lockfile: this is Lua with no dependencies.
+# What does have pinned versions is the three actions the workflows call, and
+# those are worth keeping current.
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["ci"]
+    assignees: ["Aejkatappaja"]
+    commit-message:
+      # release-please reads these, so they follow the same convention as
+      # everything else. A bumped action changes no colour, so it is a chore.
+      prefix: "chore(ci)"
