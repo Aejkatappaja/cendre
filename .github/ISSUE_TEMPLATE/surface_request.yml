@@ -1,0 +1,58 @@
+name: New surface
+description: Ask for a tool cendre does not theme yet
+title: "Surface: "
+labels: ["enhancement", "extras"]
+assignees: ["Aejkatappaja"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every surface is rendered from `lua/cendre/palette.lua`, so what decides
+        whether one can be added is whether the tool documents its theme format.
+        The links below are the whole ask.
+
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      placeholder: yazi, Zellij, Neovide
+    validations:
+      required: true
+
+  - type: input
+    id: schema
+    attributes:
+      label: Where its theme format is documented
+      description: |
+        A docs page, or better, the file in its source that lists every key it
+        reads. That list is what gets covered, and a docs page can be behind it.
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: input
+    id: install
+    attributes:
+      label: Where the file has to land
+      placeholder: ~/.config/tool/themes/
+    validations:
+      required: true
+
+  - type: textarea
+    id: name
+    attributes:
+      label: Does it store a theme name
+      description: |
+        If the file carries its own name rather than taking it from its filename,
+        say so. Three depths ship for every surface, and they collide on one
+        entry unless the name is qualified.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: |
+        Whether it reloads live, whether it needs a cache rebuilt, whether it
+        ignores keys it does not know. The last one matters most: a tool that
+        stays quiet about an unknown key is a tool where a half-applied theme
+        looks fine.

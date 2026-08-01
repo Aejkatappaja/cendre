@@ -1,0 +1,66 @@
+name: Bug report
+description: A colour, a highlight group or a generated file is wrong
+labels: ["bug"]
+assignees: ["Aejkatappaja"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Screenshots help more than descriptions here. A colour is easier to see
+        than to name.
+
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Neovim, or which surface under `extras/`
+      placeholder: Neovim, or yazi, or hunk, or Ghostty
+    validations:
+      required: true
+
+  - type: dropdown
+    id: depth
+    attributes:
+      label: Depth
+      options: ["hard", "medium", "soft"]
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what you got
+      description: |
+        If you know the highlight group, `:Inspect` under the cursor names it and
+        the colour it resolved to. Paste that if you have it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: A file that shows it
+      description: |
+        The smallest snippet where the colour is wrong, and its language. A
+        colour that only goes wrong in one grammar is a different bug from one
+        that goes wrong everywhere.
+      render: text
+
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      description: cendre, Neovim, and the tool if this is not about the editor
+      placeholder: cendre 1.6.0, nvim 0.11.2, yazi 26.5.6
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before opening this
+      options:
+        - label: "`termguicolors` is set and the terminal does true colour"
+          required: true
+        - label: No `on_colors` or `on_highlights` hook is changing this
+          required: true
