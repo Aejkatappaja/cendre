@@ -103,6 +103,32 @@ require("cendre").setup({
 })
 ```
 
+## The cursor stays your terminal's
+
+`Cursor`, `lCursor`, `CursorIM` and `TermCursor` are all set to `ember`, and outside
+`:terminal` Neovim never asks for them. Its default `'guicursor'` names a highlight
+group only for terminal mode:
+
+```
+n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor
+```
+
+With no group on the other parts, the terminal draws its own cursor in its own
+colour. So a black cursor on this theme is your terminal's setting, not a missing
+highlight.
+
+The theme does not set `'guicursor'`, because that option carries the cursor's
+shape and blink rather than its colour, and those are yours.
+
+Two ways to change it. Install the terminal theme for whatever you run, and the
+cursor matches in the editor and in the shell, since every file under `extras/`
+sets it. Or hand the cursor to Neovim by naming the group on the other modes:
+
+```lua
+vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,"
+  .. "r-cr-o:hor20-Cursor,t:block-blinkon500-blinkoff500-TermCursor"
+```
+
 ## Palette
 
 Ground, hue 43°, which is wood ash under a 1300 K flame. Ash is spectrally flat,
