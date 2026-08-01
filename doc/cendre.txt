@@ -10,6 +10,7 @@ CONTENTS                                                     *cendre-contents*
   2. Requirements ............................. |cendre-requirements|
   3. Installation ............................. |cendre-installation|
   4. Configuration ............................ |cendre-configuration|
+     The cursor ............................... |cendre-cursor|
   5. Commands ................................. |cendre-commands|
   6. Depths ................................... |cendre-depths|
   7. Palette .................................. |cendre-palette|
@@ -136,6 +137,30 @@ Accepts a table. Every key is optional; pass only what you want to change.
                 hl["@keyword"] = { fg = c.brass, bold = true }
               end,
             })
+<
+                                                             *cendre-cursor*
+THE CURSOR
+
+|hl-Cursor|, |hl-lCursor|, |hl-CursorIM| and |hl-TermCursor| all carry the
+accent, and outside |:terminal| Neovim never asks for them. Its default
+'guicursor' names a highlight group only for terminal mode: >
+
+    n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,
+    t:block-blinkon500-blinkoff500-TermCursor
+<
+With no group on the other parts, the terminal draws its own cursor in its own
+colour. A black cursor on this theme is the terminal's setting, not a missing
+highlight group.
+
+Cendre does not set 'guicursor'. That option carries the cursor's shape and
+its blink rather than its colour, and both are the reader's choice.
+
+To change it, either install the terminal theme for whatever you run, in
+which case the cursor matches in the editor and in the shell because every
+file under `extras/` sets it, or hand the cursor to Neovim: >lua
+
+    vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,"
+      .. "r-cr-o:hor20-Cursor,t:block-blinkon500-blinkoff500-TermCursor"
 <
 ==============================================================================
 5. COMMANDS                                                  *cendre-commands*
