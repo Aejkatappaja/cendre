@@ -512,6 +512,52 @@ check("no generated file carries a colour the palette does not define", function
   assert(checked > 2000, "only " .. checked .. " colours checked, expected thousands")
 end)
 
+check("the hunk theme fills every slot hunk reads, and none it does not", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- CUSTOM_THEME_COLOR_KEYS in hunk's config parser, which is the whole list and
+  -- the same at the released version as on its main branch. The parser iterates
+  -- that constant, so anything else is dropped without a word: this file used to
+  -- write added, removed, context and lineNumber, none of which it reads.
+  local slots = {
+    "background", "panel", "panelAlt", "border", "accent", "accentMuted", "text",
+    "muted", "addedBg", "removedBg", "movedAddedBg", "movedRemovedBg", "contextBg",
+    "addedContentBg", "removedContentBg", "contextContentBg", "addedSignColor",
+    "removedSignColor", "lineNumberBg", "lineNumberFg", "selectedHunk",
+    "badgeAdded", "badgeRemoved", "badgeNeutral", "fileNew", "fileDeleted",
+    "fileRenamed", "fileModified", "fileUntracked", "noteBorder", "noteBackground",
+    "noteTitleBackground", "noteTitleText",
+  }
+  local retired = { "\nadded ", "\nremoved ", "\ncontext ", "\nlineNumber " }
+
+  for _, bg in ipairs(palette.backgrounds) do
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/hunk/cendre%s.toml"):format(suffix)
+    local body = files[path]
+    assert(body, "missing " .. path)
+
+    for _, slot in ipairs(slots) do
+      assert(body:find("\n" .. slot .. " ", 1, true) or body:find("\n" .. slot .. "=", 1, true),
+        path .. " leaves " .. slot .. " to the base theme")
+    end
+
+    -- The four that only looked like keys. Matched with the trailing space that
+    -- the alignment gives them, so addedBg and removedBg do not answer for them.
+    for _, name in ipairs(retired) do
+      assert(not body:find(name, 1, true),
+        path .. " still writes " .. name:gsub("\n", ""):gsub(" ", "") .. ", which hunk never reads")
+    end
+
+    -- Both syntax tables, which is the migration shape hunk documents: the
+    -- released version reads only the roles, its successor prefers the scopes.
+    assert(body:find("[custom_theme.syntax]", 1, true), path .. " has no role table")
+    assert(body:find("[custom_theme.syntax_scopes]", 1, true), path .. " has no scope table")
+  end
+end)
+
 check("the yazi theme uses section and key names yazi still knows", function()
   reload()
   local palette = require("cendre.palette")
