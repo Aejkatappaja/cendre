@@ -239,8 +239,9 @@ most frequent tokens in a real file, so that is where the warmth goes.
 ==============================================================================
 9. EXTRAS                                                      *cendre-extras*
 
-Twenty-four surfaces beyond the editor ship under `extras/`: terminals,
-prompts, pagers, TUIs, Vim, Helix, Zed, Obsidian and more.
+Every surface beyond the editor ships under `extras/`: terminals, prompts,
+pagers, TUIs, Vim, Helix, Zed, Obsidian and more. The count and the install
+path for each one are listed at https://cendretheme.com/#surfaces
 
 Every one of them is rendered from `lua/cendre/palette.lua` and nothing else,
 so a colour cannot be right in Neovim and stale in a terminal. Hand-editing a
