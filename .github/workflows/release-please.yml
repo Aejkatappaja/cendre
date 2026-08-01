@@ -24,7 +24,7 @@ jobs:
       # publishes the release with GITHUB_TOKEN, and GitHub refuses to let an event
       # raised by that token start another workflow, so a release trigger never fires.
       # Running in this same job sidesteps that, because nothing new is triggered.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Stamp the released version into the Obsidian manifest
