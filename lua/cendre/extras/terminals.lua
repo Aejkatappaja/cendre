@@ -308,6 +308,80 @@ end
 
 --- @param bg string
 --- @return string
+--- A theme block for the tokyo-night-tmux plugin, which reads its colours from a
+--- case statement in its own src/themes.sh rather than from a file it can be
+--- pointed at. So this is a snippet to paste there, not something tmux sources.
+--- @param bg string
+--- @return string
+function M.tokyo_night_tmux(bg)
+  local c = palette.get(bg)
+  local name = palette.name(bg)
+
+  -- The keys carry ANSI names, but the plugin never renders program output through
+  -- this table: every read paints statusbar chrome. So four of them are filled by
+  -- the role the plugin actually uses them for, not by the name they carry.
+  local slots = {
+    { "background", c.bg0 }, { "foreground", c.fg },
+
+    -- read as a foreground, for the count of untracked files. An ANSI black there
+    -- lands at 1.08:1 on bg0, which is not dim, it is gone.
+    { "black", c.gutter },
+
+    -- the plugin's accent: session block, active pane border, message bar. Ember is
+    -- the accent this theme declares, and it is the only warm answer a fire has.
+    { "blue", c.ember },
+
+    { "cyan", c.terminal_cyan }, { "green", c.terminal_green },
+    { "magenta", c.terminal_magenta }, { "red", c.terminal_red },
+
+    -- foreground of the command bar, over "black" above
+    { "white", c.fg },
+
+    { "yellow", c.terminal_yellow },
+
+    -- read as a background, under the window block and the clock. A text colour
+    -- there washes the block out instead of seating it.
+    { "bblack", c.bg2 },
+
+    { "bblue", c.terminal_bright_blue },
+    { "bcyan", c.terminal_bright_cyan }, { "bgreen", c.terminal_bright_green },
+    { "bmagenta", c.terminal_bright_magenta }, { "bred", c.terminal_bright_red },
+
+    -- the dim ink, since "white" above took the bright one
+    { "bwhite", c.fg_dim },
+
+    { "byellow", c.terminal_bright_yellow },
+  }
+
+  local rows = {}
+  for i, slot in ipairs(slots) do
+    -- the plugin's own file groups the eight normal slots then the eight bright
+    if i == 11 then rows[#rows + 1] = "" end
+    rows[#rows + 1] = ('    ["%s"]="%s"'):format(slot[1], slot[2])
+  end
+
+  return ([[
+%s
+%s
+#
+# The plugin reads its colours from a case statement in its own src/themes.sh, so
+# paste this block there, before its default case, then in tmux.conf:
+#   set -g @tokyo-night-tmux_theme "%s"
+#
+# The keys are named after ANSI slots, but the plugin only ever paints its own
+# statusbar with them, never program output. Four are filled by role instead of by
+# name: "blue" is the accent, "bblack" is a block background, "black" is read as a
+# foreground, and "white" is the bright ink. Aligning them to their ANSI names
+# would look tidier here and worse on screen.
+
+"%s")
+  declare -A THEME=(
+%s
+  )
+  ;;
+]]):format(HEADER:format(bg), GENERATED, name, name, table.concat(rows, "\n"))
+end
+
 function M.tmux(bg)
   local c = palette.get(bg)
   return ([[
