@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/Aejkatappaja/cendre/compare/v1.6.0...v1.6.1) (2026-08-01)
+
+
+### Bug Fixes
+
+* **groups:** make lazy.nvim's key hints readable in the tab they sit in ([1fcf74f](https://github.com/Aejkatappaja/cendre/commit/1fcf74f56b0c4b6bf9e0e5cd0b4e998ef83b3ea5))
+
 ## [1.6.0](https://github.com/Aejkatappaja/cendre/compare/v1.5.0...v1.6.0) (2026-08-01)
 
 
