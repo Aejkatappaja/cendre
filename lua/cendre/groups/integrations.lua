@@ -155,8 +155,9 @@ function M.get(c)
     LazyH1           = { fg = c.bg0, bg = c.ember, bold = true },
     LazyH2           = { fg = c.ember, bold = true },
     LazyButton       = { fg = c.fg, bg = c.bg2 },
-    LazyButtonActive = { fg = c.bg0, bg = c.ember, bold = true },
-    LazySpecial      = { fg = c.frost },
+    -- lazy paints the key hint over this button, so the ground stays dark
+    LazyButtonActive = { fg = c.fg, bg = c.bg3, bold = true, underline = true },
+    LazySpecial      = { fg = c.ember },
     LazyCommit       = { fg = c.sap },
     LazyReasonPlugin = { fg = c.cinder },
     LazyReasonEvent  = { fg = c.brass },
