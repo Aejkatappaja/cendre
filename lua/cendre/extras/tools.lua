@@ -477,25 +477,40 @@ function M.opencode(bg)
     { "error", c.error }, { "warning", c.warn }, { "success", c.ok },
     { "info", c.info }, { "hint", c.hint },
     { "gitAdd", c.ok }, { "gitDelete", c.error }, { "gitChange", c.info },
+    -- The tinted line grounds. Without these the added and the removed row both
+    -- landed on bgElevated, which is one background for two opposite things.
+    { "bgAdd", c.add }, { "bgDel", c.del },
   }
   local uses = {
     { "primary", "ember" }, { "secondary", "frost" }, { "accent", "brass" },
     { "text", "fg" }, { "textMuted", "fgDim" },
     { "background", "bg" }, { "backgroundPanel", "bgFloat" },
     { "backgroundElement", "bgElevated" },
+
+    -- Both optional, and opencode falls back for them: the selected row's text to
+    -- background, which its own comment calls backward compatibility, and the menu
+    -- to backgroundElement. Set outright rather than left to a legacy path, and the
+    -- menu takes the float surface, the layer this palette gives anything drawn
+    -- over the editor.
+    { "selectedListItemText", "bg" }, { "backgroundMenu", "bgFloat" },
     { "border", "border" }, { "borderActive", "ember" }, { "borderSubtle", "border" },
     { "error", "error" }, { "warning", "warning" }, { "success", "success" },
     { "info", "info" },
     { "diffAdded", "gitAdd" }, { "diffRemoved", "gitDelete" },
     { "diffContext", "fgDim" }, { "diffHunkHeader", "fgComment" },
     { "diffHighlightAdded", "success" }, { "diffHighlightRemoved", "error" },
-    { "diffAddedBg", "bgElevated" }, { "diffRemovedBg", "bgElevated" },
+    { "diffAddedBg", "bgAdd" }, { "diffRemovedBg", "bgDel" },
     { "diffContextBg", "bg" }, { "diffLineNumber", "fgGutter" },
+    { "diffAddedLineNumberBg", "bgAdd" }, { "diffRemovedLineNumberBg", "bgDel" },
     { "markdownText", "fg" }, { "markdownHeading", "ember" },
     { "markdownLink", "frost" }, { "markdownLinkText", "frost" },
     { "markdownCode", "sap" }, { "markdownBlockQuote", "fgComment" },
     { "markdownEmph", "ember" }, { "markdownStrong", "brass" },
     { "markdownHorizontalRule", "border" }, { "markdownListItem", "ember" },
+    -- An ordered marker is the same role as a bullet, and an image is a target
+    -- like a link, so each follows the one it belongs with.
+    { "markdownListEnumeration", "ember" },
+    { "markdownImage", "frost" }, { "markdownImageText", "frost" },
     { "markdownCodeBlock", "sap" },
     { "syntaxComment", "fgComment" }, { "syntaxKeyword", "cinder" },
     { "syntaxFunction", "brass" }, { "syntaxVariable", "fg" },
