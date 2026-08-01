@@ -667,6 +667,7 @@ td.under { color: var(--warn); }
 .surfaces td.cmd button:hover .label { color: var(--ember); }
 .surfaces td.cmd.done :is(button, .label) { color: var(--ok); }
 .surfaces .local { color: var(--warn); }
+.surfaces .store { color: var(--ok); }
 
 /* ---- rules ---- */
 
@@ -1261,9 +1262,11 @@ footer b { color: var(--ember); font-weight: inherit; }
         <tbody id="t-surfaces"></tbody>
       </table>
     </div>
-    <p class="note gap-sm">Zed and Obsidian are local installs for now. Both have a theme store, and
-      neither listing exists until the submission is through, so the page is not going to pretend
-      otherwise.</p>
+    <p class="note gap-sm">Obsidian is in the community store: <b>Appearance</b>, <b>Browse</b>,
+      search <code>cendre</code>. The store carries one theme, so the command above is still how
+      you get <code>-medium</code> and <code>-soft</code> into a vault. Zed is a local install
+      until its registry PR is merged, and the page is not going to claim a search that returns
+      nothing.</p>
   </section>
 
   <section id="get" aria-labelledby="get-h">
@@ -1969,10 +1972,11 @@ function flashCopy(flag, label, how) {
 }
 
 /**
- * Every entry maps to a file under extras/, except the two marked local: Zed and
- * Obsidian both have a theme store and neither listing exists yet, so the command
- * installs from the checkout instead of claiming a search.
- * @type {[string, [string, string, string, string?][]][]}
+ * Every entry maps to a file under extras/. The tag says where the theme can be found
+ * besides this checkout: "store" means a published listing exists, "local" means the
+ * submission is still open, so the command installs from the checkout rather than
+ * claiming a search that returns nothing.
+ * @type {[string, [string, string, string, ("local" | "store")?][]][]}
  */
 const SURFACES = [
   ["Editors", [
@@ -2008,7 +2012,7 @@ const SURFACES = [
     ["Hunk", "config.toml", "cp extras/hunk/cendre.toml ~/.config/hunk/config.toml"],
   ]],
   ["Notes and chat", [
-    ["Obsidian", "vault themes", "cp -r extras/obsidian/cendre .obsidian/themes/", "local"],
+    ["Obsidian", "vault themes", "cp -r extras/obsidian/cendre .obsidian/themes/", "store"],
     ["Slack", "sidebar theme", "paste extras/slack/cendre.txt"],
     ["Firefox", "about:debugging", "load extras/firefox/cendre as a temporary add-on"],
   ]],
@@ -2024,7 +2028,7 @@ function renderSurfaces() {
     const head = `<tr class="grp"><th colspan="3" scope="colgroup">${group} <b>${apps.length}</b></th></tr>`;
     return head + apps.map(([app, where, cmd, tag]) => `
       <tr>
-        <td class="surf">${escapeHtml(app)}${tag ? ` <span class="local">· ${tag}</span>` : ""}</td>
+        <td class="surf">${escapeHtml(app)}${tag ? ` <span class="${tag}">· ${tag}</span>` : ""}</td>
         <td class="where">${escapeHtml(where)}</td>
         <td class="cmd">
           <button type="button" data-cmd="${escapeHtml(cmd)}">
