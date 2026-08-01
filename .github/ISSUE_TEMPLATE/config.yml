@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question, or a colour you would argue about
+    url: https://github.com/Aejkatappaja/cendre/discussions
+    about: Taste is a discussion, not a bug. Every hue here was computed, so the interesting arguments are about lightness and chroma.
+  - name: How a hue was derived
+    url: https://cendretheme.com/#derivation
+    about: Each pigment traced from its emission wavelength to its hex, step by step.
+  - name: Report a security issue
+    url: https://github.com/Aejkatappaja/cendre/security/advisories/new
+    about: Privately, not as an issue. See SECURITY.md.
