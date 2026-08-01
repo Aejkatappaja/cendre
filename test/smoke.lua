@@ -375,6 +375,36 @@ check("the role map holds: every pigment lands where the page says", function()
   end
 end)
 
+check("a group drawn over a painted block reads against that block", function()
+  reload()
+  local c = require("cendre.palette").get("hard")
+  local built = {}
+  for _, mod in ipairs({ "editor", "syntax", "treesitter", "lsp", "integrations" }) do
+    for name, hl in pairs(require("cendre.groups." .. mod).get(c)) do built[name] = hl end
+  end
+
+  -- A foreground-only group stacked over a block another group already painted
+  -- never meets the editor ground, so nothing else here measures it.
+  local overlays = {
+    { "LazySpecial", { "LazyButtonActive", "LazyButton" } },
+  }
+
+  for _, pair in ipairs(overlays) do
+    local over = built[pair[1]]
+    assert(over and over.fg, pair[1] .. " has no foreground to check")
+    assert(not over.bg, pair[1] .. " carries a background, so it is not an overlay any more")
+
+    for _, name in ipairs(pair[2]) do
+      local under = built[name]
+      assert(under and under.bg, name .. " has no background to read against")
+      local r = ratio(over.fg, under.bg)
+      assert(r >= 4.5, string.format(
+        "%s is %.2f:1 over %s, which is the ratio a reader actually gets",
+        pair[1], r, name))
+    end
+  end
+end)
+
 check("nothing readable depends on bold or italic", function()
   reload()
   require("cendre").setup({ background = "hard", italic = false })
