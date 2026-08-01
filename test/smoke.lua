@@ -512,6 +512,62 @@ check("no generated file carries a colour the palette does not define", function
   assert(checked > 2000, "only " .. checked .. " colours checked, expected thousands")
 end)
 
+check("the opencode theme fills every colour its Theme type declares", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- Every RGBA field of the Theme type in opencode's tui package. Its ThemeJson
+  -- requires all of them but two, and the two exceptions fall back rather than
+  -- fail, so a gap here is invisible: the selected row's text silently becomes
+  -- the background and the menu silently becomes backgroundElement. The
+  -- published documentation lists neither, which is how both were missed.
+  local slots = {
+    "primary", "secondary", "accent", "error", "warning", "success", "info",
+    "text", "textMuted", "selectedListItemText", "background", "backgroundPanel",
+    "backgroundElement", "backgroundMenu", "border", "borderActive", "borderSubtle",
+    "diffAdded", "diffRemoved", "diffContext", "diffHunkHeader",
+    "diffHighlightAdded", "diffHighlightRemoved", "diffAddedBg", "diffRemovedBg",
+    "diffContextBg", "diffLineNumber", "diffAddedLineNumberBg",
+    "diffRemovedLineNumberBg", "markdownText", "markdownHeading", "markdownLink",
+    "markdownLinkText", "markdownCode", "markdownBlockQuote", "markdownEmph",
+    "markdownStrong", "markdownHorizontalRule", "markdownListItem",
+    "markdownListEnumeration", "markdownImage", "markdownImageText",
+    "markdownCodeBlock", "syntaxComment", "syntaxKeyword", "syntaxFunction",
+    "syntaxVariable", "syntaxString", "syntaxNumber", "syntaxType",
+    "syntaxOperator", "syntaxPunctuation",
+  }
+
+  for _, bg in ipairs(palette.backgrounds) do
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/opencode/cendre%s.json"):format(suffix)
+    local body = files[path]
+    assert(body, "missing " .. path)
+
+    local names, defs = {}, {}
+    for name in body:match('"defs": {(.-)\n  }'):gmatch('"([%w]+)":') do
+      defs[name] = true
+    end
+    for name, ref in body:match('"theme": {(.-)\n  }'):gmatch('"([%w]+)": "([^"]+)"') do
+      names[name] = true
+      -- Every value is a def name here, never a literal, so a typo would resolve
+      -- to nothing and opencode would throw at load rather than at review.
+      assert(defs[ref], path .. " points " .. name .. " at " .. ref .. ", which is not a def")
+    end
+
+    for _, slot in ipairs(slots) do
+      assert(names[slot], path .. " leaves " .. slot .. " to opencode's fallback")
+    end
+
+    -- The two diff grounds are opposite states and used to share one colour
+    local added = body:match('"diffAddedBg": "([^"]+)"')
+    local removed = body:match('"diffRemovedBg": "([^"]+)"')
+    assert(added ~= removed,
+      path .. " gives added and removed rows the same ground, " .. tostring(added))
+  end
+end)
+
 check("the hunk theme fills every slot hunk reads, and none it does not", function()
   reload()
   local palette = require("cendre.palette")
