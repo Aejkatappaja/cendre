@@ -440,11 +440,43 @@ check("no two depths of one surface share a theme name", function()
       "extras/vim/cendre%s.vim",
       "extras/obsidian/cendre%s/manifest.json",
       "extras/firefox/cendre%s/manifest.json",
+      "extras/tmux/cendre%s.tokyo-night.sh",
     }) do
       local path = target:format(suffix)
       local body = files[path]
       assert(body, "missing " .. path)
       assert(body:find(name, 1, true), path .. " does not carry the name " .. name)
+    end
+  end
+end)
+
+check("the tmux plugin theme is mapped by role, not by ANSI name", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- These four keys carry ANSI names the plugin does not honour: it paints its own
+  -- statusbar with them and never program output. Aligning them back to their names
+  -- reads as a cleanup and costs contrast, so the intent is pinned here rather than
+  -- left to a comment nobody has to obey.
+  for _, bg in ipairs(palette.backgrounds) do
+    local c = palette.get(bg)
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/tmux/cendre%s.tokyo-night.sh"):format(suffix)
+    local body = files[path]
+    assert(body, "missing " .. path)
+
+    for key, want in pairs({
+      blue = c.ember,     -- the plugin's accent
+      bblack = c.bg2,     -- a block background
+      black = c.gutter,   -- read as a foreground
+      white = c.fg,       -- the bright ink
+      bwhite = c.fg_dim,  -- the dim ink
+    }) do
+      local got = body:match('%["' .. key .. '"%]="(#%x+)"')
+      assert(got == want,
+        ("%s maps %s to %s, expected %s"):format(path, key, tostring(got), want))
     end
   end
 end)
