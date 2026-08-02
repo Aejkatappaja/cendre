@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/Aejkatappaja/cendre/compare/v1.6.1...v1.7.0) (2026-08-02)
+
+
+### Features
+
+* **groups:** put the completion menu on the float layer ([0c043c2](https://github.com/Aejkatappaja/cendre/commit/0c043c2116b58a1af9b70e031ee8aefe418fa79d))
+
+
+### Bug Fixes
+
+* **palette:** name potassium, the one derived hue with no key ([79c195e](https://github.com/Aejkatappaja/cendre/commit/79c195e4a1372f52ef602d39e42fd5815046f769))
+
 ## [1.6.1](https://github.com/Aejkatappaja/cendre/compare/v1.6.0...v1.6.1) (2026-08-01)
 
 
