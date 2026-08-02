@@ -53,8 +53,6 @@ function M.get(c)
     SnacksNotifierTrace     = { fg = c.comment },
 
     -- blink.cmp
-    BlinkCmpMenu           = { fg = c.fg, bg = c.bg1 },
-    BlinkCmpMenuBorder     = { fg = c.bg3, bg = c.bg1 },
     BlinkCmpMenuSelection  = { bg = c.bg3, bold = true },
     BlinkCmpScrollBarThumb = { bg = c.bg4 },
     BlinkCmpScrollBarGutter = { bg = c.bg1 },
@@ -73,11 +71,7 @@ function M.get(c)
     BlinkCmpKindKeyword    = { fg = c.cinder },
     BlinkCmpKindConstant   = { fg = c.sap },
     BlinkCmpKindSnippet    = { fg = c.ember },
-    BlinkCmpDoc            = { fg = c.fg, bg = c.bg1 },
-    BlinkCmpDocBorder      = { fg = c.bg3, bg = c.bg1 },
     BlinkCmpDocSeparator   = { fg = c.bg3 },
-    BlinkCmpSignatureHelp  = { fg = c.fg, bg = c.bg1 },
-    BlinkCmpSignatureHelpBorder = { fg = c.bg3, bg = c.bg1 },
     BlinkCmpSignatureHelpActiveParameter = { fg = c.ember, bold = true },
     BlinkCmpGhostText      = { fg = c.gutter, italic = true },
 
