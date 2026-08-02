@@ -113,7 +113,13 @@ check("no group repeats a float surface, so plugin windows can inherit it", func
   local surfaces = { NormalFloat = true, FloatBorder = true }
   -- these two carry bg_deep against a bg0 fallback, so they say something the
   -- surface groups do not
-  local allowed = { SnacksNormal = true, SnacksNormalNC = true, NeoTreeWinSeparator = true }
+  -- Pmenu is the documented transparency exception: the completion menu stays
+  -- painted because a transparent popup over code is not readable, so it is meant
+  -- to look like NormalFloat and meant to pin that colour.
+  local allowed = {
+    SnacksNormal = true, SnacksNormalNC = true, NeoTreeWinSeparator = true,
+    Pmenu = true,
+  }
   for name, hl in pairs(built) do
     if not surfaces[name] and not allowed[name] then
       for surface in pairs(surfaces) do
