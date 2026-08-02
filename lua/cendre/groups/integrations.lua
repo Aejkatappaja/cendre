@@ -28,7 +28,6 @@ function M.get(c)
     SnacksNormal            = { fg = c.fg, bg = c.bg_deep },
     SnacksNormalNC          = { fg = c.fg, bg = c.bg_deep },
     SnacksWinBar            = { fg = c.ember, bold = true },
-    SnacksBackdrop          = { bg = c.bg_deep },
     SnacksPickerTitle       = { fg = c.ember, bold = true },
     SnacksPickerBoxTitle    = { fg = c.ember, bold = true },
     SnacksPickerInputTitle  = { fg = c.ember, bold = true },
