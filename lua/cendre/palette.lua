@@ -105,11 +105,14 @@ M.tints = {
   soft   = { vis = "#3d2b23", add = "#2d3221", del = "#3e2a28", mod = "#1f333b" },
 }
 
--- ANSI wants six hues, the editor only needs five. Potassium's 404 nm line
--- fills slot 5, derived the same way as the pigments but never used on code.
-local POTASSIUM        = "#9480ba" -- 299.8° · L 0.640
-local POTASSIUM_BRIGHT = "#a692cd" -- same hue, L +0.06
-local INFO_BRIGHT      = "#8bcfff" -- info, L +0.06
+-- Derived like the pigments, and not one of them: it fills ANSI slot 5 and never
+-- touches a token, so it stays out of M.pigments.
+M.spectral = {
+  potassium        = "#9480ba", -- 299.8° · L 0.640 · potassium 404 nm · ANSI slot 5
+  potassium_bright = "#a692cd", -- same hue, L +0.06
+}
+
+local INFO_BRIGHT = "#8bcfff" -- info, L +0.06
 
 -- Resolve a background name into a full colour table. Terminal slots are
 -- derived from the pigments rather than restated, so they cannot drift.
@@ -120,6 +123,7 @@ function M.get(name)
     vim.deepcopy(M.ink),
     vim.deepcopy(M.pigments),
     vim.deepcopy(M.semantic),
+    vim.deepcopy(M.spectral),
     vim.deepcopy(M.tints[name] or M.tints.hard))
 
   c.none = "NONE"
@@ -129,7 +133,7 @@ function M.get(name)
   c.terminal_green          = c.sap
   c.terminal_yellow         = c.brass
   c.terminal_blue           = c.info
-  c.terminal_magenta        = POTASSIUM
+  c.terminal_magenta        = c.potassium
   c.terminal_cyan           = c.frost
   c.terminal_white          = c.fg_dim
   c.terminal_bright_black   = c.comment
@@ -137,7 +141,7 @@ function M.get(name)
   c.terminal_bright_green   = c.ok
   c.terminal_bright_yellow  = c.warn
   c.terminal_bright_blue    = INFO_BRIGHT
-  c.terminal_bright_magenta = POTASSIUM_BRIGHT
+  c.terminal_bright_magenta = c.potassium_bright
   c.terminal_bright_cyan    = c.hint
   c.terminal_bright_white   = c.fg
 
