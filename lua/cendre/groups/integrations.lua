@@ -99,8 +99,12 @@ function M.get(c)
     WhichKeyValue     = { fg = c.comment },
     WhichKeyIcon      = { fg = c.brass },
 
-    -- noice
+    -- noice. The three borders default to DiagnosticSign groups, so without these
+    -- an ember title sits inside an info-blue frame.
     NoiceCmdlinePopupTitle = { fg = c.ember, bold = true },
+    NoiceCmdlinePopupBorder = { fg = c.ember },
+    NoiceCmdlinePopupBorderSearch = { fg = c.brass },
+    NoiceConfirmBorder    = { fg = c.ember },
     NoiceCmdlineIcon      = { fg = c.ember },
     NoiceCmdlineIconSearch = { fg = c.brass },
     NoiceMini             = { fg = c.fg_dim, bg = c.bg1 },
