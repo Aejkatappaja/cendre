@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/Aejkatappaja/cendre/compare/v1.7.0...v1.8.0) (2026-08-03)
+
+
+### Features
+
+* **extras:** seat the tmux bar on its own ground ([9a31b86](https://github.com/Aejkatappaja/cendre/commit/9a31b865807e4ce2ad85e8c688d50161809085f1))
+* **lualine:** put the whole bar on one ground ([e24ff60](https://github.com/Aejkatappaja/cendre/commit/e24ff603e1b8c452cfa25ced4c195060ccc5b6e9))
+
 ## [1.7.0](https://github.com/Aejkatappaja/cendre/compare/v1.6.1...v1.7.0) (2026-08-02)
 
 
