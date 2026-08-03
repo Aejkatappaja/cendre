@@ -24,11 +24,11 @@ Neovim 0.9 or newer, with `termguicolors`.
 Diagnostics, git signs, diff and statusline draw from the semantic family. An
 error never wears the same red as a keyword.
 
-## 28 surfaces, one palette
+## 29 surfaces, one palette
 
 Neovim is where this starts, not where it stops. Ghostty, kitty, wezterm, foot,
 Alacritty, Konsole, tmux, bat, delta, lazygit, yazi, eza, fzf, btop, starship,
-helix, Zed, Obsidian, Firefox and the rest, with the path each one installs to:
+helix, Zed, Obsidian, Firefox, KDE Plasma and the rest, with the path each one installs to:
 [cendretheme.com/#surfaces](https://cendretheme.com/#surfaces).
 
 Nothing under `extras/` or `assets/` is written by hand, nor the favicon and share
