@@ -5,10 +5,14 @@ local c = require("cendre.palette").get(ok and cendre.config.background or "hard
 -- block should never look like a token.
 local cendre = {}
 
+-- One ground for the whole bar, bg2, which is what this theme's own StatusLine
+-- group is set to: a lualine section painted in bg1 would contradict the
+-- statusline every other Neovim surface draws. Sections separate by ink weight,
+-- fg against fg_dim, and the mode block is the only fill.
 cendre.normal = {
   a = { fg = c.bg0, bg = c.ember, gui = "bold" },
   b = { fg = c.fg, bg = c.bg2 },
-  c = { fg = c.fg_dim, bg = c.bg1 },
+  c = { fg = c.fg_dim, bg = c.bg2 },
 }
 
 cendre.insert = {
@@ -32,9 +36,9 @@ cendre.terminal = {
 }
 
 cendre.inactive = {
-  a = { fg = c.gutter, bg = c.bg1 },
-  b = { fg = c.gutter, bg = c.bg1 },
-  c = { fg = c.gutter, bg = c.bg1 },
+  a = { fg = c.gutter, bg = c.bg2 },
+  b = { fg = c.gutter, bg = c.bg2 },
+  c = { fg = c.gutter, bg = c.bg2 },
 }
 
 return cendre
