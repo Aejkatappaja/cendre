@@ -4,16 +4,26 @@
 # The plugin reads its colours from a case statement in its own src/themes.sh, so
 # paste this block there, before its default case, then in tmux.conf:
 #   set -g @tokyo-night-tmux_theme "cendre-medium"
+#   set -g @tokyo-night-tmux_transparent 0
+#
+# The transparent option is not cosmetic here: at 1 the plugin overwrites
+# "background" below with tmux's "default", and the bar drops onto the terminal's
+# own colour instead of the ground this theme picked for it.
 #
 # The keys are named after ANSI slots, but the plugin only ever paints its own
 # statusbar with them, never program output. Four are filled by role instead of by
 # name: "blue" is the accent, "bblack" is a block background, "black" is read as a
 # foreground, and "white" is the bright ink. Aligning them to their ANSI names
 # would look tidier here and worse on screen.
+#
+# One thing this block cannot fix: the plugin paints the inactive pane border with
+# "bblack" too, the slot that fills the active window block. If that border reads
+# too loud, put this in tmux.conf after the plugin runs:
+#   set -g pane-border-style "fg=#3d3633"
 
 "cendre-medium")
   declare -A THEME=(
-    ["background"]="#1d1917"
+    ["background"]="#312a28"
     ["foreground"]="#e6d5c2"
     ["black"]="#4e4641"
     ["blue"]="#ea9875"
@@ -24,7 +34,7 @@
     ["white"]="#e6d5c2"
     ["yellow"]="#fcba81"
 
-    ["bblack"]="#312a28"
+    ["bblack"]="#4e4541"
     ["bblue"]="#8bcfff"
     ["bcyan"]="#20c9cb"
     ["bgreen"]="#43b16a"
