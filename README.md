@@ -100,7 +100,7 @@ lazy.nvim:
   config = function()
     require("cendre").setup({
       background = "hard", -- "hard" | "medium" | "soft"
-      italic = false,
+      italic_virtual_text = false,
     })
   end,
 },
@@ -122,8 +122,8 @@ lualine picks it up with `options.theme = "cendre"`, or leave `"auto"`.
 | ----------------- | ---------- | -------------------------------------------------------- |
 | `background`      | `"hard"`   | ground depth: `hard`, `medium` or `soft`                  |
 | `transparent`     | `false`    | strips Normal, floats and the statusline; plugin windows follow |
-| `italic`          | `false`    | italics on virtual text: inlay hints, ghost text, git blame |
-| `italic_comments` | `true`     | italics on comments, independently of `italic`             |
+| `italic_virtual_text` | `false` | italics on inlay hints, ghost text, git blame, the dashboard footer |
+| `italic_comments` | `true`     | italics on comments, independently of the above             |
 | `on_colors`       | noop       | `function(colors)` mutates the palette before highlights  |
 | `on_highlights`   | noop       | `function(highlights, colors)` gets the last word         |
 
@@ -131,9 +131,11 @@ The background is painted by default. The ash bed is a colour the theme derived,
 so it may as well be on screen.
 
 The two italic switches are independent, not one overriding the other, so
-`italic = false` on its own leaves comments italic. Set both to `false` for no
-italics. `Italic` and `@markup.italic` are outside both, because italic is their
-entire definition: strip it and `*emphasis*` renders as body text.
+`italic_virtual_text = false` on its own leaves comments italic. Set both to
+`false` for no italics. `italic` is the old name for `italic_virtual_text`, kept
+as an alias that warns, and removed in 2.0. `Italic` and `@markup.italic` are
+outside both, because italic is their entire definition: strip it and
+`*emphasis*` renders as body text.
 
 With `transparent = true`, plugin windows go through too, without being listed one
 by one: which-key, the Snacks picker, Noice and fzf-lua link their windows to

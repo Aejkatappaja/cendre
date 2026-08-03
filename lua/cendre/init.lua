@@ -6,15 +6,18 @@ M.config = {
   background = "hard",
   -- The ash bed is a colour the theme derived, so it may as well be on screen.
   transparent = false,
-  -- Every role keeps a real gap from the others, so italics carry no
-  -- information here. Off by default.
-  italic = false,
+  -- Italics on the text the editor adds around yours: inlay hints, ghost text,
+  -- git blame, Noice virtual text, the dashboard footer. No syntax role is italic
+  -- at any setting, since every role already keeps a real gap from the others.
+  italic_virtual_text = false,
   italic_comments = true,
   on_colors = function(colors) end,
   on_highlights = function(highlights, colors) end,
 }
 
--- Which switch each italic group answers to. Anything absent follows `italic`.
+-- Which switch each italic group answers to. Every family is listed, so a group
+-- added later is classified on purpose rather than inheriting a switch whose name
+-- does not describe it.
 --
 -- The comment family is wider than the three names a reader thinks of, because an
 -- LSP attaching swaps Comment for @lsp.type.comment, and a comment that changes
@@ -28,6 +31,12 @@ for _, name in ipairs({
   "@lsp.type.comment", "LspCodeLens", "@markup.quote",
 }) do
   ITALIC[name] = "comment"
+end
+for _, name in ipairs({
+  "LspInlayHint", "BlinkCmpGhostText", "GitSignsCurrentLineBlame",
+  "NoiceVirtualText", "SnacksDashboardFooter",
+}) do
+  ITALIC[name] = "virtual"
 end
 
 --- Register :CendreBackground. Called from load() rather than setup(), because a
@@ -54,7 +63,19 @@ local function register_command()
 end
 
 function M.setup(opts)
-  M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+  opts = vim.tbl_extend("force", {}, opts or {})
+
+  -- `italic` never reached anything but virtual text, so it read as a master
+  -- switch it never was. Removed in 2.0.
+  if opts.italic ~= nil then
+    vim.deprecate("cendre italic", "italic_virtual_text", "2.0.0", "cendre")
+    if opts.italic_virtual_text == nil then
+      opts.italic_virtual_text = opts.italic
+    end
+    opts.italic = nil
+  end
+
+  M.config = vim.tbl_deep_extend("force", M.config, opts)
   register_command()
 end
 
@@ -102,8 +123,8 @@ function M.load()
       local family = ITALIC[name]
       if family == "comment" then
         hl.italic = M.config.italic_comments
-      elseif family ~= "markup" then
-        hl.italic = M.config.italic
+      elseif family == "virtual" then
+        hl.italic = M.config.italic_virtual_text
       end
     end
   end

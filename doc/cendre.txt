@@ -58,7 +58,7 @@ With lazy.nvim: >lua
       config = function()
         require("cendre").setup({
           background = "hard",
-          italic = false,
+          italic_virtual_text = false,
         })
       end,
     }
@@ -108,12 +108,17 @@ Accepts a table. Every key is optional; pass only what you want to change.
         too. blink draws no border of its own by default, `border` in its own
         options turns one on.
 
-    italic              boolean     default false
+    italic_virtual_text boolean     default false
 
-        Italics on virtual text: inlay hints, ghost text, git blame, Noice.
-        No syntax role is italic at any setting, because every role already
-        keeps a real gap from the others, so italics carry no information
-        there.
+        Italics on the text the editor adds around yours: `LspInlayHint`,
+        `BlinkCmpGhostText`, `GitSignsCurrentLineBlame`, `NoiceVirtualText`
+        and `SnacksDashboardFooter`. No syntax role is italic at any setting,
+        because every role already keeps a real gap from the others, so
+        italics carry no information there.
+
+        This option was called `italic`. That name read as a switch for the
+        whole theme and never was one, so it is now an alias that warns
+        through |vim.deprecate()|, and it goes away in 2.0.
 
     italic_comments     boolean     default true
 
@@ -122,8 +127,8 @@ Accepts a table. Every key is optional; pass only what you want to change.
         `@markup.quote` follow it too, so a comment does not change shape
         the moment a language server attaches.
 
-        The two switches are independent. `italic = false` on its own leaves
-        comments italic; set both to false for no italics.
+        The two switches are independent. `italic_virtual_text = false` on
+        its own leaves comments italic; set both to false for no italics.
 
         `Italic` and `@markup.italic` answer to neither. Italic is their
         whole definition, and they carry no foreground, so stripping it

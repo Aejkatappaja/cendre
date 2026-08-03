@@ -376,7 +376,7 @@ end
 
 check("the role map holds: every pigment lands where the page says", function()
   reload()
-  require("cendre").setup({ background = "hard", italic = false })
+  require("cendre").setup({ background = "hard", italic_virtual_text = false })
   require("cendre").load()
   local c = require("cendre").colors
   local want = {
@@ -437,7 +437,7 @@ end)
 
 check("nothing readable depends on bold or italic", function()
   reload()
-  require("cendre").setup({ background = "hard", italic = false })
+  require("cendre").setup({ background = "hard", italic_virtual_text = false })
   require("cendre").load()
   for _, group in ipairs({
     "@keyword", "@function", "@type", "@string", "@number", "@property", "@variable",
@@ -451,7 +451,7 @@ end)
 -- One group per family, so the four rows the README prints are a contract.
 check("the italic switches do what the options table says", function()
   local MATRIX = {
-    -- italic, italic_comments, comment, virtual text, markup
+    -- italic_virtual_text, italic_comments, comment, virtual text, markup
     { false, true, true, false, true },
     { false, false, false, false, true },
     { true, true, true, true, true },
@@ -459,9 +459,13 @@ check("the italic switches do what the options table says", function()
   }
 
   for _, row in ipairs(MATRIX) do
-    local italic, italic_comments, comment, virtual, markup = row[1], row[2], row[3], row[4], row[5]
+    local virtual_text, italic_comments, comment, virtual, markup = row[1], row[2], row[3], row[4], row[5]
     reload()
-    require("cendre").setup({ background = "hard", italic = italic, italic_comments = italic_comments })
+    require("cendre").setup({
+      background = "hard",
+      italic_virtual_text = virtual_text,
+      italic_comments = italic_comments,
+    })
     require("cendre").load()
 
     local function is_italic(group)
@@ -469,8 +473,8 @@ check("the italic switches do what the options table says", function()
     end
     local function want(group, expected, why)
       assert(is_italic(group) == expected,
-        ("italic=%s italic_comments=%s: %s is %s, %s"):format(
-          italic, italic_comments, group, tostring(is_italic(group)), why))
+        ("italic_virtual_text=%s italic_comments=%s: %s is %s, %s"):format(
+          virtual_text, italic_comments, group, tostring(is_italic(group)), why))
     end
 
     want("Comment", comment, "comments follow italic_comments")
@@ -481,6 +485,25 @@ check("the italic switches do what the options table says", function()
     want("Italic", markup, "this group carries no fg: stripped, it means nothing")
     want("@markup.italic", markup, "*emphasis* has to stay emphasised")
   end
+end)
+
+check("the old italic option still works, and says it is going away", function()
+  reload()
+  local told
+  local real = vim.deprecate
+  vim.deprecate = function(name, alternative, version)
+    told = { name = name, alternative = alternative, version = version }
+  end
+  require("cendre").setup({ background = "hard", italic = true })
+  vim.deprecate = real
+  require("cendre").load()
+
+  assert(told, "setting italic said nothing about the rename")
+  assert(told.alternative == "italic_virtual_text",
+    "pointed at " .. tostring(told.alternative) .. " instead of italic_virtual_text")
+  assert(told.version == "2.0.0", "a deprecation without a removal version is not a promise")
+  assert(vim.api.nvim_get_hl(0, { name = "LspInlayHint" }).italic == true,
+    "italic = true no longer reaches virtual text")
 end)
 
 check("every surface ships at all three depths", function()
