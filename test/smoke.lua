@@ -855,7 +855,7 @@ check("lualine theme follows the active background", function()
   require("cendre").load()
   package.loaded["lualine.themes.cendre"] = nil
   local theme = require("lualine.themes.cendre")
-  assert(theme.normal.c.bg == require("cendre.palette").grounds.soft.bg1,
+  assert(theme.normal.c.bg == require("cendre.palette").grounds.soft.bg2,
     "lualine still on the wrong ground")
 end)
 
