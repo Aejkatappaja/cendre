@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/Aejkatappaja/cendre/compare/v1.9.0...v1.10.0) (2026-08-03)
+
+
+### Features
+
+* **config:** rename italic to italic_virtual_text ([f56a8f3](https://github.com/Aejkatappaja/cendre/commit/f56a8f37900345af6f6798df675a20c73260ca85))
+
+
+### Bug Fixes
+
+* **groups:** paint blink.cmp's own windows ([cc6b76d](https://github.com/Aejkatappaja/cendre/commit/cc6b76db843b989d5b03b8c2f73b15744307c771))
+* **groups:** theme the noice borders, not just what sits inside them ([a32599c](https://github.com/Aejkatappaja/cendre/commit/a32599c48015642f4f857c32acf7a2b5bafc5c03))
+
 ## [1.9.0](https://github.com/Aejkatappaja/cendre/compare/v1.8.0...v1.9.0) (2026-08-03)
 
 
