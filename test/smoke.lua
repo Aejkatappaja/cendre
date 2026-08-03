@@ -42,6 +42,41 @@ local function ratio(a, b)
   return (hi + 0.05) / (lo + 0.05)
 end
 
+-- Same matrices as derive.lua, which comes at OKLCH from the other end, wavelengths.
+local SRGB_XYZ = { { 0.4123907993, 0.3575843394, 0.1804807884 },
+                   { 0.2126390059, 0.7151686788, 0.0721923154 },
+                   { 0.0193308187, 0.1191947798, 0.9505321522 } }
+local XYZ_LMS = { { 0.8189330101, 0.3618667424, -0.1288597137 },
+                  { 0.0329845436, 0.9293118715,  0.0361456387 },
+                  { 0.0482003018, 0.2643662691,  0.6338517070 } }
+local LMS_LAB = { { 0.2104542553,  0.7936177850, -0.0040720468 },
+                  { 1.9779984951, -2.4285922050,  0.4505937099 },
+                  { 0.0259040371,  0.7827717662, -0.8086757660 } }
+
+local function mul(M, v)
+  local o = {}
+  for i = 1, 3 do
+    o[i] = M[i][1] * v[1] + M[i][2] * v[2] + M[i][3] * v[3]
+  end
+  return o
+end
+
+local atan2 = math.atan2 or math.atan
+
+--- @return number lightness, number chroma, number hue in degrees
+local function oklch(hex)
+  local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)$")
+  assert(r, "not a hex colour: " .. tostring(hex))
+  local lms = mul(XYZ_LMS, mul(SRGB_XYZ, { lin(tonumber(r, 16)), lin(tonumber(g, 16)), lin(tonumber(b, 16)) }))
+  for i = 1, 3 do
+    local c = lms[i]
+    lms[i] = c < 0 and -((-c) ^ (1 / 3)) or c ^ (1 / 3)
+  end
+  local lab = mul(LMS_LAB, lms)
+  local L, a, bb = lab[1], lab[2], lab[3]
+  return L, math.sqrt(a * a + bb * bb), atan2(bb, a) * 180 / math.pi % 360
+end
+
 -- load() pushes every highlight through nvim_set_hl, which throws on a nil or
 -- malformed colour. A clean load is therefore the core regression guard: any
 -- group referencing a missing palette key blows up right here.
@@ -857,6 +892,106 @@ check("lualine theme follows the active background", function()
   local theme = require("lualine.themes.cendre")
   assert(theme.normal.c.bg == require("cendre.palette").grounds.soft.bg2,
     "lualine still on the wrong ground")
+end)
+
+-- The palette writes a hue, a lightness and a source in the margin beside every
+-- pigment. Those three claims are the reason to prefer this theme over one whose
+-- colours were picked, so none of them gets to be a comment nobody rechecks.
+local PIGMENTS = { "brass", "ember", "sap", "cinder", "frost" }
+
+--- The margin of M.pigments, parsed: hue, lightness and the source line as written.
+local function margin()
+  local src = io.open("lua/cendre/palette.lua", "r")
+  assert(src, "lua/cendre/palette.lua is missing")
+  local body = src:read("*a")
+  src:close()
+
+  local block = body:match("M%.pigments%s*=%s*{(.-)\n}")
+  assert(block, "M.pigments is no longer a single table literal")
+
+  local out = {}
+  for name, hex, hue, l, source in block:gmatch('(%w+)%s*=%s*"(#%x+)",%s*%-%-%s*([%d%.]+)°%s*·%s*L%s*([%d%.]+)%s*·%s*(.-)%s*·') do
+    out[name] = { hex = hex, hue = tonumber(hue), l = tonumber(l), source = source }
+  end
+  return out
+end
+
+check("the palette's margin matches the colours it ships", function()
+  local noted = margin()
+  local c = require("cendre.palette").pigments
+
+  for _, name in ipairs(PIGMENTS) do
+    local note = noted[name]
+    assert(note, "no annotated line for " .. name .. " in M.pigments")
+    assert(note.hex == c[name],
+      ("%s: the margin sits beside %s but the table holds %s"):format(name, note.hex, c[name]))
+
+    local L, _, hue = oklch(note.hex)
+    assert(math.abs(hue - note.hue) < 0.05,
+      ("%s: margin says %.1f°, %s is %.1f°"):format(name, note.hue, note.hex, hue))
+    assert(math.abs(L - note.l) < 0.0005,
+      ("%s: margin says L %.3f, %s is L %.3f"):format(name, note.l, note.hex, L))
+  end
+end)
+
+check("every pigment carries the hue its source emits", function()
+  -- derive.lua is a script that prints for a reader; here only its return matters
+  local chunk = loadfile("derive.lua")
+  assert(chunk, "derive.lua is missing: the palette's provenance is unverifiable")
+
+  local spoken = print
+  _G.print = function() end
+  local ok, derived = pcall(chunk)
+  _G.print = spoken
+  assert(ok, "derive.lua failed to run: " .. tostring(derived))
+  assert(type(derived) == "table", "derive.lua no longer returns what it computed")
+
+  local noted = margin()
+
+  -- The CMF fit derive.lua uses is published as within ~1% of the tabulated
+  -- curves, and bringing a spectral line into sRGB rotates it a little more, so
+  -- this is not an equality. Frost is the widest, at 1.4°.
+  local TOLERANCE = 2.0
+
+  for _, name in ipairs(PIGMENTS) do
+    local from_source = derived[name]
+    assert(from_source, "derive.lua computes no hue for " .. name)
+
+    local _, _, hue = oklch(noted[name].hex)
+    assert(math.abs(hue - from_source.hue) <= TOLERANCE,
+      ("%s: %s is %.1f°, its source gives %.1f°"):format(name, noted[name].hex, hue, from_source.hue))
+
+    -- and the margin has to name the number derive.lua was actually handed
+    assert(noted[name].source:match(tostring(math.floor(from_source.arg))),
+      ("%s: the margin reads \"%s\", derive.lua used %s"):format(name, noted[name].source, from_source.arg))
+  end
+end)
+
+check("the gaps the palette claims between its warm three are the gaps it ships", function()
+  local src = io.open("lua/cendre/palette.lua", "r")
+  local body = src:read("*a")
+  src:close()
+
+  local first, second = body:match("land%s+([%d%.]+)°%s+and%s+([%d%.]+)°%s+apart")
+  assert(first, "the header no longer states the spacing of cinder, ember and brass")
+
+  -- The header restates the figures in the margin, to one decimal, so it is held
+  -- to those and not to the full-precision hues: 61.4 less 43.8 is the 17.6 it
+  -- claims, where the hexes themselves are 17.69 apart. The margin is tied to the
+  -- hexes by the check above, so the chain still reaches the shipped colour.
+  local noted = margin()
+
+  -- both sides are written to one decimal, so anything under that is float noise
+  local function same(a, b)
+    return math.abs(a - b) < 1e-9
+  end
+
+  assert(same(noted.ember.hue - noted.cinder.hue, tonumber(first)),
+    ("cinder to ember is %.1f° in the margin, the header claims %s°"):format(
+      noted.ember.hue - noted.cinder.hue, first))
+  assert(same(noted.brass.hue - noted.ember.hue, tonumber(second)),
+    ("ember to brass is %.1f° in the margin, the header claims %s°"):format(
+      noted.brass.hue - noted.ember.hue, second))
 end)
 
 print(("-"):rep(52))
