@@ -194,22 +194,6 @@ check("transparent = false keeps Normal bg", function()
   assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == 0x171311, "Normal bg wrong")
 end)
 
-check("italic = false, italic_comments = true", function()
-  reload()
-  require("cendre").setup({ italic = false, italic_comments = true })
-  require("cendre").load()
-  assert(vim.api.nvim_get_hl(0, { name = "Comment" }).italic, "Comment lost its italic")
-  assert(not vim.api.nvim_get_hl(0, { name = "@variable.parameter" }).italic,
-    "parameter still italic")
-end)
-
-check("italic_comments = false kills every italic", function()
-  reload()
-  require("cendre").setup({ italic = false, italic_comments = false })
-  require("cendre").load()
-  assert(not vim.api.nvim_get_hl(0, { name = "Comment" }).italic, "Comment still italic")
-end)
-
 check("on_colors override", function()
   reload()
   require("cendre").setup({ on_colors = function(colors) colors.bg0 = "#000000" end })
@@ -456,6 +440,41 @@ check("nothing readable depends on bold or italic", function()
     local hl = vim.api.nvim_get_hl(0, { name = group })
     assert(not hl.bold, group .. " leans on bold")
     assert(not hl.italic, group .. " leans on italic")
+  end
+end)
+
+-- One group per family, so the four rows the README prints are a contract.
+check("the italic switches do what the options table says", function()
+  local MATRIX = {
+    -- italic, italic_comments, comment, virtual text, markup
+    { false, true, true, false, true },
+    { false, false, false, false, true },
+    { true, true, true, true, true },
+    { true, false, false, true, true },
+  }
+
+  for _, row in ipairs(MATRIX) do
+    local italic, italic_comments, comment, virtual, markup = row[1], row[2], row[3], row[4], row[5]
+    reload()
+    require("cendre").setup({ background = "hard", italic = italic, italic_comments = italic_comments })
+    require("cendre").load()
+
+    local function is_italic(group)
+      return vim.api.nvim_get_hl(0, { name = group }).italic == true
+    end
+    local function want(group, expected, why)
+      assert(is_italic(group) == expected,
+        ("italic=%s italic_comments=%s: %s is %s, %s"):format(
+          italic, italic_comments, group, tostring(is_italic(group)), why))
+    end
+
+    want("Comment", comment, "comments follow italic_comments")
+    want("@lsp.type.comment", comment, "an LSP attaching must not reshape a comment")
+    want("SpecialComment", comment, "a special comment is still a comment")
+    want("LspInlayHint", virtual, "virtual text follows italic")
+    want("BlinkCmpGhostText", virtual, "ghost text is virtual text")
+    want("Italic", markup, "this group carries no fg: stripped, it means nothing")
+    want("@markup.italic", markup, "*emphasis* has to stay emphasised")
   end
 end)
 
@@ -894,9 +913,8 @@ check("lualine theme follows the active background", function()
     "lualine still on the wrong ground")
 end)
 
--- The palette writes a hue, a lightness and a source in the margin beside every
--- pigment. Those three claims are the reason to prefer this theme over one whose
--- colours were picked, so none of them gets to be a comment nobody rechecks.
+-- The margin beside every pigment claims a hue, a lightness and a source. None of
+-- the three gets to be a comment nobody rechecks.
 local PIGMENTS = { "brass", "ember", "sap", "cinder", "frost" }
 
 --- The margin of M.pigments, parsed: hue, lightness and the source line as written.
@@ -967,10 +985,8 @@ check("every pigment carries the hue its source emits", function()
   end
 end)
 
--- L, C and hue are published in two places that render without Lua, the module's
--- own margin and the page's data tables, to the decimal each one prints. Both are
--- recomputed from the hex they sit beside: half a unit in the last place is the
--- tolerance, so a figure that rounds the wrong way is a failure like any other.
+-- Both copies, the module's margin and the page's data tables, get recomputed from
+-- the hex they sit beside, to half a unit in the last place each one prints.
 local function annotated(body, pattern)
   local found = {}
   for line in body:gmatch("[^\n]+") do
@@ -1047,9 +1063,7 @@ check("the derivation table on the page is what derive.lua prints", function()
   _G.print = spoken
   assert(ok and type(derived) == "table", "derive.lua did not return what it computed")
 
-  -- The page tells a reader that nvim -l derive.lua prints this column, and it
-  -- carries its own copy to render without Lua, so the two have to agree to the
-  -- decimal it publishes.
+  -- The page tells a reader that nvim -l derive.lua prints this column, so it has to.
   for _, name in ipairs(PIGMENTS) do
     local published = html:match('name:%s*"' .. name .. '".-derived:%s*([%d%.]+)')
     assert(published, "docs/index.html publishes no derived hue for " .. name)
@@ -1067,10 +1081,9 @@ check("the gaps the palette claims between its warm three are the gaps it ships"
   local first, second = body:match("land%s+([%d%.]+)°%s+and%s+([%d%.]+)°%s+apart")
   assert(first, "the header no longer states the spacing of cinder, ember and brass")
 
-  -- The header restates the figures in the margin, to one decimal, so it is held
-  -- to those and not to the full-precision hues: 61.4 less 43.8 is the 17.6 it
-  -- claims, where the hexes themselves are 17.69 apart. The margin is tied to the
-  -- hexes by the check above, so the chain still reaches the shipped colour.
+  -- Held to the margin rather than to the full-precision hues, because that is what
+  -- it restates: 61.4 less 43.8 is the 17.6 claimed, the hexes are 17.69 apart. The
+  -- check above ties the margin to the hexes, so the chain still reaches the colour.
   local noted = margin()
 
   -- both sides are written to one decimal, so anything under that is float noise
