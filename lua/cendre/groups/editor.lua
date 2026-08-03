@@ -53,7 +53,6 @@ function M.get(c)
     WinSeparator = { fg = c.bg3, bg = c.bg0 },
     VertSplit    = { fg = c.bg3, bg = c.bg0 },
 
-    -- messages
     ModeMsg      = { fg = c.ember, bold = true },
     MoreMsg      = { fg = c.info },
     Question     = { fg = c.info },
@@ -73,7 +72,6 @@ function M.get(c)
     qfLineNr     = { fg = c.gutter },
     qfFileName   = { fg = c.frost },
 
-    -- diff
     DiffAdd      = { bg = c.add },
     DiffDelete   = { bg = c.del },
     DiffChange   = { bg = c.mod },
@@ -87,7 +85,6 @@ function M.get(c)
     diffLine     = { fg = c.comment },
     diffIndexLine = { fg = c.comment },
 
-    -- spell
     SpellBad     = { undercurl = true, sp = c.error },
     SpellCap     = { undercurl = true, sp = c.warn },
     SpellLocal   = { undercurl = true, sp = c.info },

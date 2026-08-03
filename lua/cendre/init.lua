@@ -17,7 +17,6 @@ M.config = {
 --- Register :CendreBackground. Called from load() rather than setup(), because a
 --- bare `colorscheme cendre` with no configuration is a supported way to install
 --- this, and it should not be the way that silently loses the command.
---- @return nil
 local function register_command()
   vim.api.nvim_create_user_command("CendreBackground", function(o)
     local palette = require("cendre.palette")
