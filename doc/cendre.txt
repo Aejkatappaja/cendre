@@ -106,13 +106,24 @@ Accepts a table. Every key is optional; pass only what you want to change.
 
     italic              boolean     default false
 
-        Italics across the theme. Every role keeps a real gap from the
-        others, so italics carry no information here.
+        Italics on virtual text: inlay hints, ghost text, git blame, Noice.
+        No syntax role is italic at any setting, because every role already
+        keeps a real gap from the others, so italics carry no information
+        there.
 
     italic_comments     boolean     default true
 
-        Keeps comments italic even when `italic` is false. Set both to false
-        for no italics anywhere.
+        Italics on comments, and on everything the editor treats as one:
+        `SpecialComment`, `@lsp.type.comment`, `LspCodeLens` and
+        `@markup.quote` follow it too, so a comment does not change shape
+        the moment a language server attaches.
+
+        The two switches are independent. `italic = false` on its own leaves
+        comments italic; set both to false for no italics.
+
+        `Italic` and `@markup.italic` answer to neither. Italic is their
+        whole definition, and they carry no foreground, so stripping it
+        would render `*emphasis*` as body text.
 
     on_colors           function    default noop
 
