@@ -1066,6 +1066,10 @@ footer b { color: var(--ember); font-weight: inherit; }
       <p>What we chose is lightness and chroma, because a spectral line is far outside sRGB and has
         to be brought into gamut anyway. Hue survived that trip intact; the last column is what
         actually shipped.</p>
+      <p>The computation is in the repository, 93 lines with no data file and no dependency, because
+        those curves have a published analytic fit and OKLab is two matrix multiplies around a cube
+        root. <code>nvim -l derive.lua</code> prints the derived column below, and the test suite
+        holds this table to it.</p>
     </div>
     <div class="scroll">
       <table>
@@ -1376,9 +1380,9 @@ const PIGMENTS = [
     hard: 8.13, medium: 7.69, soft: 7.20, src: "blackbody · 1300 K" },
   { name: "brass", hex: "#fcba81", hue: 61.4, derived: 61.4, L: 0.838, C: 0.106,
     hard: 10.97, medium: 10.37, soft: 9.72, src: "sodium D · 589 nm" },
-  { name: "sap", hex: "#99af6b", hue: 123.4, derived: 123.2, L: 0.721, C: 0.095,
+  { name: "sap", hex: "#99af6b", hue: 123.4, derived: 124.1, L: 0.721, C: 0.095,
     hard: 7.65, medium: 7.23, soft: 6.77, src: "C₂ Swan · 563 nm" },
-  { name: "frost", hex: "#4e89a2", hue: 227.4, derived: 226.6, L: 0.600, C: 0.072,
+  { name: "frost", hex: "#4e89a2", hue: 227.4, derived: 226.0, L: 0.600, C: 0.072,
     hard: 4.77, medium: 4.51, soft: 4.22, src: "C₂ Swan · 474 nm" },
 ];
 

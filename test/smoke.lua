@@ -967,6 +967,30 @@ check("every pigment carries the hue its source emits", function()
   end
 end)
 
+check("the derivation table on the page is what derive.lua prints", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local html = page:read("*a")
+  page:close()
+
+  local spoken = print
+  _G.print = function() end
+  local ok, derived = pcall(assert(loadfile("derive.lua")))
+  _G.print = spoken
+  assert(ok and type(derived) == "table", "derive.lua did not return what it computed")
+
+  -- The page tells a reader that nvim -l derive.lua prints this column, and it
+  -- carries its own copy to render without Lua, so the two have to agree to the
+  -- decimal it publishes.
+  for _, name in ipairs(PIGMENTS) do
+    local published = html:match('name:%s*"' .. name .. '".-derived:%s*([%d%.]+)')
+    assert(published, "docs/index.html publishes no derived hue for " .. name)
+    assert(math.abs(tonumber(published) - derived[name].hue) < 0.05,
+      ("%s: the page publishes %s° derived, derive.lua computes %.1f°"):format(
+        name, published, derived[name].hue))
+  end
+end)
+
 check("the gaps the palette claims between its warm three are the gaps it ships", function()
   local src = io.open("lua/cendre/palette.lua", "r")
   local body = src:read("*a")
