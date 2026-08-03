@@ -505,7 +505,7 @@ check("the tmux plugin theme is mapped by role, not by ANSI name", function()
 
     for key, want in pairs({
       blue = c.ember,     -- the plugin's accent
-      bblack = c.bg2,     -- a block background
+      bblack = c.bg4,     -- a block background, and it has to mark a state
       black = c.gutter,   -- read as a foreground
       white = c.fg,       -- the bright ink
       bwhite = c.fg_dim,  -- the dim ink

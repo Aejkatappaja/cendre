@@ -321,10 +321,14 @@ function M.tokyo_night_tmux(bg)
   -- this table: every read paints statusbar chrome. So four of them are filled by
   -- the role the plugin actually uses them for, not by the name they carry.
   local slots = {
-    { "background", c.bg0 }, { "foreground", c.fg },
+    -- the bar's own ground, so bg2, not the editor's bg0. A statusbar sits one
+    -- layer above the buffer it describes, and this theme has a step for that.
+    { "background", c.bg2 },
+
+    { "foreground", c.fg },
 
     -- read as a foreground, for the count of untracked files. An ANSI black there
-    -- lands at 1.08:1 on bg0, which is not dim, it is gone.
+    -- lands near 1:1 on the bar ground, which is not dim, it is gone.
     { "black", c.gutter },
 
     -- the plugin's accent: session block, active pane border, message bar. Ember is
@@ -339,9 +343,14 @@ function M.tokyo_night_tmux(bg)
 
     { "yellow", c.terminal_yellow },
 
-    -- read as a background, under the window block and the clock. A text colour
-    -- there washes the block out instead of seating it.
-    { "bblack", c.bg2 },
+    -- read as a background, under the active window block and the clock, so it has
+    -- to lift off "background" above by enough to mark a state: bg4 is 0.105 of
+    -- lightness clear of bg2, where bg3 would have been 0.046 and would whisper.
+    --
+    -- The plugin also reads this same slot as the ink of its session block, over
+    -- the accent, where a fill this light only reaches 4.4:1. Both roles cannot be
+    -- served by one value; the state marker is the one that carries meaning.
+    { "bblack", c.bg4 },
 
     { "bblue", c.terminal_bright_blue },
     { "bcyan", c.terminal_bright_cyan }, { "bgreen", c.terminal_bright_green },
@@ -367,19 +376,29 @@ function M.tokyo_night_tmux(bg)
 # The plugin reads its colours from a case statement in its own src/themes.sh, so
 # paste this block there, before its default case, then in tmux.conf:
 #   set -g @tokyo-night-tmux_theme "%s"
+#   set -g @tokyo-night-tmux_transparent 0
+#
+# The transparent option is not cosmetic here: at 1 the plugin overwrites
+# "background" below with tmux's "default", and the bar drops onto the terminal's
+# own colour instead of the ground this theme picked for it.
 #
 # The keys are named after ANSI slots, but the plugin only ever paints its own
 # statusbar with them, never program output. Four are filled by role instead of by
 # name: "blue" is the accent, "bblack" is a block background, "black" is read as a
 # foreground, and "white" is the bright ink. Aligning them to their ANSI names
 # would look tidier here and worse on screen.
+#
+# One thing this block cannot fix: the plugin paints the inactive pane border with
+# "bblack" too, the slot that fills the active window block. If that border reads
+# too loud, put this in tmux.conf after the plugin runs:
+#   set -g pane-border-style "fg=%s"
 
 "%s")
   declare -A THEME=(
 %s
   )
   ;;
-]]):format(HEADER:format(bg), GENERATED, name, name, table.concat(rows, "\n"))
+]]):format(HEADER:format(bg), GENERATED, name, c.bg3, name, table.concat(rows, "\n"))
 end
 
 function M.tmux(bg)
@@ -389,16 +408,20 @@ function M.tmux(bg)
 %s
 # source-file ~/.config/tmux/cendre.tmux.conf
 
-set -g status-style "bg=default fg=%s"
+# The bar sits on bg2, one layer above the buffer, and marks state with fills
+# rather than with colour alone: the accent names the session, a bg4 fill marks the
+# current window, and everything inactive stays ink on the bar's own ground.
+
+set -g status-style "bg=%s fg=%s"
 set -g status-position bottom
 set -g status-justify left
 set -g status-left-length 200
 
-set -g status-left "#[fg=%s,bold] #{session_name}  "
+set -g status-left "#[fg=%s,bg=%s,bold] #{session_name} #[fg=%s,bg=%s,nobold] "
 set -g status-right "#[fg=%s]#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD) "
 
-set -g window-status-format "#[fg=%s]#{window_index}:#{window_name}#{window_flags} "
-set -g window-status-current-format "#[fg=%s,bold]#{window_index}:#{window_name}#{window_flags} "
+set -g window-status-format "#[fg=%s,bg=%s] #{window_index}:#{window_name}#{window_flags} "
+set -g window-status-current-format "#[fg=%s,bg=%s,bold] #{window_index}:#{window_name}#{window_flags} "
 set -g window-status-last-style "fg=%s"
 set -g window-status-activity-style "fg=%s"
 
@@ -410,11 +433,11 @@ set -g message-command-style "bg=%s fg=%s"
 
 set -g mode-style "bg=%s fg=%s"
 ]]):format(bg, GENERATED,
-    c.fg,
-    c.ember,
+    c.bg2, c.fg,
+    c.bg0, c.ember, c.fg, c.bg2,
     c.comment,
-    c.comment,
-    c.ember,
+    c.comment, c.bg2,
+    c.fg, c.bg4,
     c.fg_dim,
     c.warn,
     c.bg3,
