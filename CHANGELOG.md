@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.9.0](https://github.com/Aejkatappaja/cendre/compare/v1.8.0...v1.9.0) (2026-08-03)
+
+
+### Features
+
+* **palette:** ship the derivation the margin claims ([5128fa0](https://github.com/Aejkatappaja/cendre/commit/5128fa0fb1ea996ea73126dc4da351792db43278))
+
+
+### Bug Fixes
+
+* **italic:** keep the attribute where it is the meaning ([05809da](https://github.com/Aejkatappaja/cendre/commit/05809dacecc20c1fd717566a0d83bef2c7c67280))
+* **palette:** publish the lightness and hue the hexes actually have ([b58eb34](https://github.com/Aejkatappaja/cendre/commit/b58eb3425d1a8c47db651c519d16faa7e84e2024))
+* **site:** publish the derived hues derive.lua actually computes ([4c06b39](https://github.com/Aejkatappaja/cendre/commit/4c06b3971b93be2dd9b4bb27a7d674ab154dcb58))
+
 ## [1.8.0](https://github.com/Aejkatappaja/cendre/compare/v1.7.0...v1.8.0) (2026-08-03)
 
 
