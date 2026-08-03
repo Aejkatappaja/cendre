@@ -24,6 +24,41 @@ Neovim 0.9 or newer, with `termguicolors`.
 Diagnostics, git signs, diff and statusline draw from the semantic family. An
 error never wears the same red as a keyword.
 
+## 27 surfaces, one palette
+
+Neovim is where this starts, not where it stops. Ghostty, kitty, wezterm, foot,
+Alacritty, tmux, bat, delta, lazygit, yazi, eza, fzf, btop, starship, helix, Zed,
+Obsidian, Firefox and the rest, with the path each one installs to:
+[cendretheme.com/#surfaces](https://cendretheme.com/#surfaces).
+
+Nothing under `extras/` or `assets/` is written by hand, nor the favicon and share
+card under `docs/`. All of it is rendered from `lua/cendre/palette.lua`, so a
+colour cannot be right in the editor and stale in a terminal, in this README, or
+on the site:
+
+```sh
+nvim --headless --noplugin -u NONE -c "set rtp+=." -c "luafile scripts/extras.lua" -c q
+```
+
+**Every surface ships at all three depths.** A reader on `soft` wants `soft` in
+their terminal too, so each directory holds `cendre`, `cendre-medium` and
+`cendre-soft`. The unsuffixed name is the depth the plugin defaults to, so the
+editor and everything around it match with no second decision.
+
+Anything that stores a theme name rather than taking it from its filename gets
+that name qualified per depth, or installing two of them collides on one entry in
+Zed, bat, Obsidian and the rest. The test asserts that.
+
+Ghostty, for example:
+
+```
+theme = cendre
+```
+
+The 16 ANSI slots are also exported as `vim.g.terminal_color_*`, so `:terminal`
+matches. Slot 5 is potassium's 404 nm line, derived the same way as the pigments,
+and it exists because ANSI wants six hues while the editor needs five.
+
 ## Three depths, one palette
 
 The pigments are the identity, so they never move. Only the ground under them
@@ -192,39 +227,6 @@ Each hue traced from its spectrum to its hex:
 5. Diagnostics are their own family, separate from the pigments.
 6. Nothing readable under 4.5:1, with three exceptions that are stated rather
    than hidden: `comment` everywhere, and `frost` and `error` on `soft`.
-
-## Everywhere else
-
-Nothing under `extras/` or `assets/` is written by hand, nor the favicon and share
-card under `docs/`. All of it is rendered from `lua/cendre/palette.lua`, so a
-colour cannot be right in the editor and stale in a terminal, in this README, or
-on the site:
-
-```sh
-nvim --headless --noplugin -u NONE -c "set rtp+=." -c "luafile scripts/extras.lua" -c q
-```
-
-**Every surface ships at all three depths.** A reader on `soft` wants `soft` in
-their terminal too, so each directory holds `cendre`, `cendre-medium` and
-`cendre-soft`. The unsuffixed name is the depth the plugin defaults to, so the
-editor and everything around it match with no second decision.
-
-Anything that stores a theme name rather than taking it from its filename gets
-that name qualified per depth, or installing two of them collides on one entry in
-Zed, bat, Obsidian and the rest. The test asserts that.
-
-The full list, with the path each one installs to:
-[cendretheme.com/#surfaces](https://cendretheme.com/#surfaces).
-
-Ghostty, for example:
-
-```
-theme = cendre
-```
-
-The 16 ANSI slots are also exported as `vim.g.terminal_color_*`, so `:terminal`
-matches. Slot 5 is potassium's 404 nm line, derived the same way as the pigments,
-and it exists because ANSI wants six hues while the editor needs five.
 
 ## Test
 
