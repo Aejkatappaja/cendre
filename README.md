@@ -133,7 +133,8 @@ With `transparent = true`, plugin windows go through too, without being listed o
 by one: which-key, the Snacks picker, Noice and fzf-lua link their windows to
 `NormalFloat`, so stripping that strips all of them, including plugins released
 after this README. The completion menu is the exception and stays painted, since a
-transparent popup over code is not readable.
+transparent popup over code is not readable. That covers `Pmenu` and blink.cmp's own
+windows, which read neither `Pmenu` nor `NormalFloat`.
 
 ```lua
 require("cendre").setup({

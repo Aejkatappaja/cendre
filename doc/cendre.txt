@@ -102,7 +102,11 @@ Accepts a table. Every key is optional; pass only what you want to change.
         `NormalFloat` and their edges to `FloatBorder`, so stripping those two
         strips every one of them, including plugins released after this file.
         The completion menu is the exception and stays painted: a transparent
-        popup over code is not readable.
+        popup over code is not readable. blink.cmp points its windows at
+        `BlinkCmpMenu`, `BlinkCmpDoc` and `BlinkCmpSignatureHelp` rather than at
+        `Pmenu` or `NormalFloat`, so those three and their borders are painted
+        too. blink draws no border of its own by default, `border` in its own
+        options turns one on.
 
     italic              boolean     default false
 
