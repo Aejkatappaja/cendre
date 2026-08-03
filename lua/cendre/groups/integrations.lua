@@ -52,7 +52,15 @@ function M.get(c)
     SnacksNotifierDebug     = { fg = c.comment },
     SnacksNotifierTrace     = { fg = c.comment },
 
-    -- blink.cmp
+    -- blink.cmp. winhighlight points its windows here, not at Pmenu or NormalFloat,
+    -- so undefined means a popup with no ground. Painted under transparent, like Pmenu.
+    BlinkCmpMenu                = { fg = c.fg, bg = c.bg_deep },
+    BlinkCmpMenuBorder          = { fg = c.bg3, bg = c.bg_deep },
+    BlinkCmpDoc                 = { fg = c.fg, bg = c.bg_deep },
+    BlinkCmpDocBorder           = { fg = c.bg3, bg = c.bg_deep },
+    BlinkCmpSignatureHelp       = { fg = c.fg, bg = c.bg_deep },
+    BlinkCmpSignatureHelpBorder = { fg = c.bg3, bg = c.bg_deep },
+
     BlinkCmpMenuSelection  = { bg = c.bg3, bold = true },
     BlinkCmpScrollBarThumb = { bg = c.bg4 },
     BlinkCmpScrollBarGutter = { bg = c.bg1 },
