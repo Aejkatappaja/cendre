@@ -732,6 +732,54 @@ check("the hunk theme fills every slot hunk reads, and none it does not", functi
   end
 end)
 
+check("the konsole scheme carries the sections konsole ships", function()
+  reload()
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- Taken from Breeze.colorscheme, which Konsole ships. Nobody here runs KDE, so
+  -- the shape is held to KDE's own file rather than to what a reader assumes.
+  local bases = { "Background", "Foreground" }
+  for i = 0, 7 do
+    table.insert(bases, "Color" .. i)
+  end
+  local want = { General = true }
+  for _, base in ipairs(bases) do
+    want[base] = true
+    want[base .. "Faint"] = true
+    want[base .. "Intense"] = true
+  end
+
+  for path, body in pairs(files) do
+    if path:match("konsole") then
+      local seen = {}
+      for name in body:gmatch("%[([%w]+)%]") do
+        seen[name] = true
+      end
+      for name in pairs(want) do
+        assert(seen[name], path .. " has no [" .. name .. "]")
+      end
+      for name in pairs(seen) do
+        assert(want[name], path .. " invents [" .. name .. "]")
+      end
+
+      -- KConfig wants three decimals, and a hex slipping through would apply nothing
+      for line in body:gmatch("Color=([^\n]+)") do
+        local r, g, b = line:match("^(%d+),(%d+),(%d+)$")
+        assert(r, path .. " has a colour that is not a decimal triplet: " .. line)
+        for _, v in ipairs({ r, g, b }) do
+          assert(tonumber(v) <= 255, path .. " has a channel over 255: " .. line)
+        end
+      end
+
+      -- two depths under one Description collide on a single entry in Konsole's list
+      local name = path:match("([%w%-]+)%.colorscheme$")
+      assert(body:find("Description=" .. name .. "\n", 1, true),
+        path .. " does not name itself in [General]")
+    end
+  end
+end)
+
 check("the yazi theme uses section and key names yazi still knows", function()
   reload()
   local palette = require("cendre.palette")

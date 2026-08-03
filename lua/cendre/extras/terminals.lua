@@ -224,6 +224,54 @@ end
 --- foot takes bare hex without the leading hash.
 --- @param bg string
 --- @return string
+--- Konsole reads KConfig INI and wants decimal triplets. No header comment: every
+--- scheme KDE ships is bare, and this is the one file here nobody could test.
+---
+--- The Faint set repeats the normal colours. The palette has no dimmed pigment to
+--- put there, deriving one would be five colours chosen in a theme whose whole
+--- claim is that none are, and leaving the sections out lets Konsole fall back to
+--- its own defaults, which are off-palette.
+--- @param bg string
+--- @return string
+function M.konsole(bg)
+  local c = palette.get(bg)
+  local s = ansi(c)
+
+  local function triplet(hex)
+    local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)$")
+    return ("%d,%d,%d"):format(tonumber(r, 16), tonumber(g, 16), tonumber(b, 16))
+  end
+
+  local out = {}
+  local function section(name, hex)
+    vim.list_extend(out, { "[" .. name .. "]", "Color=" .. triplet(hex), "" })
+  end
+
+  section("Background", c.bg0)
+  section("BackgroundFaint", c.bg_deep)
+  section("BackgroundIntense", c.bg1)
+
+  for i = 1, 8 do
+    local slot = "Color" .. (i - 1)
+    section(slot, s[i])
+    section(slot .. "Faint", s[i])
+    section(slot .. "Intense", s[i + 8])
+  end
+
+  section("Foreground", c.fg)
+  section("ForegroundFaint", c.fg_dim)
+  section("ForegroundIntense", c.fg)
+
+  vim.list_extend(out, {
+    "[General]",
+    "Description=" .. palette.name(bg),
+    "Opacity=1",
+    "Wallpaper=",
+  })
+
+  return table.concat(out, "\n") .. "\n"
+end
+
 function M.foot(bg)
   local c = palette.get(bg)
   local s = ansi(c)
