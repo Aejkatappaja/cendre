@@ -1066,10 +1066,12 @@ footer b { color: var(--ember); font-weight: inherit; }
       <p>What we chose is lightness and chroma, because a spectral line is far outside sRGB and has
         to be brought into gamut anyway. Hue survived that trip intact; the last column is what
         actually shipped.</p>
-      <p>The computation is in the repository, 93 lines with no data file and no dependency, because
-        those curves have a published analytic fit and OKLab is two matrix multiplies around a cube
-        root. <code>nvim -l derive.lua</code> prints the derived column below, and the test suite
-        holds this table to it.</p>
+      <p>The computation is in the repository, a hundred lines with no data file and no dependency,
+        because those curves have a published analytic fit and OKLab is two matrix multiplies around
+        a cube root. <code>nvim -l derive.lua</code> prints the derived column below, and the test
+        suite holds this table to it. The fit is the approximation in the chain: its authors publish
+        it as within about one percent of the tabulated curves, which is worth up to a degree of hue
+        here.</p>
     </div>
     <div class="scroll">
       <table>
