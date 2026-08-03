@@ -241,6 +241,19 @@ no readable token leans on bold or italic, and that every committed file under
 `extras/`, `assets/` and `docs/` matches a fresh render of the palette. Exits
 non-zero on failure.
 
+## Discussions
+
+Four threads are open, and none of them is a bug report:
+
+- [Show your setup](https://github.com/Aejkatappaja/cendre/discussions/43), any
+  surface, any depth. The only screenshot here is mine.
+- [Which surface next](https://github.com/Aejkatappaja/cendre/discussions/47), a
+  poll over eight candidates.
+- [Argue with the palette](https://github.com/Aejkatappaja/cendre/discussions/44).
+  The hue is not negotiable, everything chosen around it is.
+- [Install and setup questions](https://github.com/Aejkatappaja/cendre/discussions/45),
+  including the black cursor.
+
 ## Licence
 
 MIT.
