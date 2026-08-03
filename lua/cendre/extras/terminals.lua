@@ -346,10 +346,9 @@ function M.tokyo_night_tmux(bg)
     -- read as a background, under the active window block and the clock, so it has
     -- to lift off "background" above by enough to mark a state: bg4 is 0.105 of
     -- lightness clear of bg2, where bg3 would have been 0.046 and would whisper.
-    --
-    -- The plugin also reads this same slot as the ink of its session block, over
-    -- the accent, where a fill this light only reaches 4.4:1. Both roles cannot be
-    -- served by one value; the state marker is the one that carries meaning.
+    -- The plugin also reads this slot as the ink of its session block, over the
+    -- accent, where a fill this light only reaches 4.4:1. One value cannot serve
+    -- both; the state marker is the one that carries meaning.
     { "bblack", c.bg4 },
 
     { "bblue", c.terminal_bright_blue },
