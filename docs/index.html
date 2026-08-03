@@ -1325,7 +1325,7 @@ const DEPTHS = ["hard", "medium", "soft"];
 /** @type {Record<Depth, Ground[]>} */
 const GROUNDS = {
   hard: [
-    { name: "bg_deep", hex: "#0f0c0a", L: 0.156 },
+    { name: "bg_deep", hex: "#0f0c0a", L: 0.157 },
     { name: "bg0", hex: "#171311", L: 0.191 },
     { name: "bg1", hex: "#201b19", L: 0.227 },
     { name: "bg2", hex: "#2a2422", L: 0.266 },
@@ -1334,12 +1334,12 @@ const GROUNDS = {
     { name: "bg5", hex: "#5a504c", L: 0.440 },
   ],
   medium: [
-    { name: "bg_deep", hex: "#141110", L: 0.182 },
+    { name: "bg_deep", hex: "#141110", L: 0.181 },
     { name: "bg0", hex: "#1d1917", L: 0.217 },
     { name: "bg1", hex: "#26211f", L: 0.253 },
     { name: "bg2", hex: "#312a28", L: 0.292 },
-    { name: "bg3", hex: "#3d3633", L: 0.338 },
-    { name: "bg4", hex: "#4e4541", L: 0.397 },
+    { name: "bg3", hex: "#3d3633", L: 0.339 },
+    { name: "bg4", hex: "#4e4541", L: 0.398 },
     { name: "bg5", hex: "#625753", L: 0.466 },
   ],
   soft: [
@@ -1347,9 +1347,9 @@ const GROUNDS = {
     { name: "bg0", hex: "#231f1d", L: 0.243 },
     { name: "bg1", hex: "#2d2725", L: 0.279 },
     { name: "bg2", hex: "#37312e", L: 0.318 },
-    { name: "bg3", hex: "#443c39", L: 0.364 },
-    { name: "bg4", hex: "#554c48", L: 0.423 },
-    { name: "bg5", hex: "#695e5a", L: 0.492 },
+    { name: "bg3", hex: "#443c39", L: 0.363 },
+    { name: "bg4", hex: "#554c48", L: 0.424 },
+    { name: "bg5", hex: "#695e5a", L: 0.491 },
   ],
 };
 
@@ -1363,9 +1363,9 @@ const DEPTH_NOTE = {
 /** @type {Swatch[]} */
 const INK = [
   { name: "fg", hex: "#e6d5c2", hue: 70.5, L: 0.882, C: 0.032, hard: 12.89, medium: 12.19, soft: 11.42 },
-  { name: "fg_dim", hex: "#a09384", hue: 71.3, L: 0.670, C: 0.027, hard: 6.15, medium: 5.82, soft: 5.45 },
-  { name: "comment", hex: "#73665b", hue: 62.0, L: 0.520, C: 0.024, hard: 3.32, medium: 3.14, soft: 2.94 },
-  { name: "gutter", hex: "#4e4641", hue: 56.4, L: 0.400, C: 0.014, hard: 2.00, medium: 1.89, soft: 1.77 },
+  { name: "fg_dim", hex: "#a09384", hue: 71.3, L: 0.670, C: 0.026, hard: 6.15, medium: 5.82, soft: 5.45 },
+  { name: "comment", hex: "#73665b", hue: 62.5, L: 0.519, C: 0.024, hard: 3.32, medium: 3.14, soft: 2.94 },
+  { name: "gutter", hex: "#4e4641", hue: 54.1, L: 0.401, C: 0.014, hard: 2.00, medium: 1.89, soft: 1.77 },
 ];
 
 /**
@@ -1408,11 +1408,11 @@ const WHY = {
 
 /** @type {Swatch[]} */
 const SEMANTIC = [
-  { name: "error", hex: "#d25780", hue: 2.0, L: 0.639, C: 0.160, hard: 4.76, medium: 4.50, soft: 4.21 },
-  { name: "warning", hex: "#f4a21c", hue: 71.7, L: 0.760, C: 0.160, hard: 8.82, medium: 8.33, soft: 7.81 },
-  { name: "ok · git add", hex: "#43b16a", hue: 152.1, L: 0.681, C: 0.145, hard: 6.80, medium: 6.43, soft: 6.02 },
-  { name: "hint", hex: "#20c9cb", hue: 196.2, L: 0.759, C: 0.125, hard: 9.03, medium: 8.54, soft: 8.00 },
-  { name: "info · git change", hex: "#58bdff", hue: 240.4, L: 0.766, C: 0.133, hard: 8.91, medium: 8.42, soft: 7.89 },
+  { name: "error", hex: "#d25780", hue: 2.0, L: 0.625, C: 0.160, hard: 4.76, medium: 4.50, soft: 4.21 },
+  { name: "warning", hex: "#f4a21c", hue: 71.7, L: 0.775, C: 0.160, hard: 8.82, medium: 8.33, soft: 7.81 },
+  { name: "ok · git add", hex: "#43b16a", hue: 152.1, L: 0.680, C: 0.145, hard: 6.80, medium: 6.43, soft: 6.02 },
+  { name: "hint", hex: "#20c9cb", hue: 196.2, L: 0.760, C: 0.125, hard: 9.03, medium: 8.54, soft: 8.00 },
+  { name: "info · git change", hex: "#58bdff", hue: 240.4, L: 0.766, C: 0.134, hard: 8.91, medium: 8.42, soft: 7.89 },
 ];
 
 /** @type {Record<Depth, Tints>} */
@@ -1423,7 +1423,7 @@ const TINTS = {
 };
 
 /** ANSI wants six hues where the editor needs five, so this one is terminal only. */
-const POTASSIUM = { hex: "#9480ba", L: 0.640, C: 0.088, hue: 299.8, ratio: 5.32 };
+const POTASSIUM = { hex: "#9480ba", L: 0.640, C: 0.088, hue: 299.7, ratio: 5.32 };
 
 /** The two bright slots with no editor role: the same hues, lightness raised 0.06. */
 const POTASSIUM_BRIGHT = "#a692cd";

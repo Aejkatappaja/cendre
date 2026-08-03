@@ -967,6 +967,74 @@ check("every pigment carries the hue its source emits", function()
   end
 end)
 
+-- L, C and hue are published in two places that render without Lua, the module's
+-- own margin and the page's data tables, to the decimal each one prints. Both are
+-- recomputed from the hex they sit beside: half a unit in the last place is the
+-- tolerance, so a figure that rounds the wrong way is a failure like any other.
+local function annotated(body, pattern)
+  local found = {}
+  for line in body:gmatch("[^\n]+") do
+    local hex = line:match('"(#%x%x%x%x%x%x)"')
+    local note = hex and line:match(pattern)
+    if note then
+      found[#found + 1] = { hex = hex, note = note, line = line }
+    end
+  end
+  return found
+end
+
+-- The decimal point is required: "C2 Swan 563 nm" sits in the same margin and
+-- reads as a chroma of 2 to anything looser.
+local function claims(note)
+  return {
+    { "L", tonumber(note:match("L:?%s*(%d%.%d+)")), 1, 0.0005 },
+    { "C", tonumber(note:match("C:?%s*(%d%.%d+)")), 2, 0.0005 },
+    { "hue", tonumber(note:match("hue:%s*(%d+%.%d)") or note:match("(%d+%.%d)°")), 3, 0.05 },
+  }
+end
+
+check("every lightness and hue the module's margin prints is the hex beside it", function()
+  local src = io.open("lua/cendre/palette.lua", "r")
+  assert(src, "lua/cendre/palette.lua is missing")
+  local body = src:read("*a")
+  src:close()
+
+  local rows = annotated(body, "%-%-%s*(.*)$")
+  assert(#rows >= 30, "only " .. #rows .. " annotated colours found, the margin cannot have shrunk that far")
+
+  for _, row in ipairs(rows) do
+    local measured = { oklch(row.hex) }
+    for _, c in ipairs(claims(row.note)) do
+      local field, want, index, tolerance = c[1], c[2], c[3], c[4]
+      if want then
+        assert(math.abs(measured[index] - want) < tolerance,
+          ("%s: margin says %s %s, %s is %.4f"):format(row.hex, field, want, row.hex, measured[index]))
+      end
+    end
+  end
+end)
+
+check("every lightness and hue the page publishes is the hex beside it", function()
+  local page = io.open("docs/index.html", "r")
+  assert(page, "docs/index.html is missing")
+  local body = page:read("*a")
+  page:close()
+
+  local rows = annotated(body, 'hex: "#%x+",%s*(.*)$')
+  assert(#rows >= 30, "only " .. #rows .. " annotated colours found on the page")
+
+  for _, row in ipairs(rows) do
+    local measured = { oklch(row.hex) }
+    for _, c in ipairs(claims(row.note)) do
+      local field, want, index, tolerance = c[1], c[2], c[3], c[4]
+      if want then
+        assert(math.abs(measured[index] - want) < tolerance,
+          ("%s: the page publishes %s %s, the hex is %.4f"):format(row.hex, field, want, measured[index]))
+      end
+    end
+  end
+end)
+
 check("the derivation table on the page is what derive.lua prints", function()
   local page = io.open("docs/index.html", "r")
   assert(page, "docs/index.html is missing")
