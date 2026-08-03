@@ -14,6 +14,22 @@ M.config = {
   on_highlights = function(highlights, colors) end,
 }
 
+-- Which switch each italic group answers to. Anything absent follows `italic`.
+--
+-- The comment family is wider than the three names a reader thinks of, because an
+-- LSP attaching swaps Comment for @lsp.type.comment, and a comment that changes
+-- shape when the server connects reads as a bug.
+local ITALIC = {}
+for _, name in ipairs({ "Italic", "@markup.italic" }) do
+  ITALIC[name] = "markup"
+end
+for _, name in ipairs({
+  "Comment", "SpecialComment", "@comment", "@comment.documentation",
+  "@lsp.type.comment", "LspCodeLens", "@markup.quote",
+}) do
+  ITALIC[name] = "comment"
+end
+
 --- Register :CendreBackground. Called from load() rather than setup(), because a
 --- bare `colorscheme cendre` with no configuration is a supported way to install
 --- this, and it should not be the way that silently loses the command.
@@ -79,21 +95,15 @@ function M.load()
     highlights.FloatBorder = { fg = c.bg3, bg = "NONE" }
   end
 
-  if not M.config.italic then
-    for _, hl in pairs(highlights) do
-      hl.italic = false
-    end
-    if M.config.italic_comments then
-      for _, name in ipairs({ "Comment", "@comment", "@comment.documentation" }) do
-        if highlights[name] then
-          highlights[name].italic = true
-        end
-      end
-    end
-  elseif not M.config.italic_comments then
-    for _, name in ipairs({ "Comment", "@comment", "@comment.documentation" }) do
-      if highlights[name] then
-        highlights[name].italic = false
+  -- Markup answers to neither switch: italic is the whole definition there, and a
+  -- stripped one leaves an empty group, so *emphasis* would render as body text.
+  for name, hl in pairs(highlights) do
+    if hl.italic then
+      local family = ITALIC[name]
+      if family == "comment" then
+        hl.italic = M.config.italic_comments
+      elseif family ~= "markup" then
+        hl.italic = M.config.italic
       end
     end
   end
