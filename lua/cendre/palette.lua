@@ -34,7 +34,7 @@ end
 -- cursorline has to read as one material at different distances.
 M.grounds = {
   hard = {
-    bg_deep = "#0f0c0a", -- L 0.156 · floats, sidebars
+    bg_deep = "#0f0c0a", -- L 0.157 · floats, sidebars
     bg0     = "#171311", -- L 0.191 · editor
     bg1     = "#201b19", -- L 0.227 · cursorline
     bg2     = "#2a2422", -- L 0.266 · statusline
@@ -43,12 +43,12 @@ M.grounds = {
     bg5     = "#5a504c", -- L 0.440 · highest layer
   },
   medium = {
-    bg_deep = "#141110", -- L 0.182
+    bg_deep = "#141110", -- L 0.181
     bg0     = "#1d1917", -- L 0.217
     bg1     = "#26211f", -- L 0.253
     bg2     = "#312a28", -- L 0.292
-    bg3     = "#3d3633", -- L 0.338
-    bg4     = "#4e4541", -- L 0.397
+    bg3     = "#3d3633", -- L 0.339
+    bg4     = "#4e4541", -- L 0.398
     bg5     = "#625753", -- L 0.466
   },
   soft = {
@@ -56,9 +56,9 @@ M.grounds = {
     bg0     = "#231f1d", -- L 0.243
     bg1     = "#2d2725", -- L 0.279
     bg2     = "#37312e", -- L 0.318
-    bg3     = "#443c39", -- L 0.364
-    bg4     = "#554c48", -- L 0.423
-    bg5     = "#695e5a", -- L 0.492
+    bg3     = "#443c39", -- L 0.363
+    bg4     = "#554c48", -- L 0.424
+    bg5     = "#695e5a", -- L 0.491
   },
 }
 
@@ -71,8 +71,8 @@ M.grounds = {
 M.ink = {
   fg      = "#e6d5c2", -- L 0.882 · 12.89:1 on hard
   fg_dim  = "#a09384", -- L 0.670 ·  6.15:1 · operators, delimiters
-  comment = "#73665b", -- L 0.520 ·  3.32:1 · quiet on purpose
-  gutter  = "#4e4641", -- L 0.400 ·  2.00:1 · line numbers, inlay
+  comment = "#73665b", -- L 0.519 ·  3.32:1 · quiet on purpose
+  gutter  = "#4e4641", -- L 0.401 ·  2.00:1 · line numbers, inlay
 }
 
 -- The five pigments, in order of lightness, which is also order of distance
@@ -94,7 +94,7 @@ M.semantic = {
   warn  = "#f4a21c", --  71.7° · C 0.160
   ok    = "#43b16a", -- 152.1° · C 0.145
   hint  = "#20c9cb", -- 196.2° · C 0.125
-  info  = "#58bdff", -- 240.4° · C 0.133
+  info  = "#58bdff", -- 240.4° · C 0.134
 }
 
 -- Tinted grounds for diff and visual, per depth, so a selection lifts off the
@@ -108,7 +108,7 @@ M.tints = {
 -- Derived like the pigments, and not one of them: it fills ANSI slot 5 and never
 -- touches a token, so it stays out of M.pigments.
 M.spectral = {
-  potassium        = "#9480ba", -- 299.8° · L 0.640 · potassium 404 nm · ANSI slot 5
+  potassium        = "#9480ba", -- 299.7° · L 0.640 · potassium 404 nm · ANSI slot 5
   potassium_bright = "#a692cd", -- same hue, L +0.06
 }
 
