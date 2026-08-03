@@ -732,6 +732,45 @@ check("the hunk theme fills every slot hunk reads, and none it does not", functi
   end
 end)
 
+check("the kde scheme carries the sections plasma reads", function()
+  reload()
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- Taken from BreezeDark.colors, which KDE ships. Every Colors: section reads the
+  -- same twelve keys, and a missing one falls back to a Breeze default.
+  local sections = {
+    "Colors:Button", "Colors:Complementary", "Colors:Header", "Colors:Header%]%[Inactive",
+    "Colors:Selection", "Colors:Tooltip", "Colors:View", "Colors:Window",
+  }
+  local keys = {
+    "BackgroundAlternate", "BackgroundNormal", "DecorationFocus", "DecorationHover",
+    "ForegroundActive", "ForegroundInactive", "ForegroundLink", "ForegroundNegative",
+    "ForegroundNeutral", "ForegroundNormal", "ForegroundPositive", "ForegroundVisited",
+  }
+
+  for path, body in pairs(files) do
+    if path:match("%.colors$") then
+      for _, section in ipairs(sections) do
+        local block = body:match("%[" .. section .. "%]\n(.-)\n\n")
+        assert(block, path .. " has no [" .. section:gsub("%%", "") .. "]")
+        for _, key in ipairs(keys) do
+          assert(block:match(key .. "=%d+,%d+,%d+"),
+            path .. " is missing " .. key .. " in " .. section:gsub("%%", ""))
+        end
+      end
+
+      for _, key in ipairs({ "activeBackground", "activeForeground", "inactiveForeground" }) do
+        assert(body:match(key .. "=%d+,%d+,%d+"), path .. " has no [WM] " .. key)
+      end
+
+      local name = path:match("([%w%-]+)%.colors$")
+      assert(body:find("ColorScheme=" .. name .. "\n", 1, true),
+        path .. " does not name itself in [General]")
+    end
+  end
+end)
+
 check("the konsole scheme carries the sections konsole ships", function()
   reload()
   package.loaded["cendre.extras"] = nil

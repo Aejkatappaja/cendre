@@ -835,6 +835,88 @@ function M.slack(bg)
   }, ",") .. "\n"
 end
 
+--- A Plasma colour scheme, shaped like BreezeDark.colors. The eight sections are a
+--- ladder of depth, so only the two grounds move.
+--- @param bg string
+--- @return string
+function M.kde(bg)
+  local c = palette.get(bg)
+
+  local function triplet(hex)
+    local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)$")
+    return ("%d,%d,%d"):format(tonumber(r, 16), tonumber(g, 16), tonumber(b, 16))
+  end
+
+  -- Visited takes potassium, the one pigment no editor role uses.
+  local ink = {
+    DecorationFocus = c.ember,
+    DecorationHover = c.brass,
+    ForegroundActive = c.ember,
+    ForegroundInactive = c.fg_dim,
+    ForegroundLink = c.info,
+    ForegroundNegative = c.error,
+    ForegroundNeutral = c.warn,
+    ForegroundNormal = c.fg,
+    ForegroundPositive = c.ok,
+    ForegroundVisited = c.potassium_bright,
+  }
+
+  local out = {}
+  -- Keys sorted: pairs() has no order, and two renders must not differ.
+  local function section(name, normal, alternate, override)
+    local keys = vim.tbl_extend("force", {
+      BackgroundNormal = normal,
+      BackgroundAlternate = alternate,
+    }, ink, override or {})
+
+    local lines = {}
+    for key, hex in pairs(keys) do
+      table.insert(lines, key .. "=" .. triplet(hex))
+    end
+    table.sort(lines)
+
+    table.insert(out, "[" .. name .. "]")
+    vim.list_extend(out, lines)
+    table.insert(out, "")
+  end
+
+  -- alternates go down, not up: every ink here is light
+  section("Colors:Button", c.bg2, c.bg1)
+  section("Colors:Complementary", c.bg_deep, c.bg1)
+  section("Colors:Header", c.bg2, c.bg1)
+  section("Colors:Header][Inactive", c.bg1, c.bg2)
+  -- Selection fills with the accent, so every ink on it flips dark. Semantic colour
+  -- inside a selected row is lost; light-on-ember was 1.0:1, which is worse.
+  local dark = { ForegroundInactive = c.bg2 }
+  for key in pairs(ink) do
+    dark[key] = dark[key] or c.bg0
+  end
+  section("Colors:Selection", c.ember, c.brass, dark)
+  section("Colors:Tooltip", c.bg_deep, c.bg1)
+  section("Colors:View", c.bg_deep, c.bg0)
+  section("Colors:Window", c.bg0, c.bg1)
+
+  vim.list_extend(out, {
+    "[WM]",
+    "activeBackground=" .. triplet(c.bg2),
+    "activeBlend=" .. triplet(c.fg),
+    "activeForeground=" .. triplet(c.fg),
+    "inactiveBackground=" .. triplet(c.bg1),
+    "inactiveBlend=" .. triplet(c.comment),
+    "inactiveForeground=" .. triplet(c.comment),
+    "",
+    "[General]",
+    "ColorScheme=" .. palette.name(bg),
+    "Name=" .. palette.name(bg),
+    "shadeSortColumn=true",
+    "",
+    "[KDE]",
+    "contrast=4",
+  })
+
+  return table.concat(out, "\n") .. "\n"
+end
+
 --- @param bg string
 --- @return string
 function M.obsidian(bg)

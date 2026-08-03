@@ -31,6 +31,7 @@ local PER_DEPTH = {
   ["extras/wezterm/cendre.toml"] = terminals.wezterm,
   ["extras/foot/cendre.ini"] = terminals.foot,
   ["extras/konsole/cendre.colorscheme"] = terminals.konsole,
+  ["extras/kde/cendre.colors"] = tools.kde,
   ["extras/macos-terminal/cendre.itermcolors"] = terminals.itermcolors,
   ["extras/macos-terminal/cendre.terminal"] = terminals.macos_terminal,
   ["extras/tmux/cendre.tmux.conf"] = terminals.tmux,
