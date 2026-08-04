@@ -221,16 +221,8 @@ author = "Aejkatappaja"
     palette.name(bg))
 end
 
---- foot takes bare hex without the leading hash.
---- @param bg string
---- @return string
---- Konsole reads KConfig INI and wants decimal triplets. No header comment: every
---- scheme KDE ships is bare, and this is the one file here nobody could test.
----
---- The Faint set repeats the normal colours. The palette has no dimmed pigment to
---- put there, deriving one would be five colours chosen in a theme whose whole
---- claim is that none are, and leaving the sections out lets Konsole fall back to
---- its own defaults, which are off-palette.
+--- KConfig INI, decimal triplets, no header comment: KDE ships these bare.
+--- Faint repeats the normal colours, since the palette has no dimmed pigment.
 --- @param bg string
 --- @return string
 function M.konsole(bg)
@@ -272,6 +264,9 @@ function M.konsole(bg)
   return table.concat(out, "\n") .. "\n"
 end
 
+--- foot takes bare hex without the leading hash.
+--- @param bg string
+--- @return string
 function M.foot(bg)
   local c = palette.get(bg)
   local s = ansi(c)
