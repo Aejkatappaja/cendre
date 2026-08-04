@@ -764,6 +764,21 @@ check("the kde scheme carries the sections plasma reads", function()
         assert(body:match(key .. "=%d+,%d+,%d+"), path .. " has no [WM] " .. key)
       end
 
+      -- Hover and focus are fills, not strokes, and keep ForegroundNormal on them.
+      for _, section in ipairs(sections) do
+        local block = body:match("%[" .. section .. "%]\n(.-)\n\n")
+        local function triplet(key)
+          local r, g, b = block:match(key .. "=(%d+),(%d+),(%d+)")
+          return ("#%02x%02x%02x"):format(tonumber(r), tonumber(g), tonumber(b))
+        end
+        local ink = triplet("ForegroundNormal")
+        for _, fill in ipairs({ "DecorationHover", "DecorationFocus" }) do
+          local got = ratio(ink, triplet(fill))
+          assert(got >= 4.5, ("%s: ForegroundNormal is %.2f:1 on %s in %s"):format(
+            path, got, fill, section:gsub("%%", "")))
+        end
+      end
+
       local name = path:match("([%w%-]+)%.colors$")
       assert(body:find("ColorScheme=" .. name .. "\n", 1, true),
         path .. " does not name itself in [General]")

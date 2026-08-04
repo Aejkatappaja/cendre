@@ -847,10 +847,10 @@ function M.kde(bg)
     return ("%d,%d,%d"):format(tonumber(r, 16), tonumber(g, 16), tonumber(b, 16))
   end
 
-  -- Visited takes potassium, the one pigment no editor role uses.
+  -- Plasma fills with hover and focus, so both are ground steps.
   local ink = {
-    DecorationFocus = c.ember,
-    DecorationHover = c.brass,
+    DecorationFocus = c.bg4,
+    DecorationHover = c.bg3,
     ForegroundActive = c.ember,
     ForegroundInactive = c.fg_dim,
     ForegroundLink = c.info,
@@ -885,9 +885,12 @@ function M.kde(bg)
   section("Colors:Complementary", c.bg_deep, c.bg1)
   section("Colors:Header", c.bg2, c.bg1)
   section("Colors:Header][Inactive", c.bg1, c.bg2)
-  -- Selection fills with the accent, so every ink on it flips dark. Semantic colour
-  -- inside a selected row is lost; light-on-ember was 1.0:1, which is worse.
-  local dark = { ForegroundInactive = c.bg2 }
+  -- Accent fill, so every ink flips dark and the two fills go lighter instead.
+  local dark = {
+    ForegroundInactive = c.bg2,
+    DecorationHover = c.brass,
+    DecorationFocus = c.fg,
+  }
   for key in pairs(ink) do
     dark[key] = dark[key] or c.bg0
   end
