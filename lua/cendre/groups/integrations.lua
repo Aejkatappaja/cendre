@@ -61,7 +61,7 @@ function M.get(c)
     BlinkCmpSignatureHelp       = { fg = c.fg, bg = c.bg_deep },
     BlinkCmpSignatureHelpBorder = { fg = c.bg3, bg = c.bg_deep },
 
-    BlinkCmpMenuSelection  = { bg = c.bg3, bold = true },
+    BlinkCmpMenuSelection  = { bg = c.bg2, bold = true },
     BlinkCmpScrollBarThumb = { bg = c.bg4 },
     BlinkCmpScrollBarGutter = { bg = c.bg1 },
     BlinkCmpLabel          = { fg = c.fg },
