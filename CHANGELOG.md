@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.0](https://github.com/Aejkatappaja/cendre/compare/v1.11.0...v1.12.0) (2026-08-05)
+
+
+### Features
+
+* **extras:** add a KDE Plasma colour scheme ([1756019](https://github.com/Aejkatappaja/cendre/commit/1756019eb01ecdb4a1ca158e65e46e8193b7fef0))
+* **groups:** give netrw's own groups the roles they already have ([7bd5cac](https://github.com/Aejkatappaja/cendre/commit/7bd5cacf06b915985dfe0451fa2c3d8da535ea5a))
+
+
+### Bug Fixes
+
+* **extras:** take the accent off the KDE hover and focus fills ([0aa7046](https://github.com/Aejkatappaja/cendre/commit/0aa7046337c19e9990a9527640852a1c975ace03))
+
 ## [1.11.0](https://github.com/Aejkatappaja/cendre/compare/v1.10.0...v1.11.0) (2026-08-05)
 
 
