@@ -55,11 +55,11 @@ function M.get(c)
     -- blink.cmp. winhighlight points its windows here, not at Pmenu or NormalFloat,
     -- so undefined means a popup with no ground. Painted under transparent, like Pmenu.
     BlinkCmpMenu                = { fg = c.fg, bg = c.bg_deep },
-    BlinkCmpMenuBorder          = { fg = c.bg3, bg = c.bg_deep },
+    BlinkCmpMenuBorder          = { fg = c.bg5, bg = c.bg_deep },
     BlinkCmpDoc                 = { fg = c.fg, bg = c.bg_deep },
-    BlinkCmpDocBorder           = { fg = c.bg3, bg = c.bg_deep },
+    BlinkCmpDocBorder           = { fg = c.bg5, bg = c.bg_deep },
     BlinkCmpSignatureHelp       = { fg = c.fg, bg = c.bg_deep },
-    BlinkCmpSignatureHelpBorder = { fg = c.bg3, bg = c.bg_deep },
+    BlinkCmpSignatureHelpBorder = { fg = c.bg5, bg = c.bg_deep },
 
     BlinkCmpMenuSelection  = { bg = c.bg2, bold = true },
     BlinkCmpScrollBarThumb = { bg = c.bg4 },
@@ -199,7 +199,7 @@ function M.get(c)
     DapUIStoppedThread  = { fg = c.warn },
     DapUISource         = { fg = c.frost },
     DapUILineNumber     = { fg = c.gutter },
-    DapUIFloatBorder    = { fg = c.bg3 },
+    DapUIFloatBorder    = { fg = c.bg5 },
     DapUIWatchesEmpty   = { fg = c.comment },
     DapUIWatchesValue   = { fg = c.ok },
     DapUIWatchesError   = { fg = c.error },

@@ -113,6 +113,25 @@ check("transparent = true strips Normal bg", function()
   assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == nil, "Normal bg not stripped")
 end)
 
+check("every float edge is the same stroke", function()
+  reload()
+  local c = require("cendre.palette").get("hard")
+  local built = {}
+  for _, mod in ipairs({ "editor", "syntax", "treesitter", "lsp", "integrations" }) do
+    for name, hl in pairs(require("cendre.groups." .. mod).get(c)) do built[name] = hl end
+  end
+
+  -- A border on the float ground is the generic float edge and takes one colour.
+  -- Noice's accent borders set no background, so they stay out by construction.
+  local want = built.FloatBorder.fg
+  for name, hl in pairs(built) do
+    if name:match("Border$") and hl.bg == c.bg_deep then
+      assert(hl.fg == want,
+        ("%s strokes %s where FloatBorder strokes %s"):format(name, tostring(hl.fg), tostring(want)))
+    end
+  end
+end)
+
 check("transparent = true keeps the float border stroke", function()
   reload()
   require("cendre").setup({ transparent = true })
