@@ -120,6 +120,13 @@ check("transparent = true keeps the float border stroke", function()
   local hl = vim.api.nvim_get_hl(0, { name = "FloatBorder" })
   assert(hl.bg == nil, "FloatBorder bg not stripped")
   assert(hl.fg ~= nil, "FloatBorder lost its stroke")
+
+  -- And it is the same stroke, not a second one: stripping the ground is the only
+  -- thing transparency is allowed to do to an edge.
+  local c = require("cendre.palette").get("hard")
+  local want = require("cendre.groups.editor").get(c).FloatBorder.fg
+  assert(("#%06x"):format(hl.fg) == want,
+    ("transparent strokes #%06x where the theme strokes %s"):format(hl.fg, want))
 end)
 
 check("no group repeats a float surface, so plugin windows can inherit it", function()
