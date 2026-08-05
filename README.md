@@ -57,7 +57,7 @@ theme = cendre
 
 Inside the editor, these get groups of their own rather than whatever their
 defaults land on: gitsigns, blink.cmp, Snacks, fzf-lua, which-key, Noice,
-neo-tree, nvim-tree, flash, trouble, lazy.nvim, mason, nvim-dap and dap-ui,
+neo-tree, nvim-tree, netrw, flash, trouble, lazy.nvim, mason, nvim-dap and dap-ui,
 neotest, mini.indentscope, mini.hipatterns, hlchunk, grug-far, diffview,
 illuminate, treesitter-context and rainbow-delimiters.
 
