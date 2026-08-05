@@ -189,9 +189,9 @@ so it lands within a degree of the bare flame itself. Shown at `hard`, the defau
 | `bg0`     | `#171311` | 0.191 | editor             |
 | `bg1`     | `#201b19` | 0.227 | cursorline         |
 | `bg2`     | `#2a2422` | 0.266 | statusline         |
-| `bg3`     | `#362f2c` | 0.312 | borders, splits    |
+| `bg3`     | `#362f2c` | 0.312 | splits             |
 | `bg4`     | `#463e3a` | 0.371 | hover              |
-| `bg5`     | `#5a504c` | 0.440 | highest layer      |
+| `bg5`     | `#5a504c` | 0.440 | float edges        |
 
 Ink, shared by every depth. Ratios against `bg0` at `hard`:
 

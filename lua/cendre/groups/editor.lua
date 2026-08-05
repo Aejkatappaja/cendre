@@ -5,7 +5,7 @@ function M.get(c)
     Normal       = { fg = c.fg, bg = c.bg0 },
     NormalNC     = { fg = c.fg, bg = c.bg0 },
     NormalFloat  = { fg = c.fg, bg = c.bg_deep },
-    FloatBorder  = { fg = c.bg3, bg = c.bg_deep },
+    FloatBorder  = { fg = c.bg5, bg = c.bg_deep },
     FloatTitle   = { fg = c.ember, bold = true },
     FloatFooter  = { fg = c.comment, bg = c.bg_deep },
 
