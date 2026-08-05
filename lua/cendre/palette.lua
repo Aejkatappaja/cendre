@@ -38,9 +38,9 @@ M.grounds = {
     bg0     = "#171311", -- L 0.191 · editor
     bg1     = "#201b19", -- L 0.227 · cursorline
     bg2     = "#2a2422", -- L 0.266 · statusline
-    bg3     = "#362f2c", -- L 0.312 · borders, splits
+    bg3     = "#362f2c", -- L 0.312 · splits
     bg4     = "#463e3a", -- L 0.371 · hover
-    bg5     = "#5a504c", -- L 0.440 · highest layer
+    bg5     = "#5a504c", -- L 0.440 · float edges
   },
   medium = {
     bg_deep = "#141110", -- L 0.181
