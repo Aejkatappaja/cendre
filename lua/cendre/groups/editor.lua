@@ -72,6 +72,10 @@ function M.get(c)
     qfLineNr     = { fg = c.gutter },
     qfFileName   = { fg = c.frost },
 
+    netrwTreeBar  = { fg = c.bg4 },
+    netrwMarkFile = { bg = c.bg2, bold = true },
+    netrwClassify = { fg = c.comment },
+
     DiffAdd      = { bg = c.add },
     DiffDelete   = { bg = c.del },
     DiffChange   = { bg = c.mod },
