@@ -106,14 +106,15 @@ function M.load()
       "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeWinSeparator", "NeoTreeEndOfBuffer",
       "NvimTreeNormal", "SnacksNormal", "SnacksNormalNC", "TroubleNormal",
       "DiffviewNormal", "TreesitterContext",
+      -- stripped rather than dropped: a transparent float with no border has no
+      -- edge, so the ground goes and the stroke stays as the groups declare it.
+      "FloatBorder",
     }
     for _, name in ipairs(strip) do
       if highlights[name] then
         highlights[name].bg = "NONE"
       end
     end
-    -- keep the border stroke: a transparent float with no border has no edge
-    highlights.FloatBorder = { fg = c.bg3, bg = "NONE" }
   end
 
   -- Markup answers to neither switch: italic is the whole definition there, and a
