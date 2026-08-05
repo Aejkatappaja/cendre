@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0](https://github.com/Aejkatappaja/cendre/compare/v1.10.0...v1.11.0) (2026-08-05)
+
+
+### Features
+
+* **extras:** add Konsole ([43b07b2](https://github.com/Aejkatappaja/cendre/commit/43b07b26b2d49fbcfe1693a9c4b7a485bfc4e21e))
+
+
+### Bug Fixes
+
+* **groups:** give a float an edge that reads against bright text ([d640195](https://github.com/Aejkatappaja/cendre/commit/d64019527ba2f6e7d09ee6ac51354196133d1bcf))
+* **groups:** one ground for a selected row, wherever the list floats ([6c6e882](https://github.com/Aejkatappaja/cendre/commit/6c6e8823515257e6a779ab9a0b5eeba39818c4f1))
+* **transparent:** let the float edge keep the stroke the groups declare ([c9633ae](https://github.com/Aejkatappaja/cendre/commit/c9633ae9f17430bd2e212e621d6ad39f6c942775))
+
 ## [1.10.0](https://github.com/Aejkatappaja/cendre/compare/v1.9.0...v1.10.0) (2026-08-03)
 
 
