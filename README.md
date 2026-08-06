@@ -26,9 +26,9 @@ error never wears the same red as a keyword.
 
 ## 29 surfaces, one palette
 
-Neovim is where this starts, not where it stops. Ghostty, kitty, wezterm, foot,
-Alacritty, Konsole, tmux, bat, delta, lazygit, yazi, eza, fzf, btop, starship,
-helix, Zed, Obsidian, Firefox, KDE Plasma and the rest, with the path each one installs to:
+Neovim is where this starts, not where it stops. Ghostty, kitty, WezTerm, foot,
+Alacritty, Konsole, tmux, bat, delta, lazygit, Yazi, eza, fzf, btop, Starship,
+Helix, Zed, Obsidian, Firefox, KDE Plasma and the rest, with the path each one installs to:
 [cendretheme.com/#surfaces](https://cendretheme.com/#surfaces).
 
 Nothing under `extras/` or `assets/` is written by hand, nor the favicon and share
