@@ -362,10 +362,11 @@ function M.zed(bg)
   --- @param scope string
   --- @param hex string
   --- @param style string|nil
+  --- @param weight integer|nil
   --- @return string
-  local function syn(scope, hex, style)
-    return ('        "%s": { "color": "%sff", "font_style": %s, "font_weight": null }')
-      :format(scope, hex, style and ('"' .. style .. '"') or "null")
+  local function syn(scope, hex, style, weight)
+    return ('        "%s": { "color": "%sff", "font_style": %s, "font_weight": %s }')
+      :format(scope, hex, style and ('"' .. style .. '"') or "null", weight or "null")
   end
 
   -- Every capture takes the colour its Neovim counterpart takes, so the two
@@ -392,33 +393,45 @@ function M.zed(bg)
     syn("number", c.sap),
     syn("boolean", c.sap),
     syn("constant", c.fg),
+    syn("constant.builtin", c.sap),
     syn("variable", c.fg),
     syn("variable.special", c.cinder),
     syn("property", c.ember),
     syn("attribute", c.ember),
     syn("label", c.cinder),
+    syn("lifetime", c.cinder),
     syn("tag", c.cinder),
-    syn("emphasis", c.ember),
-    syn("emphasis.strong", c.ember),
+    syn("selector", c.cinder),
+    syn("emphasis", c.fg, "italic"),
+    syn("emphasis.strong", c.fg, nil, 700),
     syn("link_text", c.frost),
     syn("link_uri", c.comment),
-    syn("title", c.ember),
+    syn("title", c.ember, nil, 700),
+    syn("markup.heading", c.ember, nil, 700),
+    syn("markup.link.url", c.comment),
     syn("primary", c.fg),
-    syn("predictive", c.gutter, "italic"),
-    syn("hint", c.hint),
+    syn("predictive", c.gutter),
+    syn("hint", c.gutter),
     syn("variable.parameter", c.ember),
     syn("variable.member", c.ember),
+    syn("variable.other.member", c.ember),
     syn("variable.builtin", c.cinder),
     syn("enum", c.frost),
     syn("variant", c.frost),
+    syn("namespace", c.frost),
+    syn("module", c.frost),
+    syn("concept", c.frost),
     syn("preproc", c.cinder),
     syn("embedded", c.fg),
-    syn("string.doc", c.sap, "italic"),
+    syn("string.doc", c.sap),
     syn("string.special.symbol", c.ember),
     syn("text.literal", c.sap),
     syn("tag.attribute", c.ember),
     syn("tag.delimiter", c.fg_dim),
     syn("punctuation.list_marker", c.ember),
+    syn("diff.plus", c.ok),
+    syn("diff.minus", c.error),
+    syn("diff.delta", c.info),
   }
 
   -- Ordered pairs rather than one positional format string. At 140 keys a
