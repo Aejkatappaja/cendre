@@ -743,6 +743,74 @@ check("the opencode theme fills every colour its Theme type declares", function(
   end
 end)
 
+check("every scope Zed's grammars emit resolves to the hue Neovim gives it", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- Captures from crates/grammars/src/*/highlights.scm in zed-industries/zed, each
+  -- paired with the palette token its Neovim counterpart takes. Zed resolves a
+  -- capture to the longest key in the theme that is a dotted prefix of it and falls
+  -- through to editor.foreground when nothing matches, so a scope this theme never
+  -- names is body text rather than a gap anybody would see.
+  local scopes = {
+    ["constant.builtin"]      = "sap",
+    ["namespace"]             = "frost",
+    ["module"]                = "frost",
+    ["concept"]               = "frost",
+    ["type.unit"]             = "frost",
+    ["selector.class"]        = "cinder",
+    ["selector.id"]           = "cinder",
+    ["selector.pseudo"]       = "cinder",
+    ["lifetime"]              = "cinder",
+    ["keyword.operator"]      = "cinder",
+    ["diff.plus"]             = "ok",
+    ["diff.minus"]            = "error",
+    ["diff.delta"]            = "info",
+    ["diff.delta.moved"]      = "info",
+    ["markup.heading"]        = "ember",
+    ["title.markup"]          = "ember",
+    ["markup.link.url"]       = "comment",
+    ["link_uri.markup"]       = "comment",
+    ["variable.other.member"] = "ember",
+    ["attribute.jsx"]         = "ember",
+    ["property.json_key"]     = "ember",
+    ["punctuation.markup"]    = "fg_dim",
+    ["text.literal.markup"]   = "sap",
+    ["function.method.call"]  = "brass",
+  }
+
+  for _, bg in ipairs(palette.backgrounds) do
+    local c = palette.get(bg)
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/zed/themes/cendre%s.json"):format(suffix)
+    local body = assert(files[path], "missing " .. path)
+    local syntax = vim.json.decode(body).themes[1].style.syntax
+
+    for scope, token in pairs(scopes) do
+      local matched
+      for key in pairs(syntax) do
+        if scope == key or scope:sub(1, #key + 1) == key .. "." then
+          if not matched or #key > #matched then matched = key end
+        end
+      end
+      assert(matched, path .. " names no prefix of " .. scope ..
+        ", so Zed paints it in editor.foreground")
+      assert(syntax[matched].color == c[token] .. "ff",
+        ("%s resolves %s through %s to %s, where Neovim gives it %s (%s)"):format(
+          path, scope, matched, syntax[matched].color, token, c[token]))
+    end
+
+    for _, scope in ipairs({ "title", "markup.heading", "emphasis.strong" }) do
+      assert(syntax[scope].font_weight == 700,
+        path .. " leaves " .. scope .. " at normal weight, where Neovim bolds it")
+    end
+    assert(syntax["emphasis"].font_style == "italic",
+      path .. " drops the italic that is the whole definition of @markup.italic")
+  end
+end)
+
 check("the hunk theme fills every slot hunk reads, and none it does not", function()
   reload()
   local palette = require("cendre.palette")
