@@ -108,6 +108,24 @@ Accepts a table. Every key is optional; pass only what you want to change.
         too. blink draws no border of its own by default, `border` in its own
         options turns one on.
 
+    dim_inactive        boolean     default false
+
+        Drops `NormalNC`, the window you are not in, from the editor ground to
+        `bg_deep`. That rung already exists and already carries the meaning:
+        floats and sidebars stand on it, so the theme is saying "not the buffer
+        you are editing" with a colour it uses for exactly that elsewhere.
+
+        The cost is that a file tree and a background split then share one
+        ground. Off by default for that reason: it is worth the trade only if
+        you live in splits more than in a sidebar.
+
+        `SignColumn` and `FoldColumn` keep the editor ground even here, because
+        Neovim has no inactive variant for either. A dimmed window therefore
+        keeps a normal-weight gutter, and `WinSeparator` carries the editor
+        ground too. Nothing a colorscheme can reach fixes that.
+
+        `transparent = true` wins: there is no ground left to lower.
+
     italic_virtual_text boolean     default false
 
         Italics on the text the editor adds around yours: `LspInlayHint`,
@@ -331,7 +349,8 @@ them useful:
     1. the palette resolves for the chosen depth
     2. `on_colors` mutates it
     3. every highlight group is built from the result
-    4. `transparent` strips backgrounds, the italic switches apply
+    4. `dim_inactive` lowers `NormalNC`, `transparent` strips backgrounds,
+       the italic switches apply
     5. `on_highlights` runs, and wins
 
 So `on_colors` is for changing a colour everywhere at once, and

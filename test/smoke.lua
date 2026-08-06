@@ -113,6 +113,37 @@ check("transparent = true strips Normal bg", function()
   assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == nil, "Normal bg not stripped")
 end)
 
+check("dim_inactive is off unless asked, so a split does not move on its own", function()
+  reload()
+  require("cendre").setup({})
+  require("cendre").load()
+  assert(vim.api.nvim_get_hl(0, { name = "NormalNC" }).bg
+      == vim.api.nvim_get_hl(0, { name = "Normal" }).bg,
+    "NormalNC left the editor ground without being asked")
+end)
+
+check("dim_inactive = true drops NormalNC to bg_deep at every depth", function()
+  for _, bg in ipairs(BACKGROUNDS) do
+    reload()
+    require("cendre").setup({ background = bg, dim_inactive = true })
+    require("cendre").load()
+    local want = tonumber(require("cendre.palette").grounds[bg].bg_deep:sub(2), 16)
+    assert(vim.api.nvim_get_hl(0, { name = "NormalNC" }).bg == want,
+      ("NormalNC on %s is not bg_deep"):format(bg))
+    assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+        == tonumber(require("cendre.palette").grounds[bg].bg0:sub(2), 16),
+      ("dim_inactive moved the active window on %s"):format(bg))
+  end
+end)
+
+check("transparent = true outranks dim_inactive", function()
+  reload()
+  require("cendre").setup({ transparent = true, dim_inactive = true })
+  require("cendre").load()
+  assert(vim.api.nvim_get_hl(0, { name = "NormalNC" }).bg == nil,
+    "dim_inactive repainted a ground transparent = true is meant to strip")
+end)
+
 check("every float edge is the same stroke", function()
   reload()
   local c = require("cendre.palette").get("hard")
