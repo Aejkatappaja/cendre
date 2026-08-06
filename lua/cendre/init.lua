@@ -6,6 +6,8 @@ M.config = {
   background = "hard",
   -- The ash bed is a colour the theme derived, so it may as well be on screen.
   transparent = false,
+  -- The window you are not in drops to bg_deep.
+  dim_inactive = false,
   -- Italics on the text the editor adds around yours: inlay hints, ghost text,
   -- git blame, Noice virtual text, the dashboard footer. No syntax role is italic
   -- at any setting, since every role already keeps a real gap from the others.
@@ -96,6 +98,10 @@ function M.load()
   local highlights = {}
   for _, mod in ipairs({ "editor", "syntax", "treesitter", "lsp", "integrations" }) do
     highlights = vim.tbl_extend("force", highlights, require("cendre.groups." .. mod).get(c))
+  end
+
+  if M.config.dim_inactive then
+    highlights.NormalNC.bg = c.bg_deep
   end
 
   if M.config.transparent then

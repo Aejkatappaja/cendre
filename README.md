@@ -122,6 +122,7 @@ lualine picks it up with `options.theme = "cendre"`, or leave `"auto"`.
 | ----------------- | ---------- | -------------------------------------------------------- |
 | `background`      | `"hard"`   | ground depth: `hard`, `medium` or `soft`                  |
 | `transparent`     | `false`    | strips Normal, floats and the statusline; plugin windows follow |
+| `dim_inactive`    | `false`    | the window you are not in drops to `bg_deep`               |
 | `italic_virtual_text` | `false` | italics on inlay hints, ghost text, git blame, the dashboard footer |
 | `italic_comments` | `true`     | italics on comments, independently of the above             |
 | `on_colors`       | noop       | `function(colors)` mutates the palette before highlights  |
@@ -129,6 +130,13 @@ lualine picks it up with `options.theme = "cendre"`, or leave `"auto"`.
 
 The background is painted by default. The ash bed is a colour the theme derived,
 so it may as well be on screen.
+
+`dim_inactive` reuses `bg_deep`, the ground floats and sidebars already stand on,
+rather than inventing a shade for it: the theme already says "not the buffer you
+are editing" with that colour. The trade is that a file tree and a background
+split then share one ground, which is why it is off by default. `SignColumn` and
+`FoldColumn` stay at editor brightness regardless, since Neovim has no inactive
+variant for either.
 
 The two italic switches are independent, not one overriding the other, so
 `italic_virtual_text = false` on its own leaves comments italic. Set both to
