@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/Aejkatappaja/cendre/compare/v1.12.0...v1.13.0) (2026-08-06)
+
+
+### Features
+
+* **helix:** cover the scopes Helix reads and cendre left to inherit ([1b31c40](https://github.com/Aejkatappaja/cendre/commit/1b31c402dc43f22b1c3cc8c49f495f0c088826be))
+
 ## [1.12.0](https://github.com/Aejkatappaja/cendre/compare/v1.11.0...v1.12.0) (2026-08-05)
 
 
