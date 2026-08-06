@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.15.0](https://github.com/Aejkatappaja/cendre/compare/v1.14.0...v1.15.0) (2026-08-06)
+
+
+### Features
+
+* **zed:** cover the scopes Zed reads and the port left to inherit ([36f789d](https://github.com/Aejkatappaja/cendre/commit/36f789dff1958b6462f1a6adca31dc39beb574f0))
+
+
+### Bug Fixes
+
+* **zed:** follow the float edge and the selected row core already moved ([85fd755](https://github.com/Aejkatappaja/cendre/commit/85fd7550610cb92dfaf5a8454c50823ce617e72b))
+
 ## [1.14.0](https://github.com/Aejkatappaja/cendre/compare/v1.13.0...v1.14.0) (2026-08-06)
 
 
