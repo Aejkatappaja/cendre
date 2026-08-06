@@ -4,7 +4,8 @@
 # Install: copy to ~/.config/helix/themes/cendre.toml, then set
 # `theme = "cendre-medium"` in ~/.config/helix/config.toml.
 
-# syntax
+# syntax. Helix falls back on the longest prefix it has a rule for, so a scope is
+# only named here when inheriting would hand it the wrong pigment.
 "keyword" = "cinder"
 "keyword.control" = "cinder"
 "keyword.directive" = "cinder"
@@ -26,6 +27,10 @@
 "string" = "sap"
 "string.regexp" = "ember"
 "string.special" = "ember"
+# a path or a url points somewhere, which is the frost job, so the two step out
+# of the ember family the rest of string.special sits in
+"string.special.path" = "frost"
+"string.special.url" = { fg = "frost", modifiers = ["underlined"] }
 "comment" = { fg = "comment", modifiers = ["italic"] }
 "variable" = "fg"
 "variable.builtin" = "cinder"
@@ -37,14 +42,28 @@
 "punctuation" = "fg_dim"
 "punctuation.delimiter" = "fg_dim"
 "punctuation.bracket" = "fg_dim"
+# interpolation braces and format specifiers carry meaning a comma does not
+"punctuation.special" = "ember"
 "special" = "ember"
 "tag" = "cinder"
+"tabstop" = { bg = "bg2" }
 
-# markup
+# markup. Six heading levels out of five pigments, so the last one steps down to
+# fg_dim rather than repeating a pigment.
 "markup.heading" = { fg = "ember", modifiers = ["bold"] }
+"markup.heading.1" = { fg = "ember", modifiers = ["bold"] }
+"markup.heading.2" = { fg = "brass", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "frost", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "sap", modifiers = ["bold"] }
+"markup.heading.5" = { fg = "cinder", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "fg_dim", modifiers = ["bold"] }
 "markup.list" = "ember"
+"markup.list.checked" = "ok"
+"markup.list.unchecked" = "comment"
 "markup.bold" = { modifiers = ["bold"] }
 "markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link" = "frost"
 "markup.link.url" = { fg = "comment", modifiers = ["underlined"] }
 "markup.link.text" = "frost"
 "markup.quote" = { fg = "comment", modifiers = ["italic"] }
@@ -52,31 +71,66 @@
 
 # ui
 "ui.background" = { bg = "bg0" }
+"ui.background.separator" = "bg3"
 "ui.text" = "fg"
 "ui.text.focus" = { fg = "fg", modifiers = ["bold"] }
+"ui.text.inactive" = "comment"
+"ui.text.info" = "fg_dim"
+"ui.text.directory" = "frost"
+# the cursor answers to the mode, on the same three pigments the statusline uses,
+# so the block under your hand and the badge in the corner never disagree
 "ui.cursor" = { fg = "bg0", bg = "ember" }
+"ui.cursor.normal" = { fg = "bg0", bg = "ember" }
+"ui.cursor.insert" = { fg = "bg0", bg = "ok" }
+"ui.cursor.select" = { fg = "bg0", bg = "info" }
 "ui.cursor.primary" = { fg = "bg0", bg = "ember" }
+"ui.cursor.primary.normal" = { fg = "bg0", bg = "ember" }
+"ui.cursor.primary.insert" = { fg = "bg0", bg = "ok" }
+"ui.cursor.primary.select" = { fg = "bg0", bg = "info" }
 "ui.cursor.match" = { fg = "ember", modifiers = ["bold"] }
 "ui.cursorline.primary" = { bg = "bg1" }
-"ui.selection" = { bg = "vis" }
+"ui.cursorline.secondary" = { bg = "bg1" }
+"ui.cursorcolumn.primary" = { bg = "bg1" }
+"ui.cursorcolumn.secondary" = { bg = "bg1" }
+# the warm tint marks the selection you are driving. The rest take plain ground,
+# one step darker, because with thirty cursors down a file every one of them
+# cannot be the one, and hue alone does not carry that at this chroma.
+"ui.selection" = { bg = "bg1" }
+"ui.selection.primary" = { bg = "vis" }
 "ui.linenr" = "gutter"
 "ui.linenr.selected" = { fg = "ember", modifiers = ["bold"] }
+# the gutter takes the cursorline too, or the band stops where the text starts
+"ui.gutter" = { bg = "bg0" }
+"ui.gutter.selected" = { bg = "bg1" }
 "ui.statusline" = { fg = "fg_dim", bg = "bg2" }
 "ui.statusline.inactive" = { fg = "gutter", bg = "bg1" }
 "ui.statusline.normal" = { fg = "bg0", bg = "ember", modifiers = ["bold"] }
 "ui.statusline.insert" = { fg = "bg0", bg = "ok", modifiers = ["bold"] }
 "ui.statusline.select" = { fg = "bg0", bg = "info", modifiers = ["bold"] }
+"ui.statusline.separator" = { fg = "bg3", bg = "bg2" }
 "ui.bufferline" = { fg = "comment", bg = "bg1" }
 "ui.bufferline.active" = { fg = "fg", bg = "bg0", modifiers = ["bold"] }
+"ui.bufferline.background" = { bg = "bg1" }
 "ui.popup" = { fg = "fg", bg = "bg_deep" }
 "ui.window" = { fg = "bg3" }
 "ui.help" = { fg = "fg", bg = "bg_deep" }
 "ui.menu" = { fg = "fg", bg = "bg1" }
 "ui.menu.selected" = { fg = "bg0", bg = "ember", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "bg4", bg = "bg2" }
+"ui.picker.header" = "comment"
+"ui.picker.header.column.active" = { fg = "ember", modifiers = ["bold"] }
 "ui.virtual.whitespace" = "bg3"
 "ui.virtual.ruler" = { bg = "bg1" }
+"ui.virtual.indent-guide" = "bg2"
+"ui.virtual.wrap" = "bg3"
 "ui.virtual.inlay-hint" = { fg = "gutter", modifiers = ["italic"] }
+# a jump label is read in the time it takes to type it, so it gets the loudest
+# pair the theme has rather than a pigment on the ground
+"ui.virtual.jump-label" = { fg = "bg0", bg = "ember", modifiers = ["bold"] }
 "ui.highlight" = { bg = "bg2" }
+"ui.highlight.frameline" = { bg = "bg2" }
+"ui.debug.breakpoint" = "error"
+"ui.debug.active" = "warn"
 
 # diagnostics, their own family
 "error" = "error"
@@ -87,11 +141,18 @@
 "diagnostic.warning" = { underline = { color = "warn", style = "curl" } }
 "diagnostic.info" = { underline = { color = "info", style = "curl" } }
 "diagnostic.hint" = { underline = { color = "hint", style = "curl" } }
+# dead and dying code says what it is by receding, so neither takes a curl
+"diagnostic.unnecessary" = { fg = "gutter" }
+"diagnostic.deprecated" = { fg = "comment", modifiers = ["crossed_out"] }
 
 # diff
 "diff.plus" = "ok"
+"diff.plus.gutter" = "ok"
 "diff.minus" = "error"
+"diff.minus.gutter" = "error"
 "diff.delta" = "info"
+"diff.delta.gutter" = "info"
+"diff.delta.conflict" = "warn"
 
 [palette]
 bg_deep = "#141110"
