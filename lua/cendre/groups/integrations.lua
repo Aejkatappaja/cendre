@@ -281,7 +281,6 @@ function M.get(c)
     MiniStatuslineDevInfo          = { fg = c.fg, bg = c.bg3 },
     MiniStatuslineFileInfo         = { fg = c.fg, bg = c.bg3 },
     MiniStatuslineFilename         = { fg = c.fg_dim, bg = c.bg2 },
-    MiniStatuslineFilenameModified = { fg = c.fg_dim, bg = c.bg2 },
     MiniStatuslineInactive         = { fg = c.comment, bg = c.bg2 },
     MiniTablineFill                = { bg = c.bg2 },
     MiniTablineCurrent             = { fg = c.fg, bg = c.bg2, bold = true },
