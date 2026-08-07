@@ -210,7 +210,7 @@ check("no group repeats a float surface, so plugin windows can inherit it", func
   -- to look like NormalFloat and meant to pin that colour.
   local allowed = {
     SnacksNormal = true, SnacksNormalNC = true, NeoTreeWinSeparator = true,
-    Pmenu = true,
+    Pmenu = true, PmenuBorder = true,
     -- blink's windows read none of the float surfaces, so they have to pin their own
     BlinkCmpMenu = true, BlinkCmpMenuBorder = true,
     BlinkCmpDoc = true, BlinkCmpDocBorder = true,
@@ -241,8 +241,8 @@ check("transparent = true leaves no window surface painted", function()
   -- surviving here means the reader asked to see their terminal and got a panel.
   -- The completion menu is the documented exception, borders included.
   for name, hl in pairs(vim.api.nvim_get_hl(0, {})) do
-    if hl.bg and grounds[hl.bg] and not name:match("^BlinkCmp") and
-      (name:match("Normal$") or name:match("NormalNC$") or name:match("Float$")
+    if hl.bg and grounds[hl.bg] and not name:match("^BlinkCmp") and name ~= "PmenuBorder"
+       and (name:match("Normal$") or name:match("NormalNC$") or name:match("Float$")
        or name:match("Border$") or name:match("Popup$") or name:match("Cmdline$")) then
       error(name .. " still paints " .. grounds[hl.bg] .. " under transparent = true")
     end
