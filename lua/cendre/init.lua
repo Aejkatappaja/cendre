@@ -111,7 +111,8 @@ function M.load()
       "WinSeparator", "VertSplit", "EndOfBuffer", "MsgArea",
       "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeWinSeparator", "NeoTreeEndOfBuffer",
       "NvimTreeNormal", "SnacksNormal", "SnacksNormalNC", "TroubleNormal",
-      "DiffviewNormal", "TreesitterContext",
+      "DiffviewNormal", "TreesitterContext", "MiniMapNormal",
+      "MiniTablineFill", "MiniTablineCurrent", "MiniTablineVisible", "MiniTablineHidden",
       -- stripped rather than dropped: a transparent float with no border has no
       -- edge, so the ground goes and the stroke stays as the groups declare it.
       "FloatBorder",

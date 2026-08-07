@@ -57,9 +57,9 @@ theme = cendre
 
 Inside the editor, these get groups of their own rather than whatever their
 defaults land on: gitsigns, blink.cmp, Snacks, fzf-lua, which-key, Noice,
-neo-tree, nvim-tree, netrw, flash, trouble, lazy.nvim, mason, nvim-dap and dap-ui,
-neotest, mini.indentscope, mini.hipatterns, hlchunk, grug-far, diffview,
-illuminate, treesitter-context and rainbow-delimiters.
+neo-tree, nvim-tree, netrw, flash, trouble, lazy.nvim, mason, nvim-dap and
+dap-ui, neotest, mini.nvim, hlchunk, grug-far, diffview, illuminate,
+treesitter-context and rainbow-delimiters.
 
 The 16 ANSI slots are also exported as `vim.g.terminal_color_*`, so `:terminal`
 matches. Slot 5 is potassium's 404 nm line, derived the same way as the pigments,
