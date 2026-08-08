@@ -36,7 +36,7 @@ for _, name in ipairs({
 end
 for _, name in ipairs({
   "LspInlayHint", "BlinkCmpGhostText", "GitSignsCurrentLineBlame",
-  "NoiceVirtualText", "SnacksDashboardFooter",
+  "NoiceVirtualText", "SnacksDashboardFooter", "PreInsert",
 }) do
   ITALIC[name] = "virtual"
 end

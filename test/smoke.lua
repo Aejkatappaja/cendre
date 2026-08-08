@@ -656,6 +656,41 @@ check("the tmux plugin theme is mapped by role, not by ANSI name", function()
   end
 end)
 
+check("no group Neovim ships keeps a colour the palette does not define", function()
+  reload()
+  require("cendre").setup({})
+  require("cendre").load()
+
+  local palette = require("cendre.palette")
+  local known = {}
+  for _, bg in ipairs(palette.backgrounds) do
+    for _, v in pairs(palette.get(bg)) do
+      if type(v) == "string" and v:match("^#%x%x%x%x%x%x$") then known[v:lower()] = true end
+    end
+  end
+
+  -- Neovim defines a handful of groups with colours of its own, and a theme that
+  -- names none of them leaves them on screen: Added, Removed and Changed are what
+  -- @diff.plus, @diff.minus, @diff.delta and PreInsert link to, and vim.pack and
+  -- mini.deps paint with. Only the internal error and the redraw debug surfaces
+  -- are left alone, since they have to stay readable when the theme is the bug.
+  local theirs = { NvimInternalError = true }
+
+  local checked = 0
+  for name, hl in pairs(vim.api.nvim_get_hl(0, {})) do
+    if not theirs[name] and not name:match("^RedrawDebug") then
+      for _, key in ipairs({ "fg", "bg", "sp" }) do
+        if type(hl[key]) == "number" then
+          checked = checked + 1
+          assert(known[("#%06x"):format(hl[key])],
+            ("%s sets %s to #%06x, which the palette does not define"):format(name, key, hl[key]))
+        end
+      end
+    end
+  end
+  assert(checked > 300, "only " .. checked .. " colours checked, expected hundreds")
+end)
+
 check("no generated file carries a colour the palette does not define", function()
   reload()
   local palette = require("cendre.palette")
