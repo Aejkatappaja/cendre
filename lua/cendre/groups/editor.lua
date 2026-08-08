@@ -43,6 +43,9 @@ function M.get(c)
     PmenuBorder   = { fg = c.bg5, bg = c.bg_deep },
     PmenuSbar     = { bg = c.bg2 },
     PmenuThumb    = { bg = c.bg4 },
+    PreInsert     = { fg = c.gutter, italic = true },
+    FloatShadow        = { bg = c.bg_deep, blend = 80 },
+    FloatShadowThrough = { bg = c.bg_deep, blend = 100 },
     WildMenu      = { fg = c.bg0, bg = c.ember },
 
     StatusLine   = { fg = c.fg_dim, bg = c.bg2 },
@@ -61,6 +64,7 @@ function M.get(c)
     Question     = { fg = c.info },
     ErrorMsg     = { fg = c.error, bold = true },
     WarningMsg   = { fg = c.warn },
+    OkMsg        = { fg = c.ok },
     MsgArea      = { fg = c.fg_dim },
     MsgSeparator = { fg = c.bg3 },
 
@@ -91,6 +95,9 @@ function M.get(c)
     diffFile     = { fg = c.frost },
     diffLine     = { fg = c.comment },
     diffIndexLine = { fg = c.comment },
+    Added        = { fg = c.ok },
+    Removed      = { fg = c.error },
+    Changed      = { fg = c.info },
 
     SpellBad     = { undercurl = true, sp = c.error },
     SpellCap     = { undercurl = true, sp = c.warn },
