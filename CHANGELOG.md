@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.16.0](https://github.com/Aejkatappaja/cendre/compare/v1.15.0...v1.16.0) (2026-08-08)
+
+
+### Features
+
+* **groups:** add full support for mini.nvim ([229fea3](https://github.com/Aejkatappaja/cendre/commit/229fea34f7ad9c13dcb41dce20e8320cf85903da))
+
+
+### Bug Fixes
+
+* **groups:** add fg to Pmenu*Sel groups ([6710346](https://github.com/Aejkatappaja/cendre/commit/671034673f24ba8666680b3288d6c50d5dc7029f))
+* **groups:** name the groups Neovim ships with a colour of its own ([75db3e2](https://github.com/Aejkatappaja/cendre/commit/75db3e21d33ec9d4591a82bb38a31bbbed7be2ce))
+* **groups:** remove unused group ([9b68088](https://github.com/Aejkatappaja/cendre/commit/9b68088c0164a2ce2129f0b98c5dcbbfbe937fcf))
+* **groups:** style pmenu as float and don't paint fg on pmenu selection ([8530d5c](https://github.com/Aejkatappaja/cendre/commit/8530d5cc0beb5e87d2f0914b90d51b8af5d0434b))
+
 ## [1.15.0](https://github.com/Aejkatappaja/cendre/compare/v1.14.0...v1.15.0) (2026-08-06)
 
 
