@@ -1276,9 +1276,9 @@ footer b { color: var(--ember); font-weight: inherit; }
     </div>
     <p class="note gap-sm">Obsidian is in the community store: <b>Appearance</b>, <b>Browse</b>,
       search <code>cendre</code>. The store carries one theme, so the command above is still how
-      you get <code>-medium</code> and <code>-soft</code> into a vault. Zed is a local install
-      until its registry PR is merged, and the page is not going to claim a search that returns
-      nothing.</p>
+      you get <code>-medium</code> and <code>-soft</code> into a vault. Zed is in the extension
+      registry: <b>Extensions</b>, search <code>cendre</code>. One extension carries all three
+      depths there, so the command above is only for installing from a checkout.</p>
     <p class="note gap-sm">KDE Plasma is a colour scheme, not a Plasma theme. Breeze window
       decorations and the Breeze Plasma style both read the scheme that is active, so cendre
       reaches the titlebar and the panel with nothing else installed. Klassy reads it too, if you
@@ -2001,7 +2001,7 @@ const SURFACES = [
     ["Neovim", "lazy.nvim", '{ "Aejkatappaja/cendre" }'],
     ["Vim", "colors dir", "cp extras/vim/cendre.vim ~/.vim/colors/"],
     ["Helix", "themes", "cp extras/helix/cendre.toml ~/.config/helix/themes/"],
-    ["Zed", "themes", "cp extras/zed/themes/cendre.json ~/.config/zed/themes/", "local"],
+    ["Zed", "themes", "cp extras/zed/themes/cendre.json ~/.config/zed/themes/", "store"],
   ]],
   ["Terminals", [
     ["Ghostty", "themes", "cp extras/ghostty/cendre ~/.config/ghostty/themes/"],
