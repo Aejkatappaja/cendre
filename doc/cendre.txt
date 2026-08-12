@@ -108,6 +108,11 @@ Accepts a table. Every key is optional; pass only what you want to change.
         too. blink draws no border of its own by default, `border` in its own
         options turns one on.
 
+        The lualine theme drops its ground too, and keeps the mode block, which
+        is the one fill it ever draws. It reads this option once, when lualine
+        requires it, so `require("cendre").setup()` has to run before
+        `require("lualine").setup()` or the bar loads the painted variant.
+
     dim_inactive        boolean     default false
 
         Drops `NormalNC`, the window you are not in, from the editor ground to
