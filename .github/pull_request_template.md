@@ -15,7 +15,7 @@ Scopes in use: `palette`, `groups`, `extras`, `lualine`, `site`, `ci`.
 
 ## If this touches colours
 
-- [ ] Nothing under `extras/`, `assets/` or `docs/` was edited by hand. All 87
+- [ ] Nothing under `extras/`, `assets/` or `docs/` was edited by hand. All 96
       of those files are rendered from `lua/cendre/palette.lua`, and the test
       fails on any difference
 - [ ] Regenerated with the command in `CONTRIBUTING.md`, and the regenerated

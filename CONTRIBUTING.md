@@ -1,7 +1,7 @@
 # Contributing
 
 The one rule that will bite you if you skip it: **nothing under `extras/`,
-`assets/` or `docs/` is written by hand.** Those 87 files are rendered from
+`assets/` or `docs/` is written by hand.** Those 96 files are rendered from
 `lua/cendre/palette.lua`, and the test fails on any difference. Edit the
 generator, not the output.
 
