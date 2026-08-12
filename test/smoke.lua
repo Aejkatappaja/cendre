@@ -1203,6 +1203,23 @@ check("lualine theme follows the active background", function()
     "lualine still on the wrong ground")
 end)
 
+-- A bar that keeps bg2 while StatusLine is stripped paints a slab under its own
+-- components and leaves the terminal showing everywhere else: navic's own groups,
+-- and the fill past the last section. The holes are the bug, not the transparency.
+check("lualine drops its ground with the rest of the statusline", function()
+  reload()
+  require("cendre").setup({ transparent = true })
+  require("cendre").load()
+  package.loaded["lualine.themes.cendre"] = nil
+  local theme = require("lualine.themes.cendre")
+  for _, section in ipairs({ theme.normal.b, theme.normal.c, theme.inactive.a,
+    theme.inactive.b, theme.inactive.c }) do
+    assert(section.bg == "NONE", "lualine paints " .. tostring(section.bg) .. " under transparent")
+  end
+  assert(theme.normal.a.bg == require("cendre.palette").get("hard").ember,
+    "the mode block is the one fill, and transparent does not reach it")
+end)
+
 -- The margin beside every pigment claims a hue, a lightness and a source. None of
 -- the three gets to be a comment nobody rechecks.
 local PIGMENTS = { "brass", "ember", "sap", "cinder", "frost" }
