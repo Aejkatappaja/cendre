@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.17.0](https://github.com/Aejkatappaja/cendre/compare/v1.16.0...v1.17.0) (2026-08-12)
+
+
+### Features
+
+* **extras:** cover Windows Terminal ([106aac3](https://github.com/Aejkatappaja/cendre/commit/106aac36e3f1a476d0fceecfb8d30d47db27000c))
+
+
+### Bug Fixes
+
+* **lualine:** drop the section ground when transparent is on ([e3379cf](https://github.com/Aejkatappaja/cendre/commit/e3379cfd2ea7b8f5a83f6a62cbaf7441568e7a01))
+
 ## [1.16.0](https://github.com/Aejkatappaja/cendre/compare/v1.15.0...v1.16.0) (2026-08-08)
 
 
