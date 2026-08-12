@@ -1,0 +1,27 @@
+{
+  "schemes": [
+    {
+      "name": "cendre",
+      "cursorColor": "#ea9875",
+      "selectionBackground": "#2f1e17",
+      "background": "#171311",
+      "foreground": "#e6d5c2",
+      "black": "#201b19",
+      "red": "#d1766e",
+      "green": "#99af6b",
+      "yellow": "#fcba81",
+      "blue": "#58bdff",
+      "purple": "#9480ba",
+      "cyan": "#4e89a2",
+      "white": "#a09384",
+      "brightBlack": "#73665b",
+      "brightRed": "#d25780",
+      "brightGreen": "#43b16a",
+      "brightYellow": "#f4a21c",
+      "brightBlue": "#8bcfff",
+      "brightPurple": "#a692cd",
+      "brightCyan": "#20c9cb",
+      "brightWhite": "#e6d5c2"
+    }
+  ]
+}

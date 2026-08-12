@@ -616,6 +616,7 @@ check("no two depths of one surface share a theme name", function()
       "extras/obsidian/cendre%s/manifest.json",
       "extras/firefox/cendre%s/manifest.json",
       "extras/tmux/cendre%s.tokyo-night.sh",
+      "extras/windows-terminal/cendre%s.json",
     }) do
       local path = target:format(suffix)
       local body = files[path]
@@ -991,6 +992,60 @@ check("the konsole scheme carries the sections konsole ships", function()
       assert(body:find("Description=" .. name .. "\n", 1, true),
         path .. " does not name itself in [General]")
     end
+  end
+end)
+
+check("the windows terminal scheme carries the keys ColorScheme.cpp reads", function()
+  reload()
+  local palette = require("cendre.palette")
+  package.loaded["cendre.extras"] = nil
+  local files = require("cendre.extras").files()
+
+  -- ColorScheme::_layerJson reads five named keys, then walks TableColorsMapping.
+  -- A scheme short of one table colour is rejected whole rather than half applied,
+  -- which is the opposite of what yazi and hunk do.
+  local table_colours = {
+    "black", "red", "green", "yellow", "blue", "purple", "cyan", "white",
+    "brightBlack", "brightRed", "brightGreen", "brightYellow",
+    "brightBlue", "brightPurple", "brightCyan", "brightWhite",
+  }
+  local want = {
+    name = true, foreground = true, background = true,
+    selectionBackground = true, cursorColor = true,
+  }
+  for _, key in ipairs(table_colours) do
+    want[key] = true
+  end
+
+  for _, bg in ipairs(palette.backgrounds) do
+    local suffix = bg == palette.default and "" or ("-" .. bg)
+    local path = ("extras/windows-terminal/cendre%s.json"):format(suffix)
+    local body = files[path]
+    assert(body, "missing " .. path)
+
+    local seen = {}
+    for key in body:gmatch('"([%w]+)"%s*:%s*"') do
+      seen[key] = true
+    end
+    for key in pairs(want) do
+      assert(seen[key], path .. " has no " .. key)
+    end
+    for key in pairs(seen) do
+      assert(want[key], path .. " invents " .. key)
+    end
+
+    for _, alias in ipairs({ "magenta", "brightMagenta" }) do
+      assert(not seen[alias], path .. " writes " .. alias .. ", a second name for a slot it already fills")
+    end
+
+    for key, value in body:gmatch('"([%w]+)"%s*:%s*"([^"]+)"') do
+      if key ~= "name" then
+        assert(value:match("^#%x%x%x$") or value:match("^#%x%x%x%x%x%x$"),
+          path .. " gives " .. key .. " a value that is not a hex colour: " .. value)
+      end
+    end
+
+    assert(body:find('"schemes"', 1, true), path .. " is not a fragment: no schemes list")
   end
 end)
 

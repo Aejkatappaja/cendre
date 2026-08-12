@@ -349,6 +349,51 @@ function M.itermcolors(bg)
 ]]):format(table.concat(body, "\n"))
 end
 
+--- Windows Terminal, as a JSON fragment: the file drops into Fragments/ whole, or
+--- the object inside it goes in the `schemes` array of settings.json.
+--- @param bg string
+--- @return string
+function M.windows_terminal(bg)
+  local c = palette.get(bg)
+  local slots = ansi(c)
+
+  -- TableColorsMapping in ColorScheme.cpp, in the order ToJson writes back. Its
+  -- "magenta" and "brightMagenta" are second names for slots 5 and 13, and the
+  -- read loop counts keys rather than slots, so spelling one slot twice validates
+  -- a scheme with another slot left on Campbell.
+  local names = {
+    "black", "red", "green", "yellow", "blue", "purple", "cyan", "white",
+    "brightBlack", "brightRed", "brightGreen", "brightYellow",
+    "brightBlue", "brightPurple", "brightCyan", "brightWhite",
+  }
+
+  local entries = {
+    { "name", palette.name(bg) },
+    { "cursorColor", c.ember },
+    { "selectionBackground", c.vis },
+    { "background", c.bg0 },
+    { "foreground", c.fg },
+  }
+  for i, key in ipairs(names) do
+    table.insert(entries, { key, slots[i] })
+  end
+
+  local body = {}
+  for i, e in ipairs(entries) do
+    table.insert(body, ('      "%s": "%s"%s'):format(e[1], e[2], i < #entries and "," or ""))
+  end
+
+  return ([[
+{
+  "schemes": [
+    {
+%s
+    }
+  ]
+}
+]]):format(table.concat(body, "\n"))
+end
+
 --- @param bg string
 --- @return string
 --- A theme block for the tokyo-night-tmux plugin, which reads its colours from a
