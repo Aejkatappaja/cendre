@@ -623,4 +623,180 @@ function M.zed(bg)
     table.concat(syntax, ",\n"))
 end
 
+-- The Yaak plugin. Yaak installs a package instead of reading this repository,
+-- so extras/yaak is what `yaakcli build` publishes: one theme per depth, in the
+-- file that carries its name, and src/index.ts lists the three.
+
+local YAAK_THEME = [==[
+import type { Theme } from '@yaakapp/api';
+
+export const @ident@: Theme = {
+  id: '@id@',
+  label: '@label@',
+  dark: true,
+  base: {
+    surface: '@bg0@',
+    surfaceHighlight: '@bg1@',
+    surfaceActive: '@bg2@',
+    selection: '@vis@',
+    text: '@fg@',
+    textSubtle: '@fg_dim@',
+    textSubtlest: '@comment@',
+    border: '@bg3@',
+    borderSubtle: '@bg2@',
+    borderFocus: '@ember@',
+    primary: '@ember@',
+    secondary: '@frost@',
+    info: '@info@',
+    success: '@ok@',
+    notice: '@brass@',
+    warning: '@warn@',
+    danger: '@error@',
+  },
+  components: {
+    appHeader: { surface: '@bg2@', border: '@bg3@' },
+    sidebar: { surface: '@bg_deep@', border: '@bg2@' },
+    responsePane: { surface: '@bg0@', border: '@bg3@' },
+    editor: { surface: '@bg0@' },
+    dialog: { surface: '@bg_deep@', border: '@bg3@' },
+    menu: { surface: '@bg_deep@', border: '@bg3@' },
+    toast: { surface: '@bg_deep@', border: '@bg3@' },
+    input: { surface: '@bg1@', border: '@bg3@' },
+    urlBar: { surface: '@bg1@', border: '@bg3@' },
+    button: {
+      primary: '@ember@',
+      secondary: '@frost@',
+      info: '@info@',
+      success: '@ok@',
+      notice: '@brass@',
+      warning: '@warn@',
+      danger: '@error@',
+    },
+  },
+};
+]==]
+
+--- The exported binding for a depth: cendre, cendreMedium, cendreSoft.
+--- @param name string
+--- @return string
+local function yaak_ident(name)
+  return (name:gsub("%-(%l)", function(l) return l:upper() end))
+end
+
+--- The label a depth wears in Yaak's theme selector.
+--- @param name string
+--- @return string
+local function yaak_label(name)
+  return (name:gsub("^%l", string.upper):gsub("%-(%l)", function(l) return " " .. l:upper() end))
+end
+
+--- One theme module. Roles are the Neovim ones: ember is the accent, frost is a
+--- type, and brass takes `notice` so a notice and a warning are not two shades of
+--- the same amber. `shadow` and `backdrop` are left out because both want alpha.
+--- @param bg string
+--- @return string
+function M.yaak(bg)
+  local c = palette.get(bg)
+  local name = palette.name(bg)
+
+  local vars = {
+    bg0 = c.bg0,
+    bg1 = c.bg1,
+    bg2 = c.bg2,
+    bg3 = c.bg3,
+    bg_deep = c.bg_deep,
+    brass = c.brass,
+    comment = c.comment,
+    ember = c.ember,
+    error = c.error,
+    fg = c.fg,
+    fg_dim = c.fg_dim,
+    frost = c.frost,
+    id = name,
+    ident = yaak_ident(name),
+    info = c.info,
+    label = yaak_label(name),
+    ok = c.ok,
+    vis = c.vis,
+    warn = c.warn,
+  }
+
+  return (YAAK_THEME:gsub("@([%w_]+)@", vars))
+end
+
+--- The plugin entry point. Yaak's themes field is a list, so one install carries
+--- the three depths and the reader picks one in the selector.
+--- @return string
+function M.yaak_index()
+  local imports, idents = {}, {}
+  for _, bg in ipairs(palette.backgrounds) do
+    local name = palette.name(bg)
+    local ident = yaak_ident(name)
+    table.insert(imports, ("import { %s } from './%s';"):format(ident, name))
+    table.insert(idents, ident)
+  end
+
+  return ([[
+import type { PluginDefinition } from '@yaakapp/api';
+%s
+
+export const plugin: PluginDefinition = {
+  themes: [%s],
+};
+]]):format(table.concat(imports, "\n"), table.concat(idents, ", "))
+end
+
+--- The package manifest. The version is a literal for the same reason the Zed
+--- one is: read from the release manifest, a release would re-render this file at
+--- a new number and fail the drift check.
+--- @return string
+function M.yaak_package()
+  return ([[
+{
+  "name": "@aejkatappaja/cendre-theme",
+  "displayName": "Cendre for Yaak",
+  "description": "%s",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "author": "Aejkatappaja",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aejkatappaja/cendre.git"
+  },
+  "keywords": ["yaak", "yaak-plugin", "theme", "dark", "cendre"],
+  "scripts": {
+    "build": "yaakcli build"
+  },
+  "dependencies": {
+    "@yaakapp/api": "^0.8.3"
+  },
+  "devDependencies": {
+    "@yaakapp/cli": "^2026.6.1",
+    "typescript": "^5.5.2"
+  }
+}
+]]):format("Dark colorscheme with every hue computed from a wood fire's emission spectrum. Three depths.")
+end
+
+--- @return string
+function M.yaak_tsconfig()
+  return [[
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ESNext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"]
+}
+]]
+end
+
 return M
