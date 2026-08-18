@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0](https://github.com/Aejkatappaja/cendre/compare/v1.17.0...v1.18.0) (2026-08-18)
+
+
+### Features
+
+* **extras:** cover Yaak ([2967f9b](https://github.com/Aejkatappaja/cendre/commit/2967f9b2d9b8df73e12127fe163bad6d01f95209))
+
 ## [1.17.0](https://github.com/Aejkatappaja/cendre/compare/v1.16.0...v1.17.0) (2026-08-12)
 
 
