@@ -24,6 +24,7 @@ local PER_DEPTH = {
   ["extras/vim/cendre.vim"] = editors.vim,
   ["extras/helix/cendre.toml"] = editors.helix,
   ["extras/zed/themes/cendre.json"] = editors.zed,
+  ["extras/yaak/src/cendre.ts"] = editors.yaak,
 
   ["extras/ghostty/cendre"] = terminals.ghostty,
   ["extras/kitty/cendre.conf"] = terminals.kitty,
@@ -66,6 +67,10 @@ local ONCE = {
   -- their packaging step looks for the licence beside the manifest, not at the
   -- root of the repository, so the extension carries its own copy
   ["extras/zed/LICENSE"] = editors.zed_licence,
+
+  ["extras/yaak/src/index.ts"] = editors.yaak_index,
+  ["extras/yaak/package.json"] = editors.yaak_package,
+  ["extras/yaak/tsconfig.json"] = editors.yaak_tsconfig,
 
   ["assets/banner.svg"] = art.banner,
   ["assets/editor.svg"] = art.editor,
