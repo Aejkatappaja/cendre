@@ -186,6 +186,36 @@ vim.opt.guicursor = "n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,"
   .. "r-cr-o:hor20-Cursor,t:block-blinkon500-blinkoff500-TermCursor"
 ```
 
+## Zig types in plain text
+
+With zls attached, `std.mem.Allocator`, `std.Io` and everything else reached
+through `std` can come out in the plain text colour. zls answers the first
+request for semantic tokens before it has resolved `std`, so it tags those names
+as `variable`, and it never asks Neovim to fetch them again. `:Inspect` on one
+of them shows `@lsp.type.variable.zig` where it should say
+`@lsp.type.struct.zig`. The theme colours both correctly; it just gets told the
+wrong one.
+
+`:lua vim.lsp.semantic_tokens.force_refresh()` fixes the buffer you are in.
+To have it done on every open, put this anywhere in your config:
+
+```lua
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.name == "zls" then
+      vim.defer_fn(function()
+        if vim.api.nvim_buf_is_valid(args.buf) then
+          vim.lsp.semantic_tokens.force_refresh(args.buf)
+        end
+      end, 500)
+    end
+  end,
+})
+```
+
+On a large project zls may need longer than 500 ms to get through `std`.
+
 ## Palette
 
 Ground, hue 43°, which is wood ash under a 1300 K flame. Ash is spectrally flat,
