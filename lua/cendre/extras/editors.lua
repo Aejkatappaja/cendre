@@ -49,6 +49,8 @@ function M.vim(bg)
     hi("VertSplit", c.bg3, "NONE"),
     hi("StatusLine", c.fg_dim, c.bg2),
     hi("StatusLineNC", c.gutter, c.bg1),
+    hi("StatusLineTerm", c.fg_dim, c.bg2),
+    hi("StatusLineTermNC", c.gutter, c.bg1),
     hi("TabLine", c.comment, c.bg1),
     hi("TabLineFill", nil, c.bg1),
     hi("TabLineSel", c.fg, c.bg0, "bold"),
