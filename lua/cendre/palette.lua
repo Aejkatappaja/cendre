@@ -148,6 +148,114 @@ function M.get(name)
   return c
 end
 
+-- Xterm256 approximation of palette
+M.cterm = {}
+
+-- Ground xterm-256 approximation
+-- All greyscale mapped with +1 shift
+M.cterm.grounds = {
+  hard = {
+    bg_deep = "232",
+    bg0     = "233",
+    bg1     = "234",
+    bg2     = "235",
+    bg3     = "236",
+    bg4     = "237",
+    bg5     = "238",
+  },
+  medium = {
+    bg_deep = "233",
+    bg0     = "234",
+    bg1     = "235",
+    bg2     = "236",
+    bg3     = "237",
+    bg4     = "238",
+    bg5     = "239",
+  },
+  soft = {
+    bg_deep = "234",
+    bg0     = "235",
+    bg1     = "236",
+    bg2     = "237",
+    bg3     = "238",
+    bg4     = "239",
+    bg5     = "240",
+  },
+}
+
+-- Ink xterm-256 approximation
+M.cterm.ink = {
+  fg      = "223",
+  fg_dim  = "137",
+  comment = "95",
+  gutter  = "241", -- brighter than all possible bgs
+}
+
+-- Pigments xterm-256 approximation
+M.cterm.pigments = {
+  brass  = "215",
+  ember  = "173",
+  sap    = "107",
+  cinder = "167",
+  frost  = "31",
+}
+
+-- Semantic xterm-256 approximation
+M.cterm.semantic = {
+  error = "168",
+  warn  = "214",
+  ok    = "35",
+  hint  = "44",
+  info  = "39",
+}
+
+-- Tints xterm-256 approximation
+M.cterm.tints = {
+  hard   = { vis = "94",  add = "58",  del = "52",  mod = "23", },
+  medium = { vis = "130", add = "64",  del = "88",  mod = "24", },
+  soft   = { vis = "136", add = "100", del = "124", mod = "25", },
+}
+
+-- Spectral xterm-256 approximation
+M.cterm.spectral = {
+  potassium        = "140",
+  potassium_bright = "141",
+}
+
+local CTERM_INFO_BRIGHT = "117"
+
+function M.xterm256(name)
+  local ground = M.cterm.grounds[name] or M.cterm.grounds.hard
+  local c = vim.tbl_extend("force", {},
+    vim.deepcopy(ground),
+    vim.deepcopy(M.cterm.ink),
+    vim.deepcopy(M.cterm.pigments),
+    vim.deepcopy(M.cterm.semantic),
+    vim.deepcopy(M.cterm.spectral),
+    vim.deepcopy(M.cterm.tints[name] or M.cterm.tints.hard))
+
+  c.none = "NONE"
+
+  c.terminal_black          = c.bg1
+  c.terminal_red            = c.cinder
+  c.terminal_green          = c.sap
+  c.terminal_yellow         = c.brass
+  c.terminal_blue           = c.info
+  c.terminal_magenta        = c.potassium
+  c.terminal_cyan           = c.frost
+  c.terminal_white          = c.fg_dim
+  c.terminal_bright_black   = c.comment
+  c.terminal_bright_red     = c.error
+  c.terminal_bright_green   = c.ok
+  c.terminal_bright_yellow  = c.warn
+  c.terminal_bright_blue    = CTERM_INFO_BRIGHT
+  c.terminal_bright_magenta = c.potassium_bright
+  c.terminal_bright_cyan    = c.hint
+  c.terminal_bright_white   = c.fg
+
+  return c
+end
+
 -- Default, for anything that wants a table without asking.
 M.colors = M.get("hard")
 

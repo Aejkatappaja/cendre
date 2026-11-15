@@ -22,6 +22,7 @@ local DEFAULT = "hard"
 -- depth keeps the unsuffixed name, so `theme = cendre` needs no second decision.
 local PER_DEPTH = {
   ["extras/vim/cendre.vim"] = editors.vim,
+  ["extras/vim/lightline/cendre.vim"] = editors.lightline,
   ["extras/helix/cendre.toml"] = editors.helix,
   ["extras/zed/themes/cendre.json"] = editors.zed,
   ["extras/yaak/src/cendre.ts"] = editors.yaak,
