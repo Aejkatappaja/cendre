@@ -23,6 +23,8 @@ hi SignColumn       guifg=#4e4641 guibg=NONE
 hi VertSplit        guifg=#443c39 guibg=NONE
 hi StatusLine       guifg=#a09384 guibg=#37312e
 hi StatusLineNC     guifg=#4e4641 guibg=#2d2725
+hi StatusLineTerm   guifg=#a09384 guibg=#37312e
+hi StatusLineTermNC guifg=#4e4641 guibg=#2d2725
 hi TabLine          guifg=#73665b guibg=#2d2725
 hi TabLineFill      guibg=#2d2725
 hi TabLineSel       guifg=#e6d5c2 guibg=#231f1d gui=bold
