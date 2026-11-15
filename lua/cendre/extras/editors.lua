@@ -125,6 +125,10 @@ function M.vim(bg)
     "hi SpellCap     gui=undercurl guisp=" .. c.warn,
     "hi SpellLocal   gui=undercurl guisp=" .. c.info,
     "hi SpellRare    gui=undercurl guisp=" .. c.hint,
+    "",
+    '" termdebug',
+    hi("debugBreakpoint", c.error),
+    hi("debugPC", nil, c.vis),
   }
   return table.concat(lines, "\n") .. "\n"
 end

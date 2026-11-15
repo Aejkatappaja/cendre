@@ -99,3 +99,7 @@ hi SpellBad     gui=undercurl guisp=#d25780
 hi SpellCap     gui=undercurl guisp=#f4a21c
 hi SpellLocal   gui=undercurl guisp=#58bdff
 hi SpellRare    gui=undercurl guisp=#20c9cb
+
+" termdebug
+hi debugBreakpoint  guifg=#d25780
+hi debugPC          guibg=#36241d
