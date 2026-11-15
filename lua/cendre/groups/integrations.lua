@@ -90,6 +90,15 @@ function M.get(c)
     FzfLuaHeaderText  = { fg = c.cinder },
     FzfLuaPathLineNr  = { fg = c.gutter },
 
+    -- telescope
+    TelescopePromptTitle    = { fg = c.ember, bold = true },
+    TelescopeResultsTitle   = { fg = c.ember, bold = true },
+    TelescopePreviewTitle   = { fg = c.ember, bold = true },
+    TelescopeSelection      = { bg = c.bg2, bold = true },
+    TelescopeSelectionCaret = { fg = c.ember, bg = c.bg2 },
+    TelescopeMultiSelection = { bg = c.bg4 },
+    TelescopeMatching       = { fg = c.ember, bold = true },
+
     -- which-key
     WhichKey          = { fg = c.ember },
     WhichKeyTitle     = { fg = c.ember, bold = true },
