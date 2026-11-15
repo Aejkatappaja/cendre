@@ -48,7 +48,7 @@ hi ColorColumn      guibg=#2d2725
 hi ModeMsg          guifg=#ea9875 gui=bold
 hi MoreMsg          guifg=#58bdff
 hi Question         guifg=#58bdff
-hi ErrorMsg         guifg=#d25780 gui=bold
+hi ErrorMsg         guifg=#d25780 guibg=NONE gui=bold
 hi WarningMsg       guifg=#f4a21c
 
 " syntax. one role, one pigment

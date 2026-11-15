@@ -74,7 +74,7 @@ function M.vim(bg)
     hi("ModeMsg", c.ember, nil, "bold"),
     hi("MoreMsg", c.info),
     hi("Question", c.info),
-    hi("ErrorMsg", c.error, nil, "bold"),
+    hi("ErrorMsg", c.error, "NONE", "bold"),
     hi("WarningMsg", c.warn),
     "",
     '" syntax. one role, one pigment',
